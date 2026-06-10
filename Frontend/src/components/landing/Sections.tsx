@@ -13,7 +13,13 @@ import {
   BarChart3,
   Check,
   Sparkles,
+  MapPin,
+  Mail,
+  Phone,
+  Instagram,
+  Linkedin,
 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export function SectionHead({
   eyebrow,
@@ -55,7 +61,7 @@ export function Trust() {
     { v: "$420M", l: "Funding raised" },
   ];
   return (
-    <section className="border-y border-border bg-surface/30 py-20">
+    <section className="bg-surface/30 py-20">
       <div className="mx-auto max-w-6xl px-6">
         <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Trusted across the innovation ecosystem
@@ -370,49 +376,126 @@ export function Pricing() {
   );
 }
 
+const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.49 1.977 14.026.957 11.4.957c-5.44 0-9.865 4.37-9.87 9.802-.001 1.772.475 3.5 1.378 5.027L1.935 21.8l6.19-1.626zm12.355-6.967c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.669.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+  </svg>
+);
+
 export function Footer() {
-  const groups = [
-    { t: "Platform", l: ["Assessment", "Experts", "Roadmaps", "Outcomes"] },
-    { t: "Solutions", l: ["Students", "Researchers", "Startups", "Universities"] },
-    { t: "Resources", l: ["Docs", "Changelog", "Blog", "Status"] },
-    { t: "Company", l: ["About", "Careers", "Press", "Contact"] },
-  ];
   return (
-    <footer className="border-t border-border py-14">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-5">
-        <div className="md:col-span-2">
-          <div className="flex items-center gap-2">
-            <span
-              className="grid h-7 w-7 place-items-center rounded-md"
-              style={{ background: "var(--gradient-primary)" }}
-            >
-              <Sparkles className="h-4 w-4 text-background" />
-            </span>
-            <span className="font-display text-sm font-semibold">Professional Home</span>
-          </div>
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            The operating system for professional growth, research, innovation, and career success.
+    <footer className="bg-[#05060F] pt-16 pb-8 text-white/70">
+      <div className="mx-auto max-w-[1380px] px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-10">
+        
+        {/* Brand Information */}
+        <div className="col-span-12 md:col-span-5 flex flex-col gap-4">
+          <Logo />
+          <p className="text-sm leading-relaxed text-white/60 mt-1 max-w-md">
+            AI-powered platform helping students, researchers, and innovators discover the right career path, execute projects, and plan their academic journey with confidence. Our mission is to make career exploration simple, accessible, and personalized for every student.
           </p>
+          <div className="text-[13px] text-white/40 font-medium">
+            Professional Home Pvt Ltd
+          </div>
         </div>
-        {groups.map((g) => (
-          <div key={g.t}>
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {g.t}
-            </div>
-            <ul className="mt-3 space-y-2 text-sm">
-              {g.l.map((x) => (
-                <li key={x}>
-                  <a className="text-muted-foreground hover:text-foreground" href="#">
-                    {x}
-                  </a>
-                </li>
-              ))}
+
+        {/* Contact Us */}
+        <div className="col-span-12 sm:col-span-6 md:col-span-4 flex flex-col gap-5">
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">Contact Us</h3>
+            <ul className="flex flex-col gap-3.5 text-[13.5px]">
+              <li className="flex items-center gap-3">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
+                  <MapPin className="h-4 w-4" />
+                </span>
+                <span className="text-white/80">Vadodara, Gujarat, India</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
+                  <Mail className="h-4 w-4" />
+                </span>
+                <a href="mailto:collegequestfounders@gmail.com" className="text-white/80 hover:text-violet-400 transition-colors">
+                  collegequestfounders@gmail.com
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
+                  <Phone className="h-4 w-4" />
+                </span>
+                <a href="tel:+919558191264" className="text-white/80 hover:text-violet-400 transition-colors">
+                  +91 95581 91264
+                </a>
+              </li>
             </ul>
           </div>
-        ))}
+
+          {/* Social Links */}
+          <div className="mt-2">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-3.5">Connect</h3>
+            <div className="flex items-center gap-3">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 hover:text-pink-400 hover:border-pink-500/50 hover:bg-pink-500/5 transition-all duration-300"
+              >
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a
+                href="https://wa.me/919558191264"
+                target="_blank"
+                rel="noreferrer"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 hover:text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all duration-300"
+              >
+                <WhatsAppIcon className="h-4.5 w-4.5" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 hover:text-blue-400 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all duration-300"
+              >
+                <Linkedin className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Sitemap Links */}
+        <div className="col-span-12 sm:col-span-6 md:col-span-3">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-white/40 mb-4">Site Map</h3>
+          <ul className="grid gap-2.5 text-[13.5px]">
+            {[
+              { to: "/", label: "Home" },
+              { to: "/how", label: "How" },
+              { to: "/ecosystem", label: "Ecosystem" },
+              { to: "/platform", label: "Platform" },
+              { to: "/pricing", label: "Pricing" },
+              { to: "/app", label: "Login / Sign Up" },
+            ].map((link) => (
+              <li key={link.label}>
+                <Link
+                  to={link.to}
+                  className="text-white/75 hover:text-white hover:underline transition decoration-white/20 underline-offset-4"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
       </div>
-      <div className="mx-auto mt-10 max-w-6xl px-6 text-xs text-muted-foreground">
-        © 2026 Professional Home. All rights reserved.
+
+      {/* Bottom Legal / Copyright strip */}
+      <div className="mx-auto max-w-[1380px] px-6 md:px-10 mt-16 pt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
+        <div className="flex items-center gap-6">
+          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-white transition-colors">Manage Cookies</a>
+        </div>
+        <div>
+          © 2026 Professional Home Pvt Ltd. All rights reserved.
+        </div>
       </div>
     </footer>
   );
