@@ -425,3 +425,668 @@
   color: #475569; /* slate-600 */
   font-weight: 400;
 }
+
+/* Premium Ticket Styling for Pricing plans */
+.pricing-tickets-grid {
+  display: grid;
+  gap: 2rem;
+  justify-items: center;
+  align-items: stretch;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .pricing-tickets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .pricing-tickets-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.ticket-wrapper {
+  --t-bg: #ffffff; /* White background */
+  --t-bg-light: #f8fafc; /* Light slate grey for stub background */
+  --t-accent: #7c3aed;
+  --t-accent-glow: rgba(124, 58, 237, 0.45);
+  --t-text-main: #0f172a; /* Slate 900 for high-contrast visibility */
+  --t-text-muted: #475569; /* Slate 600 for labels */
+  font-size: 10px;
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-decoration: none;
+  height: 100%;
+}
+
+@media (min-width: 640px) {
+  .ticket-wrapper {
+    font-size: 9.5px;
+  }
+}
+@media (min-width: 768px) {
+  .ticket-wrapper {
+    font-size: 10.5px;
+  }
+}
+@media (min-width: 1024px) {
+  .ticket-wrapper {
+    font-size: 9px;
+  }
+}
+@media (min-width: 1200px) {
+  .ticket-wrapper {
+    font-size: 11px;
+  }
+}
+
+.ticket {
+  position: relative;
+  width: 24em;
+  color: var(--t-text-main);
+  font-family: "Geist", "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.6s ease;
+  /* Clean dark shadows with a solid purple border overlay (no fuzzy colored glow) */
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 0 0 1.5px rgba(124, 58, 237, 0.35);
+  background: transparent;
+  filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.4));
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ticket-wrapper:hover .ticket {
+  transform: rotateX(5deg) rotateY(-8deg) scale(1.02);
+  box-shadow:
+    20px 20px 40px rgba(0, 0, 0, 0.45),
+    0 0 0 1.5px var(--t-accent);
+}
+
+.ticket::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1em;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    transparent 60%,
+    transparent 100%
+  );
+  z-index: 10;
+  background-size: 250% 250%;
+  background-position: 100% 100%;
+  transition: background-position 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  mix-blend-mode: overlay;
+}
+
+.ticket-wrapper:hover .ticket::after {
+  background-position: 0% 0%;
+}
+
+.t-main {
+  padding: 2.2em 2em;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+      circle at bottom left,
+      transparent 1em,
+      var(--t-bg) 1.05em
+    ),
+    radial-gradient(circle at bottom right, transparent 1em, var(--t-bg) 1.05em);
+  background-size: 51% 100%;
+  background-position:
+    bottom left,
+    bottom right;
+  background-repeat: no-repeat;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.t-main::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      rgba(124, 58, 237, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+  background-size: 2em 2em;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+  transform: perspective(500px) rotateX(20deg) scale(1.5);
+  animation: grid-scroll 20s linear infinite;
+}
+
+@keyframes grid-scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 4em;
+  }
+}
+
+.t-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.t-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 2em;
+}
+
+.t-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: 800;
+  font-size: 1em;
+  letter-spacing: -0.03em;
+  color: var(--t-text-main);
+}
+
+.t-logo svg {
+  width: 1.4em;
+  height: 1.4em;
+  fill: var(--t-accent);
+  filter: drop-shadow(0 0 5px var(--t-accent-glow));
+  animation: logo-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes logo-pulse {
+  0% {
+    filter: drop-shadow(0 0 2px var(--t-accent-glow));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px var(--t-accent)) brightness(1.2);
+  }
+}
+
+.t-type {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t-accent);
+  border: 1.5px solid var(--t-accent);
+  padding: 0.3em 0.7em;
+  border-radius: 99em;
+  font-weight: 700;
+  background-color: rgba(124, 58, 237, 0.04);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.t-title {
+  font-size: 2.8em;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.2em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #0f172a 0%, var(--t-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.t-subtitle {
+  color: var(--t-text-muted);
+  font-size: 0.95em;
+  margin-bottom: 2.5em;
+}
+
+.t-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5em;
+  margin-top: auto;
+  margin-bottom: 1em;
+}
+
+.t-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.t-label {
+  font-size: 0.65em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--t-text-muted);
+}
+
+.t-value {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--t-text-main);
+  white-space: normal;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.t-perforation {
+  display: flex;
+  justify-content: space-between;
+  height: 1em;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.t-perf-line {
+  flex-grow: 1;
+  height: 0;
+  border-top: 2px dashed #cbd5e1; /* Visible perforation line on white background */
+  margin: 0 1.5em;
+}
+
+.t-stub {
+  padding: 2em;
+  background: radial-gradient(
+      circle at top left,
+      transparent 1em,
+      var(--t-bg-light) 1.05em
+    ),
+    radial-gradient(circle at top right, transparent 1em, var(--t-bg-light) 1.05em);
+  background-size: 51% 100%;
+  background-position:
+    top left,
+    top right;
+  background-repeat: no-repeat;
+  border-bottom-left-radius: 1em;
+  border-bottom-right-radius: 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.t-barcode-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+.t-barcode {
+  width: 10em;
+  height: 3em;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--t-text-main) 0,
+    var(--t-text-main) 2px,
+    transparent 2px,
+    transparent 4px,
+    var(--t-text-main) 4px,
+    var(--t-text-main) 5px,
+    transparent 5px,
+    transparent 8px,
+    var(--t-text-main) 8px,
+    var(--t-text-main) 12px,
+    transparent 12px,
+    transparent 15px,
+    var(--t-text-main) 15px,
+    var(--t-text-main) 16px,
+    transparent 16px,
+    transparent 18px
+  );
+  opacity: 0.85; /* Highly visible dark barcode on white background */
+}
+
+.t-barcode-id {
+  font-family: monospace;
+  font-size: 0.7em;
+  color: var(--t-text-muted);
+  letter-spacing: 0.25em;
+}
+
+.t-admit {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.t-admit-text {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--t-text-muted);
+}
+
+.t-admit-num {
+  font-size: 2.6em;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--t-accent);
+  text-shadow: 0 0 12px var(--t-accent-glow);
+}
+
+.ticket-wrapper:active .ticket {
+  transform: rotateX(12deg) rotateY(-5deg) scale(0.98);
+}
+
+/* Premium Ecosystem Network — Neuron-style Dark Monochrome */
+.eco-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.eco-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  z-index: 20;
+  cursor: default;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .eco-node {
+    padding: 12px 18px;
+    gap: 12px;
+    border-radius: 14px;
+  }
+}
+
+.eco-node:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(100, 140, 255, 0.08),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  transform: translate(-50%, -50%) scale(1.04);
+}
+
+.eco-node .eco-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .eco-node .eco-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+}
+
+.eco-node .eco-label {
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 640px) {
+  .eco-node .eco-label {
+    font-size: 13.5px;
+  }
+}
+
+/* Orb glow layers */
+.eco-orb-outer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  pointer-events: none;
+}
+
+.eco-orb-glow-1 {
+  position: absolute;
+  inset: -24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(80, 120, 255, 0.25), transparent 70%);
+  filter: blur(20px);
+}
+
+.eco-orb-glow-2 {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(120, 160, 255, 0.18), transparent 65%);
+  filter: blur(12px);
+}
+
+.eco-orb {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: radial-gradient(ellipse at 35% 25%, #6ec6ff 0%, #4f7bff 25%, #3b4fd4 50%, #1a1e4e 80%, #0a0c2a 100%);
+  box-shadow:
+    inset 0 6px 20px rgba(255, 255, 255, 0.35),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.5),
+    0 0 50px rgba(80, 130, 255, 0.35),
+    0 0 100px rgba(80, 130, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .eco-orb {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+.eco-orb::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 70%;
+  height: 50%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4), transparent 70%);
+  pointer-events: none;
+}
+
+.eco-orb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.15) 0%, transparent 45%, rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+}
+
+/* Flowing dot animation along SVG paths */
+@keyframes eco-dot-flow {
+  0% { offset-distance: 0%; opacity: 0; }
+  5% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   Platform Feature Cards — Premium Bento Grid
+   ═══════════════════════════════════════════════════════ */
+
+.platform-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .platform-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 20-column micro-grid enables perfect asymmetric bento rows:
+   Row 1 → 8 + 8 + 4  (big · big · small)
+   Row 2 → 5 + 5 + 5 + 5  (4 equal)
+   Row 3 → 4 + 8 + 8  (small · big · big) */
+@media (min-width: 1024px) {
+  .platform-grid {
+    grid-template-columns: repeat(20, 1fr);
+  }
+}
+
+.platform-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 28px 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.platform-card:hover {
+  border-color: rgba(255,255,255,0.3);
+  transform: translateY(-3px);
+}
+
+/* Shine sweep on hover */
+.platform-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255,255,255,0.04) 45%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 55%,
+    transparent 60%
+  );
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.platform-card:hover::after {
+  left: 120%;
+}
+
+/* Numbered index label */
+.platform-card-index {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  margin-bottom: 16px;
+  font-family: "Geist", monospace;
+}
+
+/* Icon container */
+.platform-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.platform-card:hover .platform-card-icon {
+  transform: scale(1.06);
+  box-shadow: 0 4px 16px var(--card-accent-glow, rgba(124,58,237,0.25));
+}
+
+/* Title & Description */
+.platform-card-title {
+  font-family: var(--font-display);
+  font-size: 14.5px;
+  font-weight: 650;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.platform-card-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.45);
+  font-weight: 400;
+}
+
+/* Featured (large) card styling on desktop */
+@media (min-width: 1024px) {
+  .platform-card.featured {
+    padding: 32px 28px;
+  }
+  .platform-card.featured .platform-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+  .platform-card.featured .platform-card-title {
+    font-size: 17px;
+  }
+  .platform-card.featured .platform-card-desc {
+    font-size: 13.5px;
+  }
+}
+
+

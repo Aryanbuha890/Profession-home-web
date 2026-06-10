@@ -16,9 +16,11 @@ import {
   MapPin,
   Mail,
   Phone,
-
   Instagram,
   Linkedin,
+  GraduationCap,
+  School,
+  UserCheck,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -182,61 +184,158 @@ export function HowItWorks() {
 }
 
 export function Ecosystem() {
-  const nodes = ["Students", "Universities", "Researchers", "Startups", "Experts", "Investors"];
+  /* Node definitions with fixed positions (percentage of the visual container)
+     and SVG path endpoints for the connection lines (in a 500x500 viewBox). */
+  const nodes = [
+    { n: "Experts",       icon: UserCheck,     x: 24, y: 17, sx: 140, sy: 95  },
+    { n: "Investors",     icon: Coins,         x: 76, y: 17, sx: 360, sy: 95  },
+    { n: "Startups",      icon: Rocket,        x: 9,  y: 50, sx: 75,  sy: 250 },
+    { n: "Students",      icon: GraduationCap, x: 91, y: 50, sx: 425, sy: 250 },
+    { n: "Researchers",   icon: FlaskConical,  x: 24, y: 83, sx: 140, sy: 405 },
+    { n: "Universities",  icon: School,        x: 76, y: 83, sx: 360, sy: 405 },
+  ];
+
+  /* Connection paths — each starts at center (250,250) and curves to the node endpoint.
+     Top/bottom nodes use vertical exit → horizontal turn (like circuit traces).
+     Side nodes use straight horizontal lines. */
+  const paths = [
+    /* Experts    */ "M 250 250 C 250 170, 170 95, 140 95",
+    /* Investors  */ "M 250 250 C 250 170, 330 95, 360 95",
+    /* Startups   */ "M 250 250 L 75 250",
+    /* Students   */ "M 250 250 L 425 250",
+    /* Researchers*/ "M 250 250 C 250 330, 170 405, 140 405",
+    /* Universities*/"M 250 250 C 250 330, 330 405, 360 405",
+  ];
+
   return (
-    <section id="ecosystem" className="border-y border-border bg-surface/30 py-28">
+    <section id="ecosystem" className="border-y border-border py-28 overflow-hidden" style={{ background: "#080a14" }}>
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="The Ecosystem" title="One network. Every role. Real relationships." />
-        <div className="mt-16 grid items-center gap-12 md:grid-cols-2">
-          <div className="relative mx-auto aspect-square w-full max-w-md">
-            <div className="absolute inset-0 rounded-full border border-border" />
-            <div className="absolute inset-10 rounded-full border border-border/70 animate-orbit" />
-            <div className="absolute inset-20 rounded-full border border-border/40" />
-            <div className="absolute inset-0 grid place-items-center">
-              <div className="grid h-24 w-24 place-items-center rounded-2xl glass-strong text-center text-xs font-medium">
-                Professional
-                <br />
-                Home
+
+        <div className="mt-16 grid items-center gap-16 md:grid-cols-2">
+          {/* ─── Network Visual ─── */}
+          <div className="eco-visual">
+
+            {/* SVG Layer — grid, rings, connection lines, and animated dots */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 500 500"
+              fill="none"
+            >
+              <defs>
+                {/* Square grid pattern */}
+                <pattern id="eco-sq-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="0.6" />
+                </pattern>
+
+                {/* Radial fade mask so grid fades at edges */}
+                <radialGradient id="eco-fade" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="white" stopOpacity="1" />
+                  <stop offset="85%" stopColor="white" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="white" stopOpacity="0" />
+                </radialGradient>
+                <mask id="eco-fade-mask">
+                  <rect width="500" height="500" fill="url(#eco-fade)" />
+                </mask>
+              </defs>
+
+              {/* Grid, masked to fade toward edges */}
+              <rect width="500" height="500" fill="url(#eco-sq-grid)" mask="url(#eco-fade-mask)" />
+
+              {/* Concentric rings */}
+              <circle cx="250" cy="250" r="210" stroke="rgba(255,255,255,0.035)" strokeWidth="0.6" />
+              <circle cx="250" cy="250" r="150" stroke="rgba(255,255,255,0.025)" strokeWidth="0.6" strokeDasharray="4 6" />
+              <circle cx="250" cy="250" r="90"  stroke="rgba(255,255,255,0.04)"  strokeWidth="0.6" />
+
+              {/* Connection lines + animated flowing dots */}
+              {paths.map((d, i) => (
+                <g key={i}>
+                  {/* Static faint line */}
+                  <path d={d} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+
+                  {/* Animated flowing dot */}
+                  <circle r="3" fill="rgba(140,180,255,0.85)">
+                    <animateMotion
+                      dur={`${3 + i * 0.4}s`}
+                      repeatCount="indefinite"
+                      path={d}
+                    />
+                  </circle>
+                </g>
+              ))}
+
+              {/* Small static endpoint dots at each node */}
+              {nodes.map((node) => (
+                <g key={`dot-${node.n}`}>
+                  <circle cx={node.sx} cy={node.sy} r="3" fill="rgba(130,170,255,0.5)" />
+                  <circle cx={node.sx} cy={node.sy} r="1.5" fill="rgba(200,220,255,0.9)" />
+                </g>
+              ))}
+            </svg>
+
+            {/* ─── Center 3D Orb ─── */}
+            <div className="eco-orb-outer">
+              <div className="eco-orb-glow-1" />
+              <div className="eco-orb-glow-2" />
+              <div className="eco-orb">
+                <span className="relative z-10 text-[7px] sm:text-[9px] font-bold tracking-[0.18em] uppercase" style={{ color: "rgba(180,220,255,0.85)" }}>
+                  Professional
+                </span>
+                <span className="relative z-10 text-sm sm:text-base font-black tracking-tight text-white uppercase mt-0.5">
+                  Home
+                </span>
               </div>
             </div>
-            {nodes.map((n, i) => {
-              const angle = (i / nodes.length) * Math.PI * 2;
-              const x = 50 + Math.cos(angle) * 42;
-              const y = 50 + Math.sin(angle) * 42;
+
+            {/* ─── Dark Glass Node Cards ─── */}
+            {nodes.map((node) => {
+              const Icon = node.icon;
               return (
                 <div
-                  key={n}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full glass px-3 py-1.5 text-xs"
-                  style={{ left: `${x}%`, top: `${y}%` }}
+                  key={node.n}
+                  className="eco-node"
+                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
                 >
-                  {n}
+                  <span className="eco-icon">
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  </span>
+                  <span className="eco-label">{node.n}</span>
                 </div>
               );
             })}
           </div>
+
+          {/* ─── Right Column — descriptive text ─── */}
           <div>
-            <h3 className="font-display text-2xl font-semibold tracking-tight">
-              A flywheel for outcomes
+            <h3 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
+              A dynamic flywheel for verified outcomes.
             </h3>
-            <p className="mt-3 text-muted-foreground">
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
               Students find mentors. Researchers find collaborators. Founders find investors.
               Universities track innovation. Every introduction is purposeful and every relationship
-              is measured.
+              is measured and verified.
             </p>
-            <ul className="mt-6 grid grid-cols-2 gap-2 text-sm">
+
+            <div className="mt-8 grid grid-cols-2 gap-4">
               {[
-                "Talent graph",
-                "Verified outcomes",
-                "AI introductions",
-                "Reputation system",
-                "Cross-institution",
-                "Granular permissions",
+                { title: "Talent Graph", desc: "Interactive mapping of expertise & potential" },
+                { title: "Verified Outcomes", desc: "Proof-backed achievements & progress" },
+                { title: "AI Introductions", desc: "Purposeful networking based on compatibility" },
+                { title: "Reputation System", desc: "Peer-vetted feedback & trust markers" },
+                { title: "Cross-Institution", desc: "Seamless collaboration across borders" },
+                { title: "Granular Permissions", desc: "Secure data controls for IP protection" },
               ].map((x) => (
-                <li key={x} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[var(--electric)]" /> {x}
-                </li>
+                <div key={x.title} className="flex gap-3 items-start">
+                  <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                    <Check className="h-3 w-3" />
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-semibold text-white/90">{x.title}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{x.desc}</p>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -246,35 +345,133 @@ export function Ecosystem() {
 
 export function Features() {
   const items = [
-    { t: "AI Assessment Engine", d: "Skill, goal, and risk profiling in minutes.", i: Brain },
-    { t: "Expert Marketplace", d: "Vetted mentors, advisors, and investors.", i: Users },
-    { t: "Roadmap Builder", d: "Milestones, dependencies, and projections.", i: Map },
-    { t: "Execution Tracker", d: "Kanban, calendar, timeline, and KPIs.", i: GanttChart },
-    { t: "Research Hub", d: "Projects, grants, teams, publications.", i: FlaskConical },
-    { t: "Startup Hub", d: "Pitch reviews, fundraising, milestones.", i: Rocket },
-    { t: "Career Hub", d: "Skill gap, resume, interview prep.", i: Briefcase },
-    { t: "Funding Hub", d: "Grants, accelerators, and term sheets.", i: Coins },
-    { t: "AI Copilot", d: "Always-on assistant across every workflow.", i: Bot },
-    { t: "Outcome Analytics", d: "Real-time success metrics by cohort.", i: BarChart3 },
+    {
+      t: "AI Assessment Engine",
+      d: "Deep multi-domain analysis of your skills, goals, risk profile, and timing — actionable insights in minutes, not months.",
+      i: Brain,
+      accent: "#7c3aed",
+      accentGlow: "rgba(124,58,237,0.3)",
+      featured: true,
+    },
+    {
+      t: "Expert Marketplace",
+      d: "Access a vetted network of mentors, advisors, and investors matched precisely to your domain and growth stage.",
+      i: Users,
+      accent: "#06b6d4",
+      accentGlow: "rgba(6,182,212,0.3)",
+      featured: true,
+    },
+    {
+      t: "Roadmap Builder",
+      d: "Milestones, dependencies, and projections.",
+      i: Map,
+      accent: "#8b5cf6",
+      accentGlow: "rgba(139,92,246,0.3)",
+    },
+    {
+      t: "Execution Tracker",
+      d: "Kanban, calendar, timeline, and KPIs.",
+      i: GanttChart,
+      accent: "#10b981",
+      accentGlow: "rgba(16,185,129,0.3)",
+    },
+    {
+      t: "Research Hub",
+      d: "Projects, grants, teams, publications.",
+      i: FlaskConical,
+      accent: "#d946ef",
+      accentGlow: "rgba(217,70,239,0.3)",
+    },
+    {
+      t: "Startup Hub",
+      d: "Pitch reviews, fundraising, milestones.",
+      i: Rocket,
+      accent: "#f97316",
+      accentGlow: "rgba(249,115,22,0.3)",
+    },
+    {
+      t: "Career Hub",
+      d: "Skill gap, resume, interview prep.",
+      i: Briefcase,
+      accent: "#3b82f6",
+      accentGlow: "rgba(59,130,246,0.3)",
+    },
+    {
+      t: "Funding Hub",
+      d: "Grants, accelerators, and term sheets.",
+      i: Coins,
+      accent: "#f59e0b",
+      accentGlow: "rgba(245,158,11,0.3)",
+    },
+    {
+      t: "AI Copilot",
+      d: "Your always-on AI assistant that works across every workflow — drafting, scheduling, research, and strategic nudges on autopilot.",
+      i: Bot,
+      accent: "#14b8a6",
+      accentGlow: "rgba(20,184,166,0.3)",
+      featured: true,
+    },
+    {
+      t: "Outcome Analytics",
+      d: "Real-time dashboards tracking success metrics by cohort, institution, and individual — proof that the system delivers.",
+      i: BarChart3,
+      accent: "#ec4899",
+      accentGlow: "rgba(236,72,153,0.3)",
+      featured: true,
+    },
   ];
+
+  /* 20-column bento layout positions (desktop only).
+     Row 1: 8 + 8 + 4   (big · big · small)
+     Row 2: 5 + 5 + 5 + 5   (4 equal)
+     Row 3: 4 + 8 + 8   (small · big · big) */
+  const gridPos = [
+    { col: "1 / 9",   row: "1" },   // 01 — featured
+    { col: "9 / 17",  row: "1" },   // 02 — featured
+    { col: "17 / 21", row: "1" },   // 03
+    { col: "1 / 6",   row: "2" },   // 04
+    { col: "6 / 11",  row: "2" },   // 05
+    { col: "11 / 16", row: "2" },   // 06
+    { col: "16 / 21", row: "2" },   // 07
+    { col: "1 / 5",   row: "3" },   // 08
+    { col: "5 / 13",  row: "3" },   // 09 — featured
+    { col: "13 / 21", row: "3" },   // 10 — featured
+  ];
+
   return (
     <section id="platform" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="Platform" title="Ten systems. One operating model." />
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {items.map(({ t, d, i: Icon }) => (
+
+        <div className="mt-14 platform-grid">
+          {items.map(({ t, d, i: Icon, accent, accentGlow, featured }, idx) => (
             <div
               key={t}
-              className="group relative rounded-2xl glass p-5 transition hover:-translate-y-0.5 hover:glow"
+              className={`platform-card${featured ? " featured" : ""}`}
+              style={{
+                "--card-accent-glow": accentGlow,
+                gridColumn: gridPos[idx]?.col,
+                gridRow: gridPos[idx]?.row,
+              } as React.CSSProperties}
             >
+              {/* Numbered index */}
+              <div className="platform-card-index">{String(idx + 1).padStart(2, "0")}</div>
+
+              {/* Accent-colored icon */}
               <div
-                className="grid h-10 w-10 place-items-center rounded-lg"
-                style={{ background: "var(--gradient-primary)" }}
+                className="platform-card-icon"
+                style={{
+                  background: `${accent}18`,
+                  border: `1px solid ${accent}30`,
+                  color: accent,
+                }}
               >
-                <Icon className="h-5 w-5 text-background" />
+                <Icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 text-sm font-semibold">{t}</h3>
-              <p className="mt-1 text-xs text-muted-foreground">{d}</p>
+
+              {/* Text */}
+              <h3 className="platform-card-title">{t}</h3>
+              <p className="platform-card-desc">{d}</p>
             </div>
           ))}
         </div>
@@ -340,71 +537,138 @@ export function Pricing() {
       n: "Student",
       p: "$0",
       d: "For ambitious learners.",
-      f: ["AI assessment", "Roadmap builder", "Community access"],
+      f: ["AI Assessment", "Roadmap Builder", "Community Access", "Workspace Hub"],
       cta: "Get started",
+      accent: "#06b6d4", // Cyan
+      accentGlow: "rgba(6, 182, 212, 0.35)",
+      tier: "STU-01",
+      barcode: "PH-STU-2026",
+      category: "BASIC",
     },
     {
       n: "Research",
       p: "$19",
       d: "For researchers and labs.",
-      f: ["Everything in Student", "Research Hub", "Grant matching", "Collaboration tools"],
+      f: ["Research Hub", "Grant Matching", "Collaboration Tools", "Workspace Hub"],
       cta: "Start trial",
       featured: true,
+      accent: "#7c3aed", // Violet
+      accentGlow: "rgba(124, 58, 237, 0.35)",
+      tier: "RES-02",
+      barcode: "PH-RES-2026",
+      category: "PRO",
     },
     {
       n: "Startup",
       p: "$49",
       d: "For founders and teams.",
-      f: ["Everything in Research", "Startup Hub", "Investor matching", "Pitch deck reviews"],
+      f: ["Startup Hub", "Investor Matching", "Pitch Deck Reviews", "Research Hub"],
       cta: "Start trial",
+      accent: "#d946ef", // Fuchsia
+      accentGlow: "rgba(217, 70, 239, 0.35)",
+      tier: "STA-03",
+      barcode: "PH-STA-2026",
+      category: "GROWTH",
     },
     {
       n: "Enterprise",
       p: "Custom",
       d: "For universities & corps.",
-      f: ["SSO & permissions", "Analytics dashboards", "Dedicated success", "Custom integrations"],
+      f: ["SSO & Permissions", "Analytics Dashboards", "Dedicated Support", "Integrations"],
       cta: "Talk to us",
+      accent: "#f97316", // Gold/Orange
+      accentGlow: "rgba(249, 115, 22, 0.35)",
+      tier: "ENT-04",
+      barcode: "PH-ENT-2026",
+      category: "ENTERPRISE",
     },
   ];
   return (
-    <section id="pricing" className="py-28">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="pricing" className="py-28 relative overflow-hidden">
+      {/* Background ambient glowing details */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-violet-600/5 blur-3xl pointer-events-none" />
+      <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-[350px] h-[350px] rounded-full bg-cyan-600/5 blur-3xl pointer-events-none" />
+
+      <div className="mx-auto max-w-7xl px-6 relative z-10">
         <SectionHead eyebrow="Pricing" title="Plans for every stage of growth." />
-        <div className="mt-14 grid gap-4 md:grid-cols-4">
+        
+        <div className="mt-16 pricing-tickets-grid">
           {plans.map((p) => (
-            <div
+            <Link
               key={p.n}
-              className={`relative rounded-2xl p-6 ${p.featured ? "glass-strong glow" : "glass"}`}
+              to="/app"
+              className="ticket-wrapper block text-left"
+              style={{
+                "--t-accent": p.accent,
+                "--t-accent-glow": p.accentGlow,
+              } as React.CSSProperties}
             >
-              {p.featured && (
-                <div
-                  className="absolute -top-3 left-6 rounded-full px-2.5 py-0.5 text-xs text-background"
-                  style={{ background: "var(--gradient-primary)" }}
-                >
-                  Most popular
+              <div className="ticket">
+                {/* Main Pass Info */}
+                <div className="t-main">
+                  <div className="t-content">
+                    
+                    {/* Top: Logo & Pass Category */}
+                    <div className="t-header">
+                      <div className="t-logo">
+                        <svg viewBox="0 0 24 24" className="w-5 h-5">
+                          <path
+                            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            fill="none"
+                          />
+                        </svg>
+                        {p.category}
+                      </div>
+                      <div className="t-type">{p.n} Pass</div>
+                    </div>
+
+                    {/* Pricing Tier Details */}
+                    <div className="t-title">
+                      {p.p}
+                      {p.p !== "Custom" && <span className="text-sm font-semibold tracking-normal text-slate-500 lowercase ml-1">/mo</span>}
+                    </div>
+                    <div className="t-subtitle">{p.d}</div>
+
+                    {/* Features Detail Grid */}
+                    <div className="t-details">
+                      {p.f.map((feature, idx) => (
+                        <div className="t-detail-item" key={idx}>
+                          <span className="t-label">Feature 0{idx + 1}</span>
+                          <span className="t-value" title={feature}>{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                  </div>
+
+                  {/* Perf separator */}
+                  <div className="t-perforation" style={{ position: "absolute", bottom: 0, left: 0, width: "100%", transform: "translateY(50%)" }}>
+                    <div className="t-perf-line" />
+                  </div>
                 </div>
-              )}
-              <div className="text-sm text-muted-foreground">{p.n}</div>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="font-display text-3xl font-semibold">{p.p}</span>
-                {p.p !== "Custom" && <span className="text-xs text-muted-foreground">/mo</span>}
+
+                {/* Ticket Stub Barcode / Admit */}
+                <div className="t-stub">
+                  
+                  {/* Barcode details */}
+                  <div className="t-barcode-container">
+                    <div className="t-barcode" />
+                    <div className="t-barcode-id">{p.barcode}</div>
+                  </div>
+
+                  {/* Admission details (Tier index) */}
+                  <div className="t-admit">
+                    <div className="t-admit-text">Tier</div>
+                    <div className="t-admit-num">{p.tier.split("-")[1]}</div>
+                  </div>
+                  
+                </div>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">{p.d}</p>
-              <ul className="mt-5 space-y-2 text-sm">
-                {p.f.map((x) => (
-                  <li key={x} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 text-[var(--electric)]" /> {x}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/app"
-                className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition ${p.featured ? "text-background hover:opacity-90" : "glass hover:bg-foreground/5"}`}
-                style={p.featured ? { background: "var(--gradient-primary)" } : undefined}
-              >
-                {p.cta}
-              </Link>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
