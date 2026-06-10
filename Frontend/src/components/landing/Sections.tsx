@@ -20,6 +20,7 @@ import {
   Linkedin,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 export function SectionHead({
   eyebrow,
@@ -53,12 +54,12 @@ export function Trust() {
     "OpenAI Research",
   ];
   const stats = [
-    { v: "120K+", l: "Active members" },
-    { v: "38K", l: "Projects in motion" },
-    { v: "9.2K", l: "Verified outcomes" },
-    { v: "2.4K", l: "Expert mentors" },
-    { v: "1.8K", l: "Research papers" },
-    { v: "$420M", l: "Funding raised" },
+    { num: 120, decimals: 0, prefix: "", suffix: "K+", l: "Active members" },
+    { num: 38, decimals: 0, prefix: "", suffix: "K", l: "Projects in motion" },
+    { num: 9.2, decimals: 1, prefix: "", suffix: "K", l: "Verified outcomes" },
+    { num: 2.4, decimals: 1, prefix: "", suffix: "K", l: "Expert mentors" },
+    { num: 1.8, decimals: 1, prefix: "", suffix: "K", l: "Research papers" },
+    { num: 420, decimals: 0, prefix: "$", suffix: "M", l: "Funding raised" },
   ];
   return (
     <section className="bg-surface/30 py-20">
@@ -76,7 +77,9 @@ export function Trust() {
         <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-6">
           {stats.map((s) => (
             <div key={s.l} className="bg-surface/60 p-6 text-center">
-              <div className="font-display text-3xl font-semibold text-gradient">{s.v}</div>
+              <div className="font-display text-3xl font-semibold text-gradient">
+                <AnimatedCounter value={s.num} decimals={s.decimals} prefix={s.prefix} suffix={s.suffix} />
+              </div>
               <div className="mt-1 text-xs text-muted-foreground">{s.l}</div>
             </div>
           ))}
@@ -85,6 +88,7 @@ export function Trust() {
     </section>
   );
 }
+
 
 export function HowItWorks() {
   const steps = [
@@ -407,22 +411,22 @@ export function Footer() {
                 <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
                   <MapPin className="h-4 w-4" />
                 </span>
-                <span className="text-white/80">Vadodara, Gujarat, India</span>
+                <span className="text-white/80">Surat, Gujarat, India</span>
               </li>
               <li className="flex items-center gap-3">
                 <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
                   <Mail className="h-4 w-4" />
                 </span>
-                <a href="mailto:collegequestfounders@gmail.com" className="text-white/80 hover:text-violet-400 transition-colors">
-                  collegequestfounders@gmail.com
+                <a href="mailto:professionalhome@gmail.com" className="text-white/80 hover:text-violet-400 transition-colors">
+                  professionalhome@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/[0.03] border border-white/5 text-white/70">
                   <Phone className="h-4 w-4" />
                 </span>
-                <a href="tel:+919558191264" className="text-white/80 hover:text-violet-400 transition-colors">
-                  +91 95581 91264
+                <a href="tel:+911234567890" className="text-white/80 hover:text-violet-400 transition-colors">
+                  +91 1234567890
                 </a>
               </li>
             </ul>
@@ -441,7 +445,7 @@ export function Footer() {
                 <Instagram className="h-4 w-4" />
               </a>
               <a
-                href="https://wa.me/919558191264"
+                href="https://wa.me/911234567890"
                 target="_blank"
                 rel="noreferrer"
                 className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.02] text-white/60 hover:text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all duration-300"
@@ -489,9 +493,9 @@ export function Footer() {
       {/* Bottom Legal / Copyright strip */}
       <div className="mx-auto max-w-[1380px] px-6 md:px-10 mt-16 pt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
         <div className="flex items-center gap-6">
-          <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-          <a href="#" className="hover:text-white transition-colors">Manage Cookies</a>
+          <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+          <Link to="/cookies" className="hover:text-white transition-colors">Manage Cookies</Link>
         </div>
         <div>
           © 2026 Professional Home Pvt Ltd. All rights reserved.

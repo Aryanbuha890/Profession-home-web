@@ -9,10 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as HowRouteImport } from './routes/how'
 import { Route as EcosystemRouteImport } from './routes/ecosystem'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
@@ -32,6 +35,16 @@ import { Route as AppCareerRouteImport } from './routes/app.career'
 import { Route as AppAssessmentRouteImport } from './routes/app.assessment'
 import { Route as AppAchievementsRouteImport } from './routes/app.achievements'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
@@ -50,6 +63,11 @@ const HowRoute = HowRouteImport.update({
 const EcosystemRoute = EcosystemRouteImport.update({
   id: '/ecosystem',
   path: '/ecosystem',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -146,10 +164,13 @@ const AppAchievementsRoute = AppAchievementsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/cookies': typeof CookiesRoute
   '/ecosystem': typeof EcosystemRoute
   '/how': typeof HowRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
@@ -169,10 +190,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cookies': typeof CookiesRoute
   '/ecosystem': typeof EcosystemRoute
   '/how': typeof HowRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
@@ -194,10 +218,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/cookies': typeof CookiesRoute
   '/ecosystem': typeof EcosystemRoute
   '/how': typeof HowRoute
   '/platform': typeof PlatformRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
@@ -220,10 +247,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/cookies'
     | '/ecosystem'
     | '/how'
     | '/platform'
     | '/pricing'
+    | '/privacy'
+    | '/terms'
     | '/app/achievements'
     | '/app/assessment'
     | '/app/career'
@@ -243,10 +273,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cookies'
     | '/ecosystem'
     | '/how'
     | '/platform'
     | '/pricing'
+    | '/privacy'
+    | '/terms'
     | '/app/achievements'
     | '/app/assessment'
     | '/app/career'
@@ -267,10 +300,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/cookies'
     | '/ecosystem'
     | '/how'
     | '/platform'
     | '/pricing'
+    | '/privacy'
+    | '/terms'
     | '/app/achievements'
     | '/app/assessment'
     | '/app/career'
@@ -292,14 +328,31 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  CookiesRoute: typeof CookiesRoute
   EcosystemRoute: typeof EcosystemRoute
   HowRoute: typeof HowRoute
   PlatformRoute: typeof PlatformRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pricing': {
       id: '/pricing'
       path: '/pricing'
@@ -326,6 +379,13 @@ declare module '@tanstack/react-router' {
       path: '/ecosystem'
       fullPath: '/ecosystem'
       preLoaderRoute: typeof EcosystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -500,10 +560,13 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  CookiesRoute: CookiesRoute,
   EcosystemRoute: EcosystemRoute,
   HowRoute: HowRoute,
   PlatformRoute: PlatformRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

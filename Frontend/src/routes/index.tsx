@@ -15,8 +15,8 @@ import {
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
 import { Trust, Footer } from "@/components/landing/Sections";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 export const Route = createFileRoute("/")({
@@ -43,14 +43,113 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    const hasSeen = sessionStorage.getItem("hasSeenIntro");
+    if (hasSeen) {
+      setShowIntro(false);
+    } else {
+      const timer = setTimeout(() => {
+        setShowIntro(false);
+        sessionStorage.setItem("hasSeenIntro", "true");
+      }, 1800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showIntro) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showIntro]);
+
   return (
     <div className="min-h-screen bg-[#05060F] text-foreground antialiased overflow-x-clip">
-      <Nav />
-      <Hero />
-      <DashboardSection />
-      <JourneySection />
-      <Trust />
-      <Footer />
+      <AnimatePresence mode="wait">
+        {showIntro ? (
+          <motion.div
+            key="intro"
+            initial={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              y: "-100vh",
+              transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] }
+            }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#05060F]"
+          >
+            {/* Ambient background radial lights */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.18),transparent_60%)] pointer-events-none animate-pulse" />
+            
+            <motion.div
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex flex-col items-center gap-5 relative z-10"
+            >
+              {/* Logo with pulsing glow */}
+              <div className="relative">
+                <div className="absolute -inset-4 bg-purple-500/25 rounded-2xl blur-2xl animate-pulse" />
+                <motion.img
+                  src="/Logo.png"
+                  alt="Logo"
+                  className="relative h-20 w-20 object-contain rounded-2xl shadow-2xl"
+                  animate={{
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: "easeInOut",
+                  }}
+                />
+              </div>
+
+              {/* Text reveal */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="font-sans text-2xl font-bold tracking-tight text-white text-center"
+              >
+                Professional{" "}
+                <span className="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent">
+                  Home
+                </span>
+              </motion.div>
+
+              {/* Glowing loading line */}
+              <div className="w-48 h-[3px] bg-white/5 rounded-full overflow-hidden mt-1 relative">
+                <motion.div
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 1.4, ease: "easeInOut" }}
+                  className="h-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Nav />
+            <Hero />
+            <DashboardSection />
+            <JourneySection />
+            <Trust />
+            <Footer />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -805,50 +904,71 @@ function JourneySection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Card 1: Assess (Slides in from the Left) */}
           <motion.div
-            initial={{ opacity: 0, x: -120 }}
+            initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, type: "spring", bounce: 0.15 }}
-            className="group relative rounded-3xl p-8 border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:bg-white/[0.04] transition-all duration-300 hover:border-violet-500/50 flex flex-col items-center text-center"
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
           >
-            <div className="absolute -inset-px rounded-3xl bg-gradient-to-b from-violet-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <DiscoverSvg />
-            <h3 className="mt-6 text-2xl font-bold text-white tracking-tight">Assess</h3>
-            <p className="mt-3 text-sm text-white/55 leading-relaxed">
-              Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
-            </p>
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Assess.png"
+                  alt="Assess"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Assess</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
+              </p>
+            </div>
           </motion.div>
 
           {/* Card 2: Execute (Slides up in the Center) */}
           <motion.div
-            initial={{ opacity: 0, y: 80 }}
+            initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.1, type: "spring", bounce: 0.15 }}
-            className="group relative rounded-3xl p-8 border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:bg-white/[0.04] transition-all duration-300 hover:border-cyan-500/50 flex flex-col items-center text-center"
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
           >
-            <div className="absolute -inset-px rounded-3xl bg-gradient-to-b from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <CompareSvg />
-            <h3 className="mt-6 text-2xl font-bold text-white tracking-tight">Execute</h3>
-            <p className="mt-3 text-sm text-white/55 leading-relaxed">
-              Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
-            </p>
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Execute.png"
+                  alt="Execute"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Execute</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
+              </p>
+            </div>
           </motion.div>
 
           {/* Card 3: Achieve (Slides in from the Right) */}
           <motion.div
-            initial={{ opacity: 0, x: 120 }}
+            initial={{ opacity: 0, x: 60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.15 }}
-            className="group relative rounded-3xl p-8 border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:bg-white/[0.04] transition-all duration-300 hover:border-pink-500/50 flex flex-col items-center text-center"
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
           >
-            <div className="absolute -inset-px rounded-3xl bg-gradient-to-b from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <DecideSvg />
-            <h3 className="mt-6 text-2xl font-bold text-white tracking-tight">Achieve</h3>
-            <p className="mt-3 text-sm text-white/55 leading-relaxed">
-              Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
-            </p>
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Achieve.png"
+                  alt="Achieve"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Achieve</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
+              </p>
+            </div>
           </motion.div>
         </div>
       </div>
