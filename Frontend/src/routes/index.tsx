@@ -14,7 +14,7 @@ import {
   Cpu,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
-import { Trust, Footer } from "@/components/landing/Sections";
+import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -144,8 +144,12 @@ function Landing() {
             <Nav />
             <Hero />
             <DashboardSection />
-            <JourneySection />
             <Trust />
+            <JourneySection />
+            <HowItWorks />
+            <Ecosystem />
+            <Features />
+            <Pricing />
             <Footer />
           </motion.div>
         )}

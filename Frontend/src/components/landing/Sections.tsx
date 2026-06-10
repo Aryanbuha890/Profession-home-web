@@ -16,6 +16,7 @@ import {
   MapPin,
   Mail,
   Phone,
+
   Instagram,
   Linkedin,
 } from "lucide-react";
@@ -43,16 +44,19 @@ export function SectionHead({
 }
 
 export function Trust() {
-  const logos = [
-    "Stanford",
-    "MIT Media Lab",
-    "Y Combinator",
-    "Genentech",
-    "Broad Institute",
-    "ETH Zürich",
-    "DeepMind",
-    "OpenAI Research",
+  const logoItems = [
+    { src: "/Coursera_Logo.png", alt: "Coursera", h: "h-7" },
+    { src: "/Jira_Logo.png", alt: "Jira", h: "h-7" },
+    { src: "/Notion_Logo.png", alt: "Notion", h: "h-7" },
+    { src: "/OpenAI_Logo.png", alt: "OpenAI", h: "h-6" },
+    { src: "/ResearchGate_logo.png", alt: "ResearchGate", h: "h-7" },
+    { src: "/Slack_Logo.png", alt: "Slack", h: "h-7" },
+    { src: "/Y_Combinator_Logo.png", alt: "Y Combinator", h: "h-7" },
   ];
+
+  // Repeat 3 times for a seamless, continuous scroll loop
+  const scrollLogos = [...logoItems, ...logoItems, ...logoItems];
+
   const stats = [
     { num: 120, decimals: 0, prefix: "", suffix: "K+", l: "Active members" },
     { num: 38, decimals: 0, prefix: "", suffix: "K", l: "Projects in motion" },
@@ -62,18 +66,34 @@ export function Trust() {
     { num: 420, decimals: 0, prefix: "$", suffix: "M", l: "Funding raised" },
   ];
   return (
-    <section className="bg-surface/30 py-20">
+    <section className="bg-surface/30 py-20 overflow-hidden">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
+        <h3 className="text-center text-xs uppercase tracking-[0.2em] font-bold text-white">
           Trusted across the innovation ecosystem
-        </p>
-        <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-center text-sm text-muted-foreground sm:grid-cols-4 md:grid-cols-8">
-          {logos.map((l) => (
-            <div key={l} className="opacity-70 transition hover:opacity-100">
-              {l}
+        </h3>
+      </div>
+        
+      {/* Infinite Logo Carousel (Edge-to-Edge White Banner with Gradient Ends) */}
+      <div 
+        className="mt-8 relative w-full overflow-hidden py-5 before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-32 before:bg-gradient-to-r before:from-[#05060F] before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-32 after:bg-gradient-to-l after:from-[#05060F] after:to-transparent"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95) 15%, rgba(255, 255, 255, 0.95) 85%, transparent)"
+        }}
+      >
+        <div className="flex w-max gap-16 animate-logo-scroll cursor-pointer">
+          {scrollLogos.map((logo, idx) => (
+            <div key={idx} className="flex items-center justify-center min-w-[140px] h-10">
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                className={`${logo.h} object-contain opacity-90 hover:opacity-100 transition-all duration-300`}
+              />
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-6">
         <div className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-6">
           {stats.map((s) => (
             <div key={s.l} className="bg-surface/60 p-6 text-center">
@@ -124,7 +144,7 @@ export function HowItWorks() {
     },
   ];
   return (
-    <section className="py-28">
+    <section id="how" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="How it works" title="Five steps from ambition to outcome." />
         <ol className="mt-14 grid gap-4 md:grid-cols-5">
@@ -152,7 +172,7 @@ export function HowItWorks() {
 export function Ecosystem() {
   const nodes = ["Students", "Universities", "Researchers", "Startups", "Experts", "Investors"];
   return (
-    <section className="border-y border-border bg-surface/30 py-28">
+    <section id="ecosystem" className="border-y border-border bg-surface/30 py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="The Ecosystem" title="One network. Every role. Real relationships." />
         <div className="mt-16 grid items-center gap-12 md:grid-cols-2">
@@ -226,7 +246,7 @@ export function Features() {
     { t: "Outcome Analytics", d: "Real-time success metrics by cohort.", i: BarChart3 },
   ];
   return (
-    <section className="py-28">
+    <section id="platform" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="Platform" title="Ten systems. One operating model." />
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -335,7 +355,7 @@ export function Pricing() {
     },
   ];
   return (
-    <section className="py-28">
+    <section id="pricing" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="Pricing" title="Plans for every stage of growth." />
         <div className="mt-14 grid gap-4 md:grid-cols-4">
@@ -388,7 +408,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function Footer() {
   return (
-    <footer className="bg-[#05060F] pt-16 pb-8 text-white/70">
+    <footer className="bg-[#05060F] pt-16 pb-0 overflow-hidden text-white/70">
       <div className="mx-auto max-w-[1380px] px-6 md:px-10 grid grid-cols-1 md:grid-cols-12 gap-10">
         
         {/* Brand Information */}
@@ -470,15 +490,16 @@ export function Footer() {
           <ul className="grid gap-2.5 text-[13.5px]">
             {[
               { to: "/", label: "Home" },
-              { to: "/how", label: "How" },
-              { to: "/ecosystem", label: "Ecosystem" },
-              { to: "/platform", label: "Platform" },
-              { to: "/pricing", label: "Pricing" },
+              { to: "/", hash: "how", label: "How" },
+              { to: "/", hash: "ecosystem", label: "Ecosystem" },
+              { to: "/", hash: "platform", label: "Platform" },
+              { to: "/", hash: "pricing", label: "Pricing" },
               { to: "/app", label: "Login / Sign Up" },
             ].map((link) => (
               <li key={link.label}>
                 <Link
                   to={link.to}
+                  hash={link.hash}
                   className="text-white/75 hover:text-white hover:underline transition decoration-white/20 underline-offset-4"
                 >
                   {link.label}
@@ -491,7 +512,7 @@ export function Footer() {
       </div>
 
       {/* Bottom Legal / Copyright strip */}
-      <div className="mx-auto max-w-[1380px] px-6 md:px-10 mt-16 pt-8 border-t border-white/5 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
+      <div className="mx-auto max-w-[1380px] px-6 md:px-10 mt-16 pt-8 border-t border-dashed border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs text-white/40">
         <div className="flex items-center gap-6">
           <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
           <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
@@ -500,6 +521,18 @@ export function Footer() {
         <div>
           © 2026 Professional Home Pvt Ltd. All rights reserved.
         </div>
+      </div>
+
+      {/* Giant Watermark Layer (rendered behind/below everything) */}
+      <div className="relative w-full pointer-events-none select-none z-0 overflow-hidden h-[18vw] min-h-[140px] flex items-end justify-center mt-2">
+        {/* Vibrant violet-purple background gradient matching reference image */}
+        <div className="absolute inset-x-0 bottom-0 h-[120%] bg-gradient-to-t from-[#7C3AED]/30 via-[#4C1D95]/5 to-transparent pointer-events-none" />
+        {/* Radial spotlight centered at the bottom to give that intense bright glow */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[160px] rounded-full bg-[radial-gradient(circle,rgba(168,85,247,0.45)_0%,rgba(139,92,246,0.18)_40%,transparent_70%)] blur-2xl pointer-events-none" />
+
+        <h1 className="relative z-10 text-[9.2vw] font-black leading-[0.8] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white/25 via-white/5 to-transparent select-none uppercase font-sans whitespace-nowrap">
+          Professional Home
+        </h1>
       </div>
     </footer>
   );

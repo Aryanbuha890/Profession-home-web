@@ -11,10 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as PlatformRouteImport } from './routes/platform'
-import { Route as HowRouteImport } from './routes/how'
-import { Route as EcosystemRouteImport } from './routes/ecosystem'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,26 +39,6 @@ const TermsRoute = TermsRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlatformRoute = PlatformRouteImport.update({
-  id: '/platform',
-  path: '/platform',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowRoute = HowRouteImport.update({
-  id: '/how',
-  path: '/how',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EcosystemRoute = EcosystemRouteImport.update({
-  id: '/ecosystem',
-  path: '/ecosystem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiesRoute = CookiesRouteImport.update({
@@ -165,10 +141,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/cookies': typeof CookiesRoute
-  '/ecosystem': typeof EcosystemRoute
-  '/how': typeof HowRoute
-  '/platform': typeof PlatformRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
@@ -191,10 +163,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cookies': typeof CookiesRoute
-  '/ecosystem': typeof EcosystemRoute
-  '/how': typeof HowRoute
-  '/platform': typeof PlatformRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
@@ -219,10 +187,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/cookies': typeof CookiesRoute
-  '/ecosystem': typeof EcosystemRoute
-  '/how': typeof HowRoute
-  '/platform': typeof PlatformRoute
-  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
@@ -248,10 +212,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/cookies'
-    | '/ecosystem'
-    | '/how'
-    | '/platform'
-    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/app/achievements'
@@ -274,10 +234,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cookies'
-    | '/ecosystem'
-    | '/how'
-    | '/platform'
-    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/app/achievements'
@@ -301,10 +257,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/cookies'
-    | '/ecosystem'
-    | '/how'
-    | '/platform'
-    | '/pricing'
     | '/privacy'
     | '/terms'
     | '/app/achievements'
@@ -329,10 +281,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   CookiesRoute: typeof CookiesRoute
-  EcosystemRoute: typeof EcosystemRoute
-  HowRoute: typeof HowRoute
-  PlatformRoute: typeof PlatformRoute
-  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
 }
@@ -351,34 +299,6 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/platform': {
-      id: '/platform'
-      path: '/platform'
-      fullPath: '/platform'
-      preLoaderRoute: typeof PlatformRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how': {
-      id: '/how'
-      path: '/how'
-      fullPath: '/how'
-      preLoaderRoute: typeof HowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ecosystem': {
-      id: '/ecosystem'
-      path: '/ecosystem'
-      fullPath: '/ecosystem'
-      preLoaderRoute: typeof EcosystemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookies': {
@@ -561,10 +481,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   CookiesRoute: CookiesRoute,
-  EcosystemRoute: EcosystemRoute,
-  HowRoute: HowRoute,
-  PlatformRoute: PlatformRoute,
-  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
 }

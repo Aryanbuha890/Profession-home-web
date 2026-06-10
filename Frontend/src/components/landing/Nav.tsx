@@ -79,16 +79,16 @@ export function Nav() {
         {/* Navigation Links */}
         <nav className="relative hidden md:flex items-center gap-0.5 text-sm">
           {[
-            { to: "/how", t: "How" },
-            { to: "/ecosystem", t: "Ecosystem" },
-            { to: "/platform", t: "Platform" },
-            { to: "/pricing", t: "Pricing" },
+            { hash: "how", t: "How" },
+            { hash: "ecosystem", t: "Ecosystem" },
+            { hash: "platform", t: "Platform" },
+            { hash: "pricing", t: "Pricing" },
           ].map((i) => (
             <Link
               key={i.t}
-              to={i.to}
-              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10 [&.active]:text-white [&.active]:bg-white/5"
-              activeOptions={{ exact: true }}
+              to="/"
+              hash={i.hash}
+              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10"
             >
               {i.t}
             </Link>

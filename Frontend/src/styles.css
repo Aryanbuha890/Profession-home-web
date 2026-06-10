@@ -126,6 +126,7 @@
   body {
     background: var(--color-background);
     color: var(--color-foreground);
+    scroll-behavior: smooth;
   }
   body {
     font-family: var(--font-sans);
@@ -283,4 +284,20 @@
 }
 @utility hero-bg {
   background-image: var(--gradient-hero);
+}
+
+@keyframes logo-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+@utility animate-logo-scroll {
+  animation: logo-scroll 28s linear infinite;
+  &:hover {
+    animation-play-state: paused;
+  }
 }
