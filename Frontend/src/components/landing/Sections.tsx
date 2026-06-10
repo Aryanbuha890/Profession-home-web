@@ -147,20 +147,32 @@ export function HowItWorks() {
     <section id="how" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="How it works" title="Five steps from ambition to outcome." />
-        <ol className="mt-14 grid gap-4 md:grid-cols-5">
+        <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
           {steps.map(({ n, t, d, i: Icon }) => (
-            <li key={n} className="glass rounded-2xl p-5">
-              <div className="flex items-center gap-3">
-                <span
-                  className="grid h-10 w-10 place-items-center rounded-lg"
-                  style={{ background: "var(--gradient-primary)" }}
-                >
-                  <Icon className="h-5 w-5 text-background" />
-                </span>
-                <span className="text-xs text-muted-foreground">Step {n}</span>
+            <li key={n} className="premium-white-window-card group">
+              {/* macOS-style window tools bar */}
+              <div className="window-tools">
+                <div className="window-dots">
+                  <span className="window-dot red" />
+                  <span className="window-dot yellow" />
+                  <span className="window-dot green" />
+                </div>
+                <span className="window-step">Step {n}</span>
               </div>
-              <h3 className="mt-4 text-base font-semibold">{t}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{d}</p>
+              
+              {/* Card content body */}
+              <div className="card-body">
+                <div className="card-icon-wrapper">
+                  <Icon className="h-5.5 w-5.5" />
+                </div>
+                
+                <h3 className="card-title-white">
+                  {t}
+                </h3>
+                <p className="card-desc-white">
+                  {d}
+                </p>
+              </div>
             </li>
           ))}
         </ol>
