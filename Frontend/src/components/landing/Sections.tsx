@@ -184,158 +184,215 @@ export function HowItWorks() {
 }
 
 export function Ecosystem() {
-  /* Node definitions with fixed positions (percentage of the visual container)
-     and SVG path endpoints for the connection lines (in a 500x500 viewBox). */
-  const nodes = [
-    { n: "Experts",       icon: UserCheck,     x: 24, y: 17, sx: 140, sy: 95  },
-    { n: "Investors",     icon: Coins,         x: 76, y: 17, sx: 360, sy: 95  },
-    { n: "Startups",      icon: Rocket,        x: 9,  y: 50, sx: 75,  sy: 250 },
-    { n: "Students",      icon: GraduationCap, x: 91, y: 50, sx: 425, sy: 250 },
-    { n: "Researchers",   icon: FlaskConical,  x: 24, y: 83, sx: 140, sy: 405 },
-    { n: "Universities",  icon: School,        x: 76, y: 83, sx: 360, sy: 405 },
+  const cards = [
+    {
+      title: "Students",
+      index: "01",
+      icon: GraduationCap,
+      metrics: [
+        { label: "Skills Profile", value: "92% Complete" },
+        { label: "Vetted Offers", value: "2 Secured" },
+        { label: "Career Pathing", value: "AI-Optimized" }
+      ]
+    },
+    {
+      title: "Researchers",
+      index: "02",
+      icon: FlaskConical,
+      metrics: [
+        { label: "Publications", value: "3 Accepted" },
+        { label: "Marie Curie Grant", value: "€186K Funded" },
+        { label: "Collaborations", value: "8 Active Labs" }
+      ]
+    },
+    {
+      title: "Universities",
+      index: "03",
+      icon: School,
+      metrics: [
+        { label: "R&D Projects", value: "42 Active" },
+        { label: "Academic Tier", value: "Tier 1 Partner" },
+        { label: "Placement Rate", value: "96.8% Verified" }
+      ]
+    },
+    {
+      title: "Startups",
+      index: "04",
+      icon: Rocket,
+      metrics: [
+        { label: "Seed Funding", value: "$2.1M Raised" },
+        { label: "Advisor Matches", value: "4 Advisors" },
+        { label: "Growth Index", value: "+42% MoM" }
+      ]
+    },
+    {
+      title: "Investors",
+      index: "05",
+      icon: Coins,
+      metrics: [
+        { label: "Vetted Deal Flow", value: "28 Deals/mo" },
+        { label: "Portfolio Status", value: "12 Co-invests" },
+        { label: "Projected IRR", value: "32% Avg" }
+      ]
+    },
+    {
+      title: "Industry Experts",
+      index: "06",
+      icon: UserCheck,
+      metrics: [
+        { label: "Advisory Capacity", value: "14 hrs Matched" },
+        { label: "Consulting Pool", value: "Verified Mentor" },
+        { label: "Client Rating", value: "4.95 / 5.0" }
+      ]
+    }
   ];
 
-  /* Connection paths — each starts at center (250,250) and curves to the node endpoint.
-     Top/bottom nodes use vertical exit → horizontal turn (like circuit traces).
-     Side nodes use straight horizontal lines. */
+  // Connection paths in the SVG viewport (0 0 960 700)
   const paths = [
-    /* Experts    */ "M 250 250 C 250 170, 170 95, 140 95",
-    /* Investors  */ "M 250 250 C 250 170, 330 95, 360 95",
-    /* Startups   */ "M 250 250 L 75 250",
-    /* Students   */ "M 250 250 L 425 250",
-    /* Researchers*/ "M 250 250 C 250 330, 170 405, 140 405",
-    /* Universities*/"M 250 250 C 250 330, 330 405, 360 405",
+    { d: "M 480 350 C 400 350, 320 110, 240 110", dur: "4.2s" }, // Card 1 (Top Left)
+    { d: "M 480 350 L 240 350",                  dur: "3.6s" }, // Card 2 (Middle Left)
+    { d: "M 480 350 C 400 350, 320 590, 240 590", dur: "4.8s" }, // Card 3 (Bottom Left)
+    { d: "M 480 350 C 560 350, 640 110, 720 110", dur: "4.0s" }, // Card 4 (Top Right)
+    { d: "M 480 350 L 720 350",                  dur: "3.8s" }, // Card 5 (Middle Right)
+    { d: "M 480 350 C 560 350, 640 590, 720 590", dur: "4.5s" }  // Card 6 (Bottom Right)
   ];
 
   return (
-    <section id="ecosystem" className="border-y border-border py-28 overflow-hidden" style={{ background: "#080a14" }}>
+    <section id="ecosystem" className="border-y border-border py-28 overflow-hidden bg-[#05060F] relative">
+      {/* Subtle grid background */}
+      <div
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+      {/* Ambient light glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-[radial-gradient(closest-side,rgba(56,189,248,0.12),transparent)] blur-3xl pointer-events-none" />
+
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="The Ecosystem" title="One network. Every role. Real relationships." />
 
-        <div className="mt-16 grid items-center gap-16 md:grid-cols-2">
-          {/* ─── Network Visual ─── */}
-          <div className="eco-visual">
-
-            {/* SVG Layer — grid, rings, connection lines, and animated dots */}
+        <div className="mt-16 relative">
+          {/* Layout Container */}
+          <div className="eco-layout-container">
+            {/* SVG Connections Layer (Visible on desktop) */}
             <svg
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              viewBox="0 0 500 500"
+              className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-0"
+              viewBox="0 0 960 700"
               fill="none"
             >
-              <defs>
-                {/* Square grid pattern */}
-                <pattern id="eco-sq-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.025)" strokeWidth="0.6" />
-                </pattern>
-
-                {/* Radial fade mask so grid fades at edges */}
-                <radialGradient id="eco-fade" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="white" stopOpacity="1" />
-                  <stop offset="85%" stopColor="white" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="white" stopOpacity="0" />
-                </radialGradient>
-                <mask id="eco-fade-mask">
-                  <rect width="500" height="500" fill="url(#eco-fade)" />
-                </mask>
-              </defs>
-
-              {/* Grid, masked to fade toward edges */}
-              <rect width="500" height="500" fill="url(#eco-sq-grid)" mask="url(#eco-fade-mask)" />
-
-              {/* Concentric rings */}
-              <circle cx="250" cy="250" r="210" stroke="rgba(255,255,255,0.035)" strokeWidth="0.6" />
-              <circle cx="250" cy="250" r="150" stroke="rgba(255,255,255,0.025)" strokeWidth="0.6" strokeDasharray="4 6" />
-              <circle cx="250" cy="250" r="90"  stroke="rgba(255,255,255,0.04)"  strokeWidth="0.6" />
-
-              {/* Connection lines + animated flowing dots */}
-              {paths.map((d, i) => (
-                <g key={i}>
-                  {/* Static faint line */}
-                  <path d={d} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
-
-                  {/* Animated flowing dot */}
-                  <circle r="3" fill="rgba(140,180,255,0.85)">
-                    <animateMotion
-                      dur={`${3 + i * 0.4}s`}
-                      repeatCount="indefinite"
-                      path={d}
-                    />
+              {paths.map((p, idx) => (
+                <g key={idx}>
+                  {/* Shadow/Glow Line */}
+                  <path
+                    d={p.d}
+                    stroke="#38bdf8"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    className="opacity-[0.06]"
+                    style={{ filter: "blur(3px)" }}
+                  />
+                  {/* Core Static Connection Line */}
+                  <path
+                    d={p.d}
+                    stroke="rgba(255, 255, 255, 0.08)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  {/* Animated Neon Flowing Dot */}
+                  <circle r="3.5" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 6px #38bdf8)" }}>
+                    <animateMotion dur={p.dur} repeatCount="indefinite" path={p.d} />
                   </circle>
                 </g>
               ))}
 
-              {/* Small static endpoint dots at each node */}
-              {nodes.map((node) => (
-                <g key={`dot-${node.n}`}>
-                  <circle cx={node.sx} cy={node.sy} r="3" fill="rgba(130,170,255,0.5)" />
-                  <circle cx={node.sx} cy={node.sy} r="1.5" fill="rgba(200,220,255,0.9)" />
-                </g>
-              ))}
+              {/* Atomic Orbits loops around center (480, 350) with animated flowing dots */}
+              {/* Atomic Orbit 1 */}
+              <g transform="rotate(-30 480 350)">
+                <path
+                  d="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350"
+                  stroke="rgba(56, 189, 248, 0.25)"
+                  strokeWidth="1.2"
+                  fill="none"
+                />
+                <circle r="3" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 5px #38bdf8)" }}>
+                  <animateMotion dur="5s" repeatCount="indefinite" path="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350" />
+                </circle>
+              </g>
+
+              {/* Atomic Orbit 2 */}
+              <g transform="rotate(30 480 350)">
+                <path
+                  d="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350"
+                  stroke="rgba(56, 189, 248, 0.25)"
+                  strokeWidth="1.2"
+                  fill="none"
+                />
+                <circle r="3" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 5px #38bdf8)" }}>
+                  <animateMotion dur="6s" repeatCount="indefinite" path="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350" />
+                </circle>
+              </g>
+
+              {/* Atomic Orbit 3 */}
+              <g transform="rotate(90 480 350)">
+                <path
+                  d="M 375 350 A 105 45 0 1 0 585 350 A 105 45 0 1 0 375 350"
+                  stroke="rgba(192, 132, 252, 0.25)"
+                  strokeWidth="1.2"
+                  fill="none"
+                />
+                <circle r="3" fill="#c084fc" style={{ filter: "drop-shadow(0 0 5px #c084fc)" }}>
+                  <animateMotion dur="7s" repeatCount="indefinite" path="M 375 350 A 105 45 0 1 0 585 350 A 105 45 0 1 0 375 350" />
+                </circle>
+              </g>
             </svg>
 
-            {/* ─── Center 3D Orb ─── */}
-            <div className="eco-orb-outer">
-              <div className="eco-orb-glow-1" />
-              <div className="eco-orb-glow-2" />
-              <div className="eco-orb">
-                <span className="relative z-10 text-[7px] sm:text-[9px] font-bold tracking-[0.18em] uppercase" style={{ color: "rgba(180,220,255,0.85)" }}>
-                  Professional
-                </span>
-                <span className="relative z-10 text-sm sm:text-base font-black tracking-tight text-white uppercase mt-0.5">
-                  Home
-                </span>
+            {/* Central AI Core */}
+            <div className="eco-core-wrapper">
+              <div className="eco-core-glow-bg" />
+              <div className="eco-core-sphere">
+                <div className="eco-core-inner-glow" />
+                {/* Brain core content */}
+                <div className="relative z-10 flex flex-col items-center justify-center text-center">
+                  <span className="text-[7px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase">
+                    AI CORE
+                  </span>
+                  <span className="text-xs font-black tracking-tight text-white uppercase mt-0.5">
+                    PH-OS
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* ─── Dark Glass Node Cards ─── */}
-            {nodes.map((node) => {
-              const Icon = node.icon;
+            {/* Ecosystem Cards */}
+            {cards.map((c, idx) => {
+              const Icon = c.icon;
               return (
-                <div
-                  key={node.n}
-                  className="eco-node"
-                  style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                >
-                  <span className="eco-icon">
-                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </span>
-                  <span className="eco-label">{node.n}</span>
+                <div key={c.title} className={`eco-glass-card card-${idx + 1}`}>
+                  <div className="eco-card-header">
+                    <div className="eco-card-title-group">
+                      <span className="eco-card-title-icon">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="eco-card-title">{c.title}</span>
+                    </div>
+                    <span className="eco-card-index">{c.index}</span>
+                  </div>
+                  
+                  <div className="eco-card-divider" />
+                  
+                  <div className="eco-card-body">
+                    {c.metrics.map((m) => (
+                      <div key={m.label} className="eco-card-metric">
+                        <span className="eco-metric-label">{m.label}</span>
+                        <span className="eco-metric-value">{m.value}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               );
             })}
-          </div>
-
-          {/* ─── Right Column — descriptive text ─── */}
-          <div>
-            <h3 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight leading-tight">
-              A dynamic flywheel for verified outcomes.
-            </h3>
-            <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Students find mentors. Researchers find collaborators. Founders find investors.
-              Universities track innovation. Every introduction is purposeful and every relationship
-              is measured and verified.
-            </p>
-
-            <div className="mt-8 grid grid-cols-2 gap-4">
-              {[
-                { title: "Talent Graph", desc: "Interactive mapping of expertise & potential" },
-                { title: "Verified Outcomes", desc: "Proof-backed achievements & progress" },
-                { title: "AI Introductions", desc: "Purposeful networking based on compatibility" },
-                { title: "Reputation System", desc: "Peer-vetted feedback & trust markers" },
-                { title: "Cross-Institution", desc: "Seamless collaboration across borders" },
-                { title: "Granular Permissions", desc: "Secure data controls for IP protection" },
-              ].map((x) => (
-                <div key={x.title} className="flex gap-3 items-start">
-                  <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20">
-                    <Check className="h-3 w-3" />
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-semibold text-white/90">{x.title}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">{x.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
