@@ -43,117 +43,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const [showIntro, setShowIntro] = useState(true);
-
-  useEffect(() => {
-    const hasSeen = sessionStorage.getItem("hasSeenIntro");
-    if (hasSeen) {
-      setShowIntro(false);
-    } else {
-      const timer = setTimeout(() => {
-        setShowIntro(false);
-        sessionStorage.setItem("hasSeenIntro", "true");
-      }, 1800);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (showIntro) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showIntro]);
-
   return (
     <div className="min-h-screen bg-[#05060F] text-foreground antialiased overflow-x-clip">
-      <AnimatePresence mode="wait">
-        {showIntro ? (
-          <motion.div
-            key="intro"
-            initial={{ opacity: 1 }}
-            exit={{
-              opacity: 0,
-              y: "-100vh",
-              transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] }
-            }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#05060F]"
-          >
-            {/* Ambient background radial lights */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.18),transparent_60%)] pointer-events-none animate-pulse" />
-            
-            <motion.div
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex flex-col items-center gap-5 relative z-10"
-            >
-              {/* Logo with pulsing glow */}
-              <div className="relative">
-                <div className="absolute -inset-4 bg-purple-500/25 rounded-2xl blur-2xl animate-pulse" />
-                <motion.img
-                  src="/Logo.png"
-                  alt="Logo"
-                  className="relative h-20 w-20 object-contain rounded-2xl shadow-2xl"
-                  animate={{
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2,
-                    ease: "easeInOut",
-                  }}
-                />
-              </div>
-
-              {/* Text reveal */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="font-sans text-2xl font-bold tracking-tight text-white text-center"
-              >
-                Professional{" "}
-                <span className="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent">
-                  Home
-                </span>
-              </motion.div>
-
-              {/* Glowing loading line */}
-              <div className="w-48 h-[3px] bg-white/5 rounded-full overflow-hidden mt-1 relative">
-                <motion.div
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 1.4, ease: "easeInOut" }}
-                  className="h-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            <Nav />
-            <Hero />
-            <DashboardSection />
-            <Trust />
-            <JourneySection />
-            <HowItWorks />
-            <Ecosystem />
-            <Features />
-            <Pricing />
-            <Footer />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Nav />
+      <Hero />
+      <DashboardSection />
+      <Trust />
+      <JourneySection />
+      <HowItWorks />
+      <Ecosystem />
+      <Features />
+      <Pricing />
+      <Footer />
     </div>
   );
 }
