@@ -478,23 +478,6 @@ export function Features() {
     },
   ];
 
-  /* 20-column bento layout positions (desktop only).
-     Row 1: 8 + 8 + 4   (big · big · small)
-     Row 2: 5 + 5 + 5 + 5   (4 equal)
-     Row 3: 4 + 8 + 8   (small · big · big) */
-  const gridPos = [
-    { col: "1 / 9",   row: "1" },   // 01 — featured
-    { col: "9 / 17",  row: "1" },   // 02 — featured
-    { col: "17 / 21", row: "1" },   // 03
-    { col: "1 / 6",   row: "2" },   // 04
-    { col: "6 / 11",  row: "2" },   // 05
-    { col: "11 / 16", row: "2" },   // 06
-    { col: "16 / 21", row: "2" },   // 07
-    { col: "1 / 5",   row: "3" },   // 08
-    { col: "5 / 13",  row: "3" },   // 09 — featured
-    { col: "13 / 21", row: "3" },   // 10 — featured
-  ];
-
   return (
     <section id="platform" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
@@ -504,11 +487,9 @@ export function Features() {
           {items.map(({ t, d, i: Icon, accent, accentGlow, featured }, idx) => (
             <div
               key={t}
-              className={`platform-card${featured ? " featured" : ""}`}
+              className={`platform-card${featured ? " featured" : ""} platform-card-${idx + 1}`}
               style={{
                 "--card-accent-glow": accentGlow,
-                gridColumn: gridPos[idx]?.col,
-                gridRow: gridPos[idx]?.row,
               } as React.CSSProperties}
             >
               {/* Numbered index */}
