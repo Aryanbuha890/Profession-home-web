@@ -26,9 +26,9 @@ function Community() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground">
             My communities
           </div>
-          <ul className="mt-3 space-y-2 text-sm">
+          <ul className="mt-3 space-y-2.5">
             {groups.map((g) => (
-              <li key={g} className="rounded-lg border border-border bg-surface/40 px-3 py-2">
+              <li key={g} className="rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] px-3.5 py-2.5 text-xs text-white/90 transition cursor-pointer">
                 {g}
               </li>
             ))}
@@ -40,10 +40,10 @@ function Community() {
           </div>
           <ul className="mt-3 space-y-3">
             {threads.map((t) => (
-              <li key={t.t} className="rounded-xl border border-border bg-surface/40 p-3">
-                <div className="text-sm font-medium">{t.t}</div>
-                <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{t.a}</span>
+              <li key={t.t} className="rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] p-4 transition cursor-pointer">
+                <div className="text-xs font-semibold text-white leading-relaxed">{t.t}</div>
+                <div className="mt-2.5 flex items-center gap-2.5 text-[10px] text-muted-foreground font-mono">
+                  <span className="text-white/80 font-medium">{t.a}</span>
                   <span>·</span>
                   <span>{t.r} replies</span>
                   <Pill>research</Pill>

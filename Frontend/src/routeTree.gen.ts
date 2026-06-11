@@ -15,20 +15,27 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppWorkspaceRouteImport } from './routes/app.workspace'
 import { Route as AppUniversityRouteImport } from './routes/app.university'
+import { Route as AppTrackerRouteImport } from './routes/app.tracker'
 import { Route as AppStartupRouteImport } from './routes/app.startup'
+import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppRoadmapRouteImport } from './routes/app.roadmap'
 import { Route as AppResearchRouteImport } from './routes/app.research'
+import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppOutcomesRouteImport } from './routes/app.outcomes'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppInvestorRouteImport } from './routes/app.investor'
 import { Route as AppExpertsRouteImport } from './routes/app.experts'
 import { Route as AppExecutionRouteImport } from './routes/app.execution'
 import { Route as AppDocumentsRouteImport } from './routes/app.documents'
+import { Route as AppDiscoveryRouteImport } from './routes/app.discovery'
 import { Route as AppCopilotRouteImport } from './routes/app.copilot'
 import { Route as AppConsultantRouteImport } from './routes/app.consultant'
 import { Route as AppCommunityRouteImport } from './routes/app.community'
 import { Route as AppCareerRouteImport } from './routes/app.career'
 import { Route as AppAssessmentRouteImport } from './routes/app.assessment'
+import { Route as AppAdminRouteImport } from './routes/app.admin'
 import { Route as AppAchievementsRouteImport } from './routes/app.achievements'
 
 const TermsRoute = TermsRouteImport.update({
@@ -61,9 +68,19 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppWorkspaceRoute = AppWorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppUniversityRoute = AppUniversityRouteImport.update({
   id: '/university',
   path: '/university',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackerRoute = AppTrackerRouteImport.update({
+  id: '/tracker',
+  path: '/tracker',
   getParentRoute: () => AppRoute,
 } as any)
 const AppStartupRoute = AppStartupRouteImport.update({
@@ -71,9 +88,24 @@ const AppStartupRoute = AppStartupRouteImport.update({
   path: '/startup',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRoadmapRoute = AppRoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResearchRoute = AppResearchRouteImport.update({
   id: '/research',
   path: '/research',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
 const AppOutcomesRoute = AppOutcomesRouteImport.update({
@@ -106,6 +138,11 @@ const AppDocumentsRoute = AppDocumentsRouteImport.update({
   path: '/documents',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDiscoveryRoute = AppDiscoveryRouteImport.update({
+  id: '/discovery',
+  path: '/discovery',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCopilotRoute = AppCopilotRouteImport.update({
   id: '/copilot',
   path: '/copilot',
@@ -131,6 +168,11 @@ const AppAssessmentRoute = AppAssessmentRouteImport.update({
   path: '/assessment',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAchievementsRoute = AppAchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
@@ -144,20 +186,27 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
   '/app/community': typeof AppCommunityRoute
   '/app/consultant': typeof AppConsultantRoute
   '/app/copilot': typeof AppCopilotRoute
+  '/app/discovery': typeof AppDiscoveryRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/execution': typeof AppExecutionRoute
   '/app/experts': typeof AppExpertsRoute
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
+  '/app/roadmap': typeof AppRoadmapRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/startup': typeof AppStartupRoute
+  '/app/tracker': typeof AppTrackerRoute
   '/app/university': typeof AppUniversityRoute
+  '/app/workspace': typeof AppWorkspaceRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -166,20 +215,27 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
   '/app/community': typeof AppCommunityRoute
   '/app/consultant': typeof AppConsultantRoute
   '/app/copilot': typeof AppCopilotRoute
+  '/app/discovery': typeof AppDiscoveryRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/execution': typeof AppExecutionRoute
   '/app/experts': typeof AppExpertsRoute
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
+  '/app/roadmap': typeof AppRoadmapRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/startup': typeof AppStartupRoute
+  '/app/tracker': typeof AppTrackerRoute
   '/app/university': typeof AppUniversityRoute
+  '/app/workspace': typeof AppWorkspaceRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -190,20 +246,27 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
+  '/app/admin': typeof AppAdminRoute
   '/app/assessment': typeof AppAssessmentRoute
   '/app/career': typeof AppCareerRoute
   '/app/community': typeof AppCommunityRoute
   '/app/consultant': typeof AppConsultantRoute
   '/app/copilot': typeof AppCopilotRoute
+  '/app/discovery': typeof AppDiscoveryRoute
   '/app/documents': typeof AppDocumentsRoute
   '/app/execution': typeof AppExecutionRoute
   '/app/experts': typeof AppExpertsRoute
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
+  '/app/roadmap': typeof AppRoadmapRoute
+  '/app/settings': typeof AppSettingsRoute
   '/app/startup': typeof AppStartupRoute
+  '/app/tracker': typeof AppTrackerRoute
   '/app/university': typeof AppUniversityRoute
+  '/app/workspace': typeof AppWorkspaceRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -215,20 +278,27 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/app/achievements'
+    | '/app/admin'
     | '/app/assessment'
     | '/app/career'
     | '/app/community'
     | '/app/consultant'
     | '/app/copilot'
+    | '/app/discovery'
     | '/app/documents'
     | '/app/execution'
     | '/app/experts'
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/reports'
     | '/app/research'
+    | '/app/roadmap'
+    | '/app/settings'
     | '/app/startup'
+    | '/app/tracker'
     | '/app/university'
+    | '/app/workspace'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -237,20 +307,27 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/app/achievements'
+    | '/app/admin'
     | '/app/assessment'
     | '/app/career'
     | '/app/community'
     | '/app/consultant'
     | '/app/copilot'
+    | '/app/discovery'
     | '/app/documents'
     | '/app/execution'
     | '/app/experts'
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/reports'
     | '/app/research'
+    | '/app/roadmap'
+    | '/app/settings'
     | '/app/startup'
+    | '/app/tracker'
     | '/app/university'
+    | '/app/workspace'
     | '/app'
   id:
     | '__root__'
@@ -260,20 +337,27 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/app/achievements'
+    | '/app/admin'
     | '/app/assessment'
     | '/app/career'
     | '/app/community'
     | '/app/consultant'
     | '/app/copilot'
+    | '/app/discovery'
     | '/app/documents'
     | '/app/execution'
     | '/app/experts'
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/reports'
     | '/app/research'
+    | '/app/roadmap'
+    | '/app/settings'
     | '/app/startup'
+    | '/app/tracker'
     | '/app/university'
+    | '/app/workspace'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -329,11 +413,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/workspace': {
+      id: '/app/workspace'
+      path: '/workspace'
+      fullPath: '/app/workspace'
+      preLoaderRoute: typeof AppWorkspaceRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/university': {
       id: '/app/university'
       path: '/university'
       fullPath: '/app/university'
       preLoaderRoute: typeof AppUniversityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/tracker': {
+      id: '/app/tracker'
+      path: '/tracker'
+      fullPath: '/app/tracker'
+      preLoaderRoute: typeof AppTrackerRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/startup': {
@@ -343,11 +441,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStartupRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings': {
+      id: '/app/settings'
+      path: '/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/roadmap': {
+      id: '/app/roadmap'
+      path: '/roadmap'
+      fullPath: '/app/roadmap'
+      preLoaderRoute: typeof AppRoadmapRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/research': {
       id: '/app/research'
       path: '/research'
       fullPath: '/app/research'
       preLoaderRoute: typeof AppResearchRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reports': {
+      id: '/app/reports'
+      path: '/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/outcomes': {
@@ -392,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDocumentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/discovery': {
+      id: '/app/discovery'
+      path: '/discovery'
+      fullPath: '/app/discovery'
+      preLoaderRoute: typeof AppDiscoveryRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/copilot': {
       id: '/app/copilot'
       path: '/copilot'
@@ -427,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAssessmentRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/achievements': {
       id: '/app/achievements'
       path: '/achievements'
@@ -439,39 +572,53 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAchievementsRoute: typeof AppAchievementsRoute
+  AppAdminRoute: typeof AppAdminRoute
   AppAssessmentRoute: typeof AppAssessmentRoute
   AppCareerRoute: typeof AppCareerRoute
   AppCommunityRoute: typeof AppCommunityRoute
   AppConsultantRoute: typeof AppConsultantRoute
   AppCopilotRoute: typeof AppCopilotRoute
+  AppDiscoveryRoute: typeof AppDiscoveryRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppExecutionRoute: typeof AppExecutionRoute
   AppExpertsRoute: typeof AppExpertsRoute
   AppInvestorRoute: typeof AppInvestorRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppOutcomesRoute: typeof AppOutcomesRoute
+  AppReportsRoute: typeof AppReportsRoute
   AppResearchRoute: typeof AppResearchRoute
+  AppRoadmapRoute: typeof AppRoadmapRoute
+  AppSettingsRoute: typeof AppSettingsRoute
   AppStartupRoute: typeof AppStartupRoute
+  AppTrackerRoute: typeof AppTrackerRoute
   AppUniversityRoute: typeof AppUniversityRoute
+  AppWorkspaceRoute: typeof AppWorkspaceRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAchievementsRoute: AppAchievementsRoute,
+  AppAdminRoute: AppAdminRoute,
   AppAssessmentRoute: AppAssessmentRoute,
   AppCareerRoute: AppCareerRoute,
   AppCommunityRoute: AppCommunityRoute,
   AppConsultantRoute: AppConsultantRoute,
   AppCopilotRoute: AppCopilotRoute,
+  AppDiscoveryRoute: AppDiscoveryRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppExecutionRoute: AppExecutionRoute,
   AppExpertsRoute: AppExpertsRoute,
   AppInvestorRoute: AppInvestorRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppOutcomesRoute: AppOutcomesRoute,
+  AppReportsRoute: AppReportsRoute,
   AppResearchRoute: AppResearchRoute,
+  AppRoadmapRoute: AppRoadmapRoute,
+  AppSettingsRoute: AppSettingsRoute,
   AppStartupRoute: AppStartupRoute,
+  AppTrackerRoute: AppTrackerRoute,
   AppUniversityRoute: AppUniversityRoute,
+  AppWorkspaceRoute: AppWorkspaceRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

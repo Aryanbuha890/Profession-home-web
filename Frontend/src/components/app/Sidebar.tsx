@@ -3,137 +3,100 @@ import {
   LayoutDashboard,
   Brain,
   Users,
-  FlaskConical,
-  Rocket,
-  Briefcase,
-  Building2,
-  Coins,
-  MessageSquare,
-  KanbanSquare,
-  Trophy,
-  FileText,
-  Globe2,
+  Calendar,
+  Map,
+  ListChecks,
   Compass,
-  Award,
-  Sparkles,
-  Search,
-  Bell,
+  FileSearch,
+  Bot,
+  Trophy,
+  ScrollText,
+  Briefcase,
+  ShieldCheck,
   Settings,
+  Search,
+  GraduationCap,
+  Bell,
 } from "lucide-react";
 
-const nav = [
-  {
-    group: "Workspace",
-    items: [
-      { to: "/app", label: "Command Center", icon: LayoutDashboard, exact: true },
-      { to: "/app/assessment", label: "AI Assessment", icon: Brain },
-      { to: "/app/copilot", label: "AI Copilot", icon: Sparkles },
-    ],
-  },
-  {
-    group: "Hubs",
-    items: [
-      { to: "/app/experts", label: "Expert Marketplace", icon: Users },
-      { to: "/app/research", label: "Research Hub", icon: FlaskConical },
-      { to: "/app/startup", label: "Startup Hub", icon: Rocket },
-      { to: "/app/career", label: "Career Hub", icon: Briefcase },
-    ],
-  },
-  {
-    group: "Portals",
-    items: [
-      { to: "/app/university", label: "University", icon: Building2 },
-      { to: "/app/investor", label: "Investor", icon: Coins },
-      { to: "/app/consultant", label: "Consultant", icon: MessageSquare },
-    ],
-  },
-  {
-    group: "Operations",
-    items: [
-      { to: "/app/execution", label: "Execution Tracker", icon: KanbanSquare },
-      { to: "/app/outcomes", label: "Outcome Tracker", icon: Trophy },
-      { to: "/app/documents", label: "Documents", icon: FileText },
-    ],
-  },
-  {
-    group: "Network",
-    items: [
-      { to: "/app/community", label: "Community", icon: Globe2 },
-      { to: "/app/opportunities", label: "Opportunities", icon: Compass },
-      { to: "/app/achievements", label: "Achievement Vault", icon: Award },
-    ],
-  },
+const navItems = [
+  { icon: LayoutDashboard, label: "Overview", to: "/app", exact: true },
+  { icon: Brain, label: "Assessment", to: "/app/assessment" },
+  { icon: Users, label: "Experts", to: "/app/experts" },
+  { icon: Calendar, label: "Discovery", to: "/app/discovery" },
+  { icon: Map, label: "Roadmap", to: "/app/roadmap" },
+  { icon: ListChecks, label: "Tasks", to: "/app/tracker" },
+  { icon: Compass, label: "Workspace", to: "/app/workspace" },
+  { icon: FileSearch, label: "Documents", to: "/app/documents" },
+  { icon: Bot, label: "AI Copilot", to: "/app/copilot" },
+  { icon: Trophy, label: "Outcomes", to: "/app/outcomes" },
+  { icon: ScrollText, label: "Reports", to: "/app/reports" },
+  { icon: Briefcase, label: "Consultant", to: "/app/consultant" },
+  { icon: ShieldCheck, label: "Admin", to: "/app/admin" },
+  { icon: Settings, label: "Settings", to: "/app/settings" },
 ] as const;
 
 export function AppSidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground">
+      {/* Brand logo */}
       <div className="flex items-center gap-2 px-5 py-4">
-        <span
-          className="grid h-7 w-7 place-items-center rounded-md"
-          style={{ background: "var(--gradient-primary)" }}
-        >
-          <Sparkles className="h-4 w-4 text-background" />
-        </span>
-        <Link to="/" className="font-display text-sm font-semibold">
-          Professional Home
+        <Link to="/" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-sky-400 to-indigo-500 text-slate-950 font-bold">
+            <GraduationCap className="h-4.5 w-4.5" />
+          </div>
+          <span className="font-display text-[15px] font-semibold text-white">Professional Home</span>
         </Link>
       </div>
+
+      {/* Search Bar */}
       <div className="px-3">
-        <div className="flex items-center gap-2 rounded-lg glass px-2.5 py-1.5 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 rounded-lg bg-white/5 border border-white/5 px-2.5 py-1.5 text-xs text-muted-foreground">
           <Search className="h-3.5 w-3.5" /> <span>Search</span>
           <span className="ml-auto rounded bg-foreground/10 px-1.5 py-0.5 text-[10px]">⌘K</span>
         </div>
       </div>
-      <nav className="mt-4 flex-1 overflow-y-auto px-2 pb-4">
-        {nav.map((g) => (
-          <div key={g.group} className="mb-4">
-            <div className="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {g.group}
-            </div>
-            <ul className="space-y-0.5">
-              {g.items.map((it) => {
-                const exact = "exact" in it ? it.exact : false;
-                const active = exact
-                  ? pathname === it.to
-                  : pathname === it.to || pathname.startsWith(it.to + "/");
-                const Icon = it.icon;
-                return (
-                  <li key={it.to}>
-                    <Link
-                      to={it.to}
-                      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm transition ${
-                        active
-                          ? "bg-foreground/10 text-foreground"
-                          : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                      }`}
-                    >
-                      {active && (
-                        <span
-                          className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full"
-                          style={{ background: "var(--gradient-primary)" }}
-                        />
-                      )}
-                      <Icon className="h-4 w-4" />
-                      <span>{it.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
+
+      {/* Navigation Links */}
+      <nav className="mt-4 flex-1 overflow-y-auto px-2 pb-4 space-y-0.5">
+        {navItems.map((n) => {
+          const exact = "exact" in n ? n.exact : false;
+          const active = exact
+            ? pathname === n.to
+            : pathname === n.to || pathname.startsWith(n.to + "/");
+          const Icon = n.icon;
+          return (
+            <li key={n.to} className="list-none">
+              <Link
+                to={n.to}
+                className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-1.5 text-sm transition ${
+                  active
+                    ? "bg-sky-400/10 text-sky-400 font-semibold"
+                    : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
+                }`}
+              >
+                {active && (
+                  <span
+                    className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full"
+                    style={{ background: "linear-gradient(135deg, #38bdf8, #0284c7)" }}
+                  />
+                )}
+                <Icon className="h-4 w-4" />
+                <span>{n.label}</span>
+              </Link>
+            </li>
+          );
+        })}
       </nav>
+
+      {/* Upgrade Callout */}
       <div className="border-t border-border p-3">
-        <div className="flex items-center gap-2.5 rounded-lg p-2">
-          <div className="h-8 w-8 rounded-full" style={{ background: "var(--gradient-primary)" }} />
-          <div className="min-w-0">
-            <div className="truncate text-sm font-medium">Alex Morgan</div>
-            <div className="truncate text-xs text-muted-foreground">Research · Pro</div>
-          </div>
-          <button className="ml-auto rounded-md p-1.5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground">
-            <Settings className="h-4 w-4" />
+        <div className="rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent p-4">
+          <p className="text-sm font-semibold text-white">Upgrade to Growth</p>
+          <p className="mt-1 text-xs text-muted-foreground">Unlock mentor calls, copilot, and full workspace.</p>
+          <button className="mt-3 w-full rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 py-1.5 text-xs font-bold text-slate-950 shadow hover:opacity-90 transition cursor-pointer">
+            Upgrade
           </button>
         </div>
       </div>
@@ -156,8 +119,8 @@ export function AppTopbar({ title, subtitle }: { title: string; subtitle?: strin
           <Settings className="h-4 w-4" />
         </button>
         <button
-          className="rounded-full px-4 py-1.5 text-xs font-medium text-background"
-          style={{ background: "var(--gradient-primary)" }}
+          className="rounded-full px-4 py-1.5 text-xs font-semibold text-slate-950 transition hover:scale-105"
+          style={{ background: "linear-gradient(135deg, #ffffff, #38bdf8)" }}
         >
           Upgrade
         </button>

@@ -1,91 +1,77 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Page, Card, Pill } from "@/components/app/Page";
-import { Star, Calendar } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Page, Card } from "@/components/app/Page";
+import { Button } from "@/components/ui/button";
+import { Star, Globe, Clock, IndianRupee, TrendingUp, Calendar } from "lucide-react";
 
 export const Route = createFileRoute("/app/experts")({
-  head: () => ({ meta: [{ title: "Expert Marketplace — Professional Home" }] }),
+  head: () => ({ meta: [{ title: "Expert Matching — Professional Home" }] }),
   component: Experts,
 });
 
 const experts = [
-  { n: "Dr. Helena Chen", r: "Computational Biology · Stanford", s: 4.9, p: "$220/hr", a: "Today" },
-  { n: "Marco Rossi", r: "Seed-stage Investor · Milan", s: 4.8, p: "$340/hr", a: "Thu" },
-  { n: "Prof. Adeyemi", r: "Public Health · LSE", s: 4.9, p: "$260/hr", a: "Fri" },
-  { n: "Yuki Tanaka", r: "Product · ex-Stripe", s: 4.7, p: "$190/hr", a: "Mon" },
-  { n: "Sarah Levin", r: "Biotech VC · Boston", s: 5.0, p: "$420/hr", a: "Wed" },
-  { n: "Karim Haddad", r: "AI Research · DeepMind", s: 4.9, p: "$310/hr", a: "Today" },
-];
-
-const filters = [
-  "Domain",
-  "Industry",
-  "Research Area",
-  "Language",
-  "Availability",
-  "Price",
-  "Rating",
-  "Experience",
+  { name: "Priya Raghavan", domain: "Product Management", exp: "9 yrs · ex-Razorpay", lang: "EN, HI", avail: "This week", budget: "₹1,800/hr", rate: 96, rating: 4.9 },
+  { name: "Dr. Aman Verma", domain: "ML Research", exp: "12 yrs · IIT-B PhD", lang: "EN", avail: "Next week", budget: "₹2,400/hr", rate: 94, rating: 4.9 },
+  { name: "Neha Kulkarni", domain: "Startup & Fundraising", exp: "7 yrs · 2 exits", lang: "EN, MR", avail: "This week", budget: "₹2,000/hr", rate: 92, rating: 4.8 },
+  { name: "Rohan Iyer", domain: "SDE Placements", exp: "6 yrs · ex-Google", lang: "EN, HI", avail: "Tomorrow", budget: "₹1,500/hr", rate: 90, rating: 4.8 },
+  { name: "Sara Khan", domain: "Biotech & Patents", exp: "10 yrs · Pfizer", lang: "EN", avail: "Next week", budget: "₹2,200/hr", rate: 89, rating: 4.7 },
 ];
 
 function Experts() {
   return (
-    <Page title="Expert Marketplace" subtitle="Vetted mentors, advisors, and investors">
-      <div className="grid gap-4 lg:grid-cols-[16rem_1fr]">
-        <Card>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Filters</div>
-          <div className="mt-3 space-y-2">
-            {filters.map((f) => (
-              <div
-                key={f}
-                className="rounded-lg border border-border bg-surface/40 px-3 py-2 text-sm"
-              >
-                {f}
+    <Page title="Matched Experts" subtitle="Top matched mentors based on your assessment">
+      <div className="flex flex-wrap gap-2 mb-6">
+        {["All domains", "Availability: any", "Language: any", "Budget: any", "Success > 85%"].map((f) => (
+          <button 
+            key={f} 
+            className="rounded-full border border-white/5 bg-white/[0.01] hover:bg-white/[0.04] px-4 py-1.5 text-xs text-muted-foreground hover:text-white transition cursor-pointer"
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      <div className="grid gap-4">
+        {experts.map((e) => (
+          <Card key={e.name} className="grid items-center gap-4 p-5 md:grid-cols-[auto_1fr_auto]">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-sky-400 to-indigo-500 text-sm font-bold text-slate-950">
+                {e.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
               </div>
-            ))}
-          </div>
-        </Card>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {experts.map((e) => (
-            <Card key={e.n}>
-              <div className="flex items-center gap-3">
-                <div
-                  className="h-12 w-12 rounded-full"
-                  style={{ background: "var(--gradient-primary)" }}
-                />
-                <div>
-                  <div className="font-medium">{e.n}</div>
-                  <div className="text-xs text-muted-foreground">{e.r}</div>
-                </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white truncate">{e.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{e.domain}</p>
               </div>
-              <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <Star className="h-3.5 w-3.5 text-amber-300" />
-                  {e.s}
-                </span>
-                <span>·</span>
-                <span>{e.p}</span>
-                <span>·</span>
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {e.a}
-                </span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground sm:grid-cols-5">
+              <Meta icon={TrendingUp} v={`${e.rate}% success`} />
+              <Meta icon={Clock} v={e.exp} />
+              <Meta icon={Globe} v={e.lang} />
+              <Meta icon={Calendar} v={e.avail} />
+              <Meta icon={IndianRupee} v={e.budget} />
+            </div>
+
+            <div className="flex items-center gap-4 shrink-0">
+              <div className="flex items-center gap-1 text-xs text-amber-400">
+                <Star className="h-3.5 w-3.5 fill-current text-current" /> {e.rating}
               </div>
-              <div className="mt-4 flex gap-2">
-                <button
-                  className="flex-1 rounded-full px-3 py-1.5 text-xs text-background"
-                  style={{ background: "var(--gradient-primary)" }}
-                >
-                  Book session
-                </button>
-                <button className="rounded-full glass px-3 py-1.5 text-xs">Profile</button>
-              </div>
-              <div className="mt-3">
-                <Pill tone="success">Available this week</Pill>
-              </div>
-            </Card>
-          ))}
-        </div>
+              <Button size="sm" asChild className="bg-gradient-to-r from-sky-400 to-indigo-500 text-slate-950 font-bold hover:opacity-90 cursor-pointer">
+                <Link to="/app/discovery">Book Discovery</Link>
+              </Button>
+            </div>
+          </Card>
+        ))}
       </div>
     </Page>
   );
 }
+
+function Meta({ icon: Icon, v }: { icon: any; v: string }) {
+  return (
+    <span className="flex items-center gap-1.5 truncate">
+      <Icon className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+      {v}
+    </span>
+  );
+}
+

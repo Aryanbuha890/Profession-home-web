@@ -1156,4 +1156,29 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   Dashboard Premium White & Blue Card with Micro-Grid
+   ═══════════════════════════════════════════════════════ */
+.db-premium-card {
+  position: relative;
+  background: 
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%),
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.04) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.01) 0px, rgba(255, 255, 255, 0.01) 1px, transparent 1px, transparent 10px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.01) 0px, rgba(255, 255, 255, 0.01) 1px, transparent 1px, transparent 10px);
+  background-blend-mode: normal, normal, overlay, overlay;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+.db-premium-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 
+    0 12px 30px rgba(0, 0, 0, 0.45),
+    0 0 15px rgba(56, 189, 248, 0.08);
+  transform: translateY(-2px);
+}
