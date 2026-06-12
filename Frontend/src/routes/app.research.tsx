@@ -25,18 +25,18 @@ function Research() {
               New project
             </button>
           </div>
-          <div className="mt-3 space-y-3">
+          <div className="mt-3 space-y-2.5">
             {[
               { n: "RNA-seq atlas of pancreatic islets", p: 72, t: "3 collaborators" },
               { n: "Federated learning for genomics", p: 48, t: "5 collaborators" },
               { n: "Diffusion models for protein design", p: 31, t: "2 collaborators" },
             ].map((p) => (
-              <div key={p.n} className="rounded-xl border border-border bg-surface/40 p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">{p.n}</div>
+              <div key={p.n} className="rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] p-4 transition cursor-pointer">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div className="text-xs font-semibold text-white">{p.n}</div>
                   <Pill>{p.t}</Pill>
                 </div>
-                <div className="mt-3">
+                <div>
                   <Bar value={p.p} />
                 </div>
               </div>
@@ -47,7 +47,7 @@ function Research() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground">
             Grant Opportunities
           </div>
-          <ul className="mt-3 space-y-3 text-sm">
+          <ul className="mt-3 space-y-2.5">
             {[
               { n: "ERC Starting Grant", d: "Mar 14, 2027" },
               { n: "NIH R21 Exploratory", d: "Feb 02, 2027" },
@@ -55,10 +55,10 @@ function Research() {
             ].map((g) => (
               <li
                 key={g.n}
-                className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
+                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] px-3.5 py-2.5 transition cursor-pointer text-xs"
               >
-                <span>{g.n}</span>
-                <span className="text-xs text-muted-foreground">{g.d}</span>
+                <span className="font-semibold text-white/90">{g.n}</span>
+                <span className="text-muted-foreground font-mono text-[10px]">{g.d}</span>
               </li>
             ))}
           </ul>

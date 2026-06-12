@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -79,16 +80,16 @@ export function Nav() {
         {/* Navigation Links */}
         <nav className="relative hidden md:flex items-center gap-0.5 text-sm">
           {[
-            { to: "/how", t: "How" },
-            { to: "/ecosystem", t: "Ecosystem" },
-            { to: "/platform", t: "Platform" },
-            { to: "/pricing", t: "Pricing" },
+            { hash: "how", t: "How" },
+            { hash: "ecosystem", t: "Ecosystem" },
+            { hash: "platform", t: "Platform" },
+            { hash: "pricing", t: "Pricing" },
           ].map((i) => (
             <Link
               key={i.t}
-              to={i.to}
-              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10 [&.active]:text-white [&.active]:bg-white/5"
-              activeOptions={{ exact: true }}
+              to="/"
+              hash={i.hash}
+              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10"
             >
               {i.t}
             </Link>
@@ -114,7 +115,66 @@ export function Nav() {
             {/* Glossy hover shimmer slide-across effect */}
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
           </Link>
+
+          {/* Hamburger Menu Toggle on Mobile */}
+          <button
+            onClick={() => setMenuOpen((o) => !o)}
+            className="flex md:hidden h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 hover:text-white hover:bg-white/10 transition cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
+          </button>
         </div>
+
+        {/* Mobile Menu Panel */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full left-0 right-0 mt-3 p-6 rounded-3xl border border-white/10 backdrop-blur-3xl bg-slate-950/95 shadow-2xl flex flex-col gap-4 md:hidden z-50"
+            >
+              {[
+                { hash: "how", t: "How" },
+                { hash: "ecosystem", t: "Ecosystem" },
+                { hash: "platform", t: "Platform" },
+                { hash: "pricing", t: "Pricing" },
+              ].map((i) => (
+                <Link
+                  key={i.t}
+                  to="/"
+                  hash={i.hash}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-base font-semibold text-white/70 hover:text-white transition py-2 border-b border-white/5 last:border-b-0"
+                >
+                  {i.t}
+                </Link>
+              ))}
+              <div className="flex flex-col gap-2.5 mt-2 pt-2">
+                <Link
+                  to="/app"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex h-10 items-center justify-center rounded-full border border-white/10 text-sm font-semibold text-white/70 hover:text-white"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/app"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex h-10 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white"
+                  style={{
+                    backgroundImage: "linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 110%)",
+                  }}
+                >
+                  Launch Platform
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </motion.header>
   );

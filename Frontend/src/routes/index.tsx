@@ -14,9 +14,9 @@ import {
   Cpu,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
-import { Trust, Footer } from "@/components/landing/Sections";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 export const Route = createFileRoute("/")({
@@ -47,8 +47,13 @@ function Landing() {
     <div className="min-h-screen bg-[#05060F] text-foreground antialiased overflow-x-clip">
       <Nav />
       <Hero />
-      <HeroStats />
+      <DashboardSection />
       <Trust />
+      <JourneySection />
+      <HowItWorks />
+      <Ecosystem />
+      <Features />
+      <Pricing />
       <Footer />
     </div>
   );
@@ -60,12 +65,12 @@ function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden border-b border-white/5 text-white"
+      className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden text-white pt-24 pb-12"
       style={{
         background:
           "radial-gradient(1200px 600px at 50% 10%, rgba(124,58,237,0.32), transparent 60%), radial-gradient(900px 500px at 80% 0%, rgba(37,99,235,0.22), transparent 60%), radial-gradient(700px 400px at 10% 20%, rgba(13,148,136,0.15), transparent 60%), linear-gradient(180deg, #05060F 0%, #07091A 60%, #05060F 100%)",
@@ -92,8 +97,8 @@ function Hero() {
       <div className="pointer-events-none absolute top-40 -left-32 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(37,99,235,0.3),transparent)] blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 right-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(13,148,136,0.25),transparent)] blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-6 pt-[148px] pb-24 lg:pt-[190px] lg:pb-32">
-        <motion.div style={{ y }} className="mx-auto max-w-3xl text-center">
+      <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1">
+        <motion.div style={{ y }} className="mx-auto max-w-5xl text-center w-full flex flex-col items-center justify-center">
           {/* Tagline Badge */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -111,10 +116,10 @@ function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05 }}
-            className="mt-6 font-display text-5xl font-semibold leading-[1.02] tracking-tight text-white sm:text-7xl lg:text-[86px]"
+            className="mt-6 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[76px] xl:text-[82px] md:leading-[1.05]"
           >
             Autonomous Intelligence
-            <br />
+            <br className="hidden sm:inline" />{" "}
             <span
               className="bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-violet-300"
               style={{
@@ -181,9 +186,6 @@ function Hero() {
             </span>
           </motion.div>
         </motion.div>
-
-        {/* Dashboard visual mockup */}
-        <FloatingDashboard />
       </div>
     </section>
   );
@@ -195,7 +197,7 @@ function FloatingDashboard() {
       initial={{ opacity: 0, y: 60 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.8 }}
-      className="relative mx-auto mt-16 max-w-5xl"
+      className="relative mx-auto mt-12 max-w-5xl"
     >
       {/* Glow aura */}
       <div className="absolute -inset-x-16 -inset-y-10 -z-10 rounded-[44px] bg-gradient-to-b from-violet-500/20 via-blue-500/10 to-transparent blur-3xl" />
@@ -636,34 +638,246 @@ function FloatingDashboard() {
   );
 }
 
-function HeroStats() {
-  const stats = [
-    { v: 847321, l: "Outcomes Tracked" },
-    { v: 99.2, dec: 1, suffix: "%", l: "Completion Rate" },
-    { v: 2400, l: "Verified Experts" },
-    { v: 98.7, dec: 1, suffix: "%", l: "Match Accuracy" },
-  ];
+// HeroStats removed as requested
 
+// Standalone section for the Dashboard Mockup
+function DashboardSection() {
   return (
-    <section className="relative py-16">
+    <section className="relative overflow-hidden pt-16 pb-16 bg-[#05060F]">
       <div className="mx-auto max-w-6xl px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl lg:grid-cols-4"
-        >
-          {stats.map((s, i) => (
-            <div key={i} className="relative bg-transparent px-6 py-7">
-              {i > 0 && <span className="absolute inset-y-4 left-0 w-px bg-white/10" />}
-              <div className="font-display text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                <AnimatedCounter value={s.v} decimals={s.dec ?? 0} suffix={s.suffix ?? ""} />
-              </div>
-              <div className="mt-1 text-xs font-medium text-white/55">{s.l}</div>
-            </div>
-          ))}
-        </motion.div>
+        <FloatingDashboard />
       </div>
     </section>
   );
 }
+
+// Premium custom SVGs for the Journey Section cards
+const DiscoverSvg = () => (
+  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(139,92,246,0.15)]">
+    <defs>
+      <radialGradient id="glow-discover" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.3" />
+        <stop offset="100%" stopColor="#A78BFA" stopOpacity="0" />
+      </radialGradient>
+      <linearGradient id="grad-discover" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#C7D2FE" />
+        <stop offset="50%" stopColor="#8B5CF6" />
+        <stop offset="100%" stopColor="#6366F1" />
+      </linearGradient>
+    </defs>
+    <circle cx="100" cy="100" r="75" fill="url(#glow-discover)" />
+    
+    {/* Orbiting rings */}
+    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(30 100 100)" strokeDasharray="4 4" className="opacity-60" />
+    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(-30 100 100)" className="opacity-80" />
+    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="2" transform="rotate(90 100 100)" />
+    
+    {/* Glowing particles */}
+    <circle cx="135" cy="40" r="5" fill="#C7D2FE" />
+    <circle cx="65" cy="160" r="4" fill="#8B5CF6" />
+    <circle cx="160" cy="135" r="3" fill="#6366F1" />
+    <circle cx="40" cy="65" r="5" fill="#A78BFA" />
+
+    {/* Central bulb shape */}
+    <g transform="translate(70, 60)">
+      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="url(#grad-discover)" opacity="0.15" />
+      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" />
+      {/* Filament */}
+      <path d="M22,35 L26,30 L34,30 L38,35" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M26,30 L26,45 M34,30 L34,45" fill="none" stroke="url(#grad-discover)" strokeWidth="2" />
+      <circle cx="30" cy="20" r="10" fill="#FFF" opacity="0.9" className="animate-pulse" style={{ filter: "blur(3px)" }} />
+    </g>
+  </svg>
+);
+
+const CompareSvg = () => (
+  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(34,211,238,0.15)]">
+    <defs>
+      <radialGradient id="glow-compare" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.25" />
+        <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
+      </radialGradient>
+      <linearGradient id="grad-compare" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#22D3EE" />
+        <stop offset="50%" stopColor="#0EA5E9" />
+        <stop offset="100%" stopColor="#6366F1" />
+      </linearGradient>
+    </defs>
+    <circle cx="100" cy="100" r="75" fill="url(#glow-compare)" />
+
+    {/* Browser Card Mockup */}
+    <g transform="translate(45, 50)" className="opacity-90">
+      {/* Card Base */}
+      <rect x="0" y="0" width="110" height="80" rx="8" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="2" />
+      {/* Card Header / Browser bar */}
+      <path d="M0,8 A8,8 0 0,1 8,0 L102,0 A8,8 0 0,1 110,8 L110,18 L0,18 Z" fill="#14193F" />
+      <circle cx="8" cy="9" r="3" fill="#FF5F57" />
+      <circle cx="18" cy="9" r="3" fill="#FEBC2E" />
+      <circle cx="28" cy="9" r="3" fill="#28C840" />
+      {/* Card Content lines */}
+      <rect x="10" y="28" width="50" height="8" rx="2" fill="url(#grad-compare)" opacity="0.8" />
+      <rect x="10" y="42" width="90" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
+      <rect x="10" y="54" width="75" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
+      <rect x="10" y="66" width="45" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
+    </g>
+
+    {/* Magnifying Glass */}
+    <g transform="translate(100, 90)">
+      {/* Handle */}
+      <line x1="16" y1="16" x2="48" y2="48" stroke="url(#grad-compare)" strokeWidth="6" strokeLinecap="round" />
+      <line x1="22" y1="22" x2="42" y2="42" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
+      {/* Glass Circle */}
+      <circle cx="0" cy="0" r="28" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="4.5" />
+      <circle cx="0" cy="0" r="23" fill="#38BDF8" opacity="0.15" />
+      {/* Inner search details */}
+      <path d="M-10,-5 L10,-5 M-10,5 L5,5" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Reflection shine */}
+      <path d="M-14,-14 A20,20 0 0,1 14,-14" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
+    </g>
+  </svg>
+);
+
+const DecideSvg = () => (
+  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(236,72,153,0.15)]">
+    <defs>
+      <radialGradient id="glow-decide" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#EC4899" stopOpacity="0.25" />
+        <stop offset="100%" stopColor="#EC4899" stopOpacity="0" />
+      </radialGradient>
+      <linearGradient id="grad-decide" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#F472B6" />
+        <stop offset="50%" stopColor="#EC4899" />
+        <stop offset="100%" stopColor="#D946EF" />
+      </linearGradient>
+      <linearGradient id="grad-book" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="#312E81" />
+        <stop offset="100%" stopColor="#4F46E5" />
+      </linearGradient>
+    </defs>
+    <circle cx="100" cy="100" r="75" fill="url(#glow-decide)" />
+
+    {/* Stack of books */}
+    <g transform="translate(45, 95)">
+      {/* Bottom Book */}
+      <path d="M0,20 L90,20 C100,20 110,25 110,30 L110,38 C110,43 100,48 90,48 L0,48 Z" fill="url(#grad-book)" stroke="url(#grad-decide)" strokeWidth="1.5" />
+      <rect x="5" y="28" width="90" height="12" fill="#FFF" opacity="0.9" />
+      <line x1="95" y1="28" x2="95" y2="40" stroke="url(#grad-decide)" strokeWidth="1.5" />
+      
+      {/* Middle Book */}
+      <path d="M10,2 L95,2 C103,2 112,6 112,11 L112,19 C112,24 103,28 95,28 L10,28 Z" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="1.5" />
+      <rect x="15" y="10" width="87" height="10" fill="#FFF" opacity="0.9" />
+      <line x1="98" y1="10" x2="98" y2="20" stroke="url(#grad-decide)" strokeWidth="1.5" />
+    </g>
+
+    {/* Graduation Cap */}
+    <g transform="translate(100, 65)">
+      {/* Cap Stand/Base */}
+      <path d="M-26,10 L-26,24 C-26,29 0,34 0,34 C0,34 26,29 26,24 L26,10 Z" fill="#0B0F2B" stroke="url(#grad-decide)" strokeWidth="2.5" />
+      <path d="M-26,18 C-26,18 0,25 0,25 C0,25 26,18 26,18" fill="none" stroke="url(#grad-decide)" strokeWidth="1.5" opacity="0.5" />
+      
+      {/* Cap Diamond Top */}
+      <polygon points="0,-16 56,0 0,16 -56,0" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="3" />
+      <polygon points="0,-11 44,0 0,11 -44,0" fill="url(#grad-decide)" opacity="0.2" />
+
+      {/* Tassel */}
+      <circle cx="0" cy="0" r="3.5" fill="url(#grad-decide)" />
+      <path d="M0,0 C12,4 28,12 32,22 L34,34" fill="none" stroke="url(#grad-decide)" strokeWidth="2" strokeLinecap="round" />
+      {/* Tassel Fringe */}
+      <polygon points="34,34 31,44 37,44" fill="url(#grad-decide)" />
+    </g>
+  </svg>
+);
+
+// Animated Journey Section
+function JourneySection() {
+  return (
+    <section className="relative py-24 overflow-hidden bg-[#05060F]">
+      {/* subtle glowing background effects */}
+      <div className="pointer-events-none absolute top-1/2 left-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.08),transparent)] blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 right-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.06),transparent)] blur-3xl" />
+
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-3xl text-center mb-16">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
+            Start your journey with Professional Home
+          </h2>
+          <p className="mt-4 text-white/60 text-base sm:text-lg">
+            An ecosystem built to guide you from initial curiosity to verified professional achievements.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Card 1: Assess (Slides in from the Left) */}
+          <motion.div
+            initial={{ opacity: 0, x: -60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+          >
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Assess.png"
+                  alt="Assess"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Assess</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Card 2: Execute (Slides up in the Center) */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+          >
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Execute.png"
+                  alt="Execute"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Execute</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Card 3: Achieve (Slides in from the Right) */}
+          <motion.div
+            initial={{ opacity: 0, x: 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 80, damping: 15 }}
+            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+          >
+            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
+              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
+                <img
+                  src="/Achieve.png"
+                  alt="Achieve"
+                  className="w-full h-full object-contain scale-[1.7]"
+                />
+              </div>
+              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Achieve</h3>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+

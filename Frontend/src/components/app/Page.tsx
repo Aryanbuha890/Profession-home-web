@@ -24,7 +24,7 @@ export function Page({
 }
 
 export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`glass rounded-2xl p-5 ${className}`}>{children}</div>;
+  return <div className={`db-premium-card ${className}`}>{children}</div>;
 }
 
 export function Stat({
@@ -38,14 +38,14 @@ export function Stat({
   delta?: string;
   tone?: "electric" | "violet";
 }) {
-  const color = tone === "electric" ? "var(--electric)" : "var(--violet)";
+  const color = tone === "electric" ? "#ffffff" : "#38bdf8";
   return (
     <Card>
       <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
       <div className="mt-2 font-display text-3xl font-semibold" style={{ color }}>
         {value}
       </div>
-      {delta && <div className="mt-1 text-xs text-muted-foreground">{delta}</div>}
+      {delta && <div className="mt-1 text-xs text-sky-400 font-medium">{delta}</div>}
     </Card>
   );
 }
@@ -77,7 +77,7 @@ export function Bar({ value, label }: { value: number; label?: string }) {
       <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
         <div
           className="h-full rounded-full"
-          style={{ width: `${value}%`, background: "var(--gradient-primary)" }}
+          style={{ width: `${value}%`, background: "linear-gradient(90deg, #0284c7, #38bdf8)" }}
         />
       </div>
     </div>

@@ -39,12 +39,15 @@ function Execution() {
               <div className="text-xs uppercase tracking-wider text-muted-foreground">{col.t}</div>
               <Pill>{col.items.length}</Pill>
             </div>
-            <div className="mt-3 space-y-2">
+            <div className="mt-3 space-y-2.5">
               {col.items.map((it) => (
-                <div key={it} className="rounded-xl border border-border bg-surface/40 p-3 text-sm">
-                  <div>{it}</div>
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>P{(i % 3) + 1}</span>
+                <div 
+                  key={it} 
+                  className="rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] p-3.5 transition group cursor-pointer"
+                >
+                  <div className="text-xs font-semibold text-white/90 group-hover:text-white leading-relaxed">{it}</div>
+                  <div className="mt-2.5 flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                    <span className="font-semibold text-sky-400">P{(i % 3) + 1}</span>
                     <span>Due {["Tue", "Thu", "Mon", "Fri"][i]}</span>
                   </div>
                 </div>

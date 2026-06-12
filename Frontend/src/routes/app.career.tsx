@@ -35,7 +35,7 @@ function Career() {
           <div className="text-xs uppercase tracking-wider text-muted-foreground">
             Active applications
           </div>
-          <ul className="mt-3 space-y-2 text-sm">
+          <ul className="mt-3 space-y-2.5">
             {[
               { c: "Genentech", r: "Research Intern", s: "interview" },
               { c: "OpenAI", r: "ML Engineer", s: "applied" },
@@ -43,11 +43,11 @@ function Career() {
             ].map((a) => (
               <li
                 key={a.c}
-                className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
+                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] px-3.5 py-2.5 transition"
               >
                 <div>
-                  <div>{a.c}</div>
-                  <div className="text-xs text-muted-foreground">{a.r}</div>
+                  <div className="text-xs font-semibold text-white">{a.c}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{a.r}</div>
                 </div>
                 <Pill tone={a.s === "final" ? "success" : "warn"}>{a.s}</Pill>
               </li>

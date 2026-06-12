@@ -28,7 +28,7 @@ function Startup() {
         </Card>
         <Card>
           <div className="text-xs uppercase tracking-wider text-muted-foreground">Milestones</div>
-          <ul className="mt-3 space-y-2 text-sm">
+          <ul className="mt-3 space-y-2.5">
             {[
               "MVP launched",
               "10 paying customers",
@@ -37,9 +37,9 @@ function Startup() {
             ].map((m, i) => (
               <li
                 key={m}
-                className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
+                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] px-3.5 py-2.5 text-xs transition cursor-pointer"
               >
-                <span>{m}</span>
+                <span className="font-semibold text-white/90">{m}</span>
                 <Pill tone={i < 2 ? "success" : "warn"}>{i < 2 ? "done" : "active"}</Pill>
               </li>
             ))}
@@ -48,18 +48,19 @@ function Startup() {
       </div>
       <Card className="mt-4">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">Mentor network</div>
-        <div className="mt-3 flex flex-wrap gap-3">
+        <div className="mt-3.5 flex flex-wrap gap-3">
           {["Marco Rossi", "Sarah Levin", "Yuki Tanaka", "Karim Haddad", "Prof. Adeyemi"].map(
-            (n) => (
+            (n, idx) => (
               <div
                 key={n}
-                className="flex items-center gap-2 rounded-full glass px-3 py-1.5 text-sm"
+                className="flex items-center gap-2.5 rounded-full border border-white/5 bg-white/[0.01] hover:bg-white/[0.04] pl-2 pr-4 py-1.5 text-xs text-white/90 transition cursor-pointer"
               >
                 <div
-                  className="h-6 w-6 rounded-full"
-                  style={{ background: "var(--gradient-primary)" }}
-                />{" "}
-                {n}
+                  className={`h-5 w-5 rounded-full bg-gradient-to-br ${["from-sky-400 to-indigo-500", "from-purple-500 to-indigo-500", "from-emerald-400 to-teal-500", "from-amber-400 to-red-500", "from-pink-500 to-rose-500"][idx % 5]} flex items-center justify-center text-[9px] font-bold text-slate-950`}
+                >
+                  {n[0]}
+                </div>
+                <span>{n}</span>
               </div>
             ),
           )}
