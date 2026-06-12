@@ -266,13 +266,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   const handleRoleSelect = (roleId: Role) => {
     setSelectedRole(roleId);
-    setQ1Val("");
-    setQ2Val("");
-    setStep(2);
-  };
-
-  const handleQuestionsSubmit = () => {
-    if (!q1Val || !q2Val) return;
+    setQ1Val("skipped");
+    setQ2Val("skipped");
     setStep(3);
   };
 
@@ -280,7 +275,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     setStep(4);
   };
 
-  const currentQuestionData = selectedRole ? QUESTIONNAIRE_DATA[selectedRole] : null;
+  const currentQuestionData = null;
 
   return (
     <div className="relative w-screen h-screen flex justify-center items-center overflow-hidden bg-black text-white px-4">
@@ -289,7 +284,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       {/* Progress Dots */}
       {step < 4 && (
         <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-          {[1, 2, 3].map((num) => (
+          {[1, 3].map((num) => (
             <div key={num} className="flex items-center">
               <div
                 className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
@@ -389,99 +384,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
               </div>
             )}
 
-            {/* Step 2: Role Specific Q&A */}
-            {step === 2 && currentQuestionData && (
-              <div className="w-full">
-                <div className="text-center mb-6">
-                  <h3 className="text-lg font-black uppercase tracking-tight text-white font-display mb-1 flex items-center justify-center gap-2">
-                    <span>Configure {selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1) : ""} Console</span>
-                  </h3>
-                  <p className="text-[11px] text-white/35">
-                    Answer a few diagnostic parameters to seed your interactive workspace dashboards.
-                  </p>
-                </div>
-
-                <div className="space-y-6 max-w-[500px] mx-auto">
-                  {/* Question 1 */}
-                  <div>
-                    <label className="block text-[11px] font-mono uppercase tracking-widest text-violet-400 font-bold mb-2.5">
-                      {currentQuestionData.q1}
-                    </label>
-                    <div className="grid grid-cols-1 gap-2">
-                      {currentQuestionData.q1Opts.map((opt) => {
-                        const isSelected = q1Val === opt;
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => setQ1Val(opt)}
-                            className={`relative rounded-xl py-2.5 px-4 text-left text-xs transition-all duration-200 cursor-default select-none border flex items-center ${
-                              isSelected
-                                ? "bg-violet-600/10 border-violet-500/50 text-white font-bold"
-                                : "bg-white/[0.01] border-white/[0.05] text-white/60 hover:bg-white/[0.03] hover:border-white/10"
-                            }`}
-                          >
-                            <span>{opt}</span>
-                            {isSelected && <Check className="ml-auto h-3.5 w-3.5 text-violet-400" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Question 2 */}
-                  <div>
-                    <label className="block text-[11px] font-mono uppercase tracking-widest text-violet-400 font-bold mb-2.5">
-                      {currentQuestionData.q2}
-                    </label>
-                    <div className="grid grid-cols-1 gap-2">
-                      {currentQuestionData.q2Opts.map((opt) => {
-                        const isSelected = q2Val === opt;
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => setQ2Val(opt)}
-                            className={`relative rounded-xl py-2.5 px-4 text-left text-xs transition-all duration-200 cursor-default select-none border flex items-center ${
-                              isSelected
-                                ? "bg-violet-600/10 border-violet-500/50 text-white font-bold"
-                                : "bg-white/[0.01] border-white/[0.05] text-white/60 hover:bg-white/[0.03] hover:border-white/10"
-                            }`}
-                          >
-                            <span>{opt}</span>
-                            {isSelected && <Check className="ml-auto h-3.5 w-3.5 text-violet-400" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Back / Next Controls */}
-                <div className="flex gap-3 justify-end max-w-[500px] mx-auto mt-8 pt-3 border-t border-white/[0.04]">
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="px-5 py-2.5 border border-white/[0.06] hover:bg-white/5 text-white text-[11px] font-mono uppercase tracking-widest rounded-xl transition cursor-default"
-                  >
-                    Console Menu
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!q1Val || !q2Val}
-                    onClick={handleQuestionsSubmit}
-                    className={`px-5 py-2.5 text-white text-[11px] font-mono uppercase tracking-widest rounded-xl transition flex items-center gap-1.5 cursor-default ${
-                      q1Val && q2Val
-                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 shadow-[0_4px_16px_rgba(124,58,237,0.3)]"
-                        : "opacity-40 bg-white/10"
-                    }`}
-                  >
-                    Configure Layout
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Step 2: Role Specific Q&A (Removed) */}
 
             {/* Step 3: Platform Preferences */}
             {step === 3 && (
@@ -572,10 +475,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
                 <div className="flex gap-3 justify-end max-w-[500px] mx-auto mt-8 pt-3 border-t border-white/[0.04]">
                   <button
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => setStep(1)}
                     className="px-5 py-2.5 border border-white/[0.06] hover:bg-white/5 text-white text-[11px] font-mono uppercase tracking-widest rounded-xl transition cursor-default"
                   >
-                    Diagnostic Qs
+                    Console Menu
                   </button>
                   <button
                     type="button"

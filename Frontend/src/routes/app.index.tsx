@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Page, Card, Bar, Stat } from "@/components/app/Page";
 import { useRole, Role } from "@/hooks/useRole";
 import { OnboardingWizard } from "@/components/app/OnboardingWizard";
@@ -58,6 +58,15 @@ import {
   Eye,
   CheckSquare,
   X,
+  Github,
+  GitBranch,
+  GitCommit,
+  Terminal,
+  ArrowUpRight,
+  Loader2,
+  ChevronLeft,
+  ImageOff,
+  Upload,
 } from "lucide-react";
 
 
@@ -315,7 +324,7 @@ function HolographicTicket({
         }}
       >
         {/* Real-size Ticket container - Bigger premium sizes */}
-        <div 
+        <div
           className="relative flex h-[210px] w-full max-w-[500px] bg-gradient-to-br from-white to-slate-50/95 border border-slate-200/90 rounded-2xl overflow-hidden shadow-md transition-all duration-300 group-hover:scale-[1.01] group-hover:shadow-xl group-hover:border-slate-300/90"
         >
           {/* Holographic light reflect overlay */}
@@ -330,7 +339,7 @@ function HolographicTicket({
           <div className="absolute inset-0 w-[120px] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-20 -translate-x-[200px] group-hover:translate-x-[600px] transition-transform duration-1000 ease-out pointer-events-none z-20" />
 
           {/* Left barcode stub - Always fully visible, raw, scannable barcode */}
-          <div 
+          <div
             onClick={(e) => {
               e.stopPropagation();
               setIsScanModalOpen(true);
@@ -359,7 +368,7 @@ function HolographicTicket({
                 <p className="font-extrabold text-base text-slate-700 tracking-tight mt-0.5">STD</p>
                 <p className="text-[9px] text-emerald-500 font-bold mt-0.5">↗ ACTIVE</p>
               </div>
-              
+
               <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#aeaeae" strokeWidth="1.5">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
@@ -403,7 +412,7 @@ function HolographicTicket({
           </div>
 
           {/* Far Right colored strip with icons */}
-          <div 
+          <div
             className="absolute right-0 top-0 bottom-0 w-14 flex flex-col items-center justify-between py-4 text-white z-10 overflow-hidden"
             style={{ background: categoryStyles.gradient }}
           >
@@ -412,7 +421,7 @@ function HolographicTicket({
 
             {/* Top student icon (Plane logo replaced with GraduationCap student related logo) */}
             <GraduationCap className="h-6.5 w-6.5 text-white/95 relative z-10" />
-            
+
             {/* Category marker rotated */}
             <div className="text-[8px] font-mono font-extrabold tracking-widest uppercase rotate-90 my-auto origin-center whitespace-nowrap text-white/90 relative z-10">
               {categoryStyles.label}
@@ -440,7 +449,7 @@ function HolographicTicket({
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/10 to-transparent w-full h-1/2 animate-pulse pointer-events-none" />
 
               {/* Close button */}
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsScanModalOpen(false);
@@ -602,6 +611,741 @@ function CelebrationModal({
   );
 }
 
+const CATEGORY_COLORS: Record<string, string> = {
+  'Web': '#00f0ff',
+  'Mobile': '#00ff9d',
+  'AI / ML': '#7000ff',
+  'Systems': '#ff6a00',
+  'Open Source': '#ff9a00',
+};
+
+interface InlineImageCarouselProps {
+  images: string[];
+  alt?: string;
+  className?: string;
+  autoPlayMs?: number;
+  overlay?: React.ReactNode;
+}
+
+const InlineImageCarousel: React.FC<InlineImageCarouselProps> = ({
+  images,
+  alt = 'image',
+  className = 'h-48',
+  autoPlayMs = 0,
+  overlay,
+}) => {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [errored, setErrored] = useState<Set<number>>(new Set());
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopAuto = useCallback(() => {
+    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
+  }, []);
+
+  useEffect(() => {
+    if (autoPlayMs > 0 && images.length > 1) {
+      timerRef.current = setInterval(() => {
+        setActiveIdx((i) => (i + 1) % images.length);
+      }, autoPlayMs);
+    }
+    return stopAuto;
+  }, [autoPlayMs, images.length, stopAuto]);
+
+  const go = useCallback((delta: number, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    stopAuto();
+    setActiveIdx((i) => (i + delta + images.length) % images.length);
+  }, [images.length, stopAuto]);
+
+  const onImgError = (idx: number) =>
+    setErrored((prev) => new Set([...prev, idx]));
+
+  if (images.length === 0) {
+    return (
+      <div className={`relative w-full overflow-hidden bg-slate-950/60 shrink-0 ${className}`}>
+        <div className="w-full h-full flex items-center justify-center">
+          <ImageOff size={28} className="text-white/20" />
+        </div>
+        {overlay}
+      </div>
+    );
+  }
+
+  const singleMode = images.length === 1;
+
+  return (
+    <div className={`relative w-full overflow-hidden bg-slate-900 shrink-0 ${className}`}>
+      {images.map((src, idx) => (
+        <div
+          key={idx}
+          className="absolute inset-0 transition-opacity duration-500"
+          style={{ opacity: idx === activeIdx ? 1 : 0, pointerEvents: idx === activeIdx ? 'auto' : 'none' }}
+          aria-hidden={idx !== activeIdx}
+        >
+          {errored.has(idx) ? (
+            <div className="w-full h-full flex items-center justify-center bg-slate-950">
+              <ImageOff size={24} className="text-white/20" />
+            </div>
+          ) : (
+            <img
+              src={src}
+              alt={`${alt} ${idx + 1}`}
+              loading="lazy"
+              onError={() => onImgError(idx)}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          )}
+        </div>
+      ))}
+
+      {overlay}
+
+      {!singleMode && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous image"
+            onClick={(e) => go(-1, e)}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-sm border border-white/10 text-white opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-all duration-200"
+          >
+            <ChevronLeft size={14} />
+          </button>
+
+          <button
+            type="button"
+            aria-label="Next image"
+            onClick={(e) => go(1, e)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 rounded-full flex items-center justify-center bg-black/60 backdrop-blur-sm border border-white/10 text-white opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-all duration-200"
+          >
+            <ChevronRight size={14} />
+          </button>
+
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                aria-label={`Go to image ${idx + 1}`}
+                onClick={(e) => { e.stopPropagation(); stopAuto(); setActiveIdx(idx); }}
+                className={`rounded-full transition-all duration-300 border border-white/25 ${idx === activeIdx ? 'w-4.5 h-1.5 bg-orange-500 border-orange-500' : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/70'}`}
+              />
+            ))}
+          </div>
+
+          <div className="absolute top-2.5 right-2.5 z-20 text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 backdrop-blur-sm text-white/80 border border-white/10">
+            {activeIdx + 1}/{images.length}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+interface ProjectDetailsModalProps {
+  project: any;
+  onClose: () => void;
+}
+
+const ProjectDetailsModal: React.FC<ProjectDetailsModalProps> = ({ project, onClose }) => {
+  const handleKey = useCallback(
+    (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); },
+    [onClose]
+  );
+
+  useEffect(() => {
+    if (!project) return;
+    document.addEventListener('keydown', handleKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [project, handleKey]);
+
+  if (!project) return null;
+
+  const accent = CATEGORY_COLORS[project.category] ?? '#ff6a00';
+  const full = project.fullDescription ?? project.desc ?? project.description;
+  const features = project.features ?? [];
+  const galleryImages = project.images && project.images.length > 0 ? project.images : (project.image ? [project.image] : []);
+
+  return (
+    <AnimatePresence>
+      <div
+        className="fixed inset-0 z-[9500] flex items-start justify-center px-4 py-6 md:py-10 overflow-y-auto bg-black/80 backdrop-blur-md"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 24, scale: 0.97 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+          className="relative w-full max-w-2xl rounded-2xl overflow-hidden my-auto bg-slate-950 border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.85)] font-sans"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Top accent line */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[2px] z-10"
+            style={{
+              background: `linear-gradient(90deg, transparent 5%, ${accent}99 38%, ${accent}99 62%, transparent 95%)`,
+            }}
+          />
+
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-20 p-2 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            aria-label="Close modal"
+          >
+            <X size={18} />
+          </button>
+
+          {/* Banner Image / Carousel */}
+          <div className="relative h-56 md:h-64 overflow-hidden bg-slate-900">
+            <InlineImageCarousel images={galleryImages} className="h-full" alt={project.name} />
+
+            {/* Fade overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, rgba(10,10,12,1) 0%, rgba(10,10,12,0.4) 50%, rgba(10,10,12,0.1) 100%)' }}
+            />
+
+            {/* Category badge */}
+            <div className="absolute bottom-4 left-6 pointer-events-none">
+              <span
+                className="px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase border"
+                style={{
+                  background: `${accent}18`,
+                  borderColor: `${accent}50`,
+                  color: accent,
+                }}
+              >
+                {project.category}
+              </span>
+            </div>
+          </div>
+
+          {/* Card Content */}
+          <div className="p-6 md:p-8 space-y-5 text-left">
+            <h2 className="font-display font-bold text-2xl text-white leading-tight pr-8">
+              {project.name}
+            </h2>
+
+            <div className="h-px bg-white/10" />
+
+            {/* About */}
+            <div className="space-y-1.5">
+              <h3 className="text-[10px] font-mono uppercase tracking-widest text-orange-500/90 font-bold flex items-center gap-1.5">
+                <Layers size={12} /> About Project
+              </h3>
+              <p className="text-xs text-white/70 leading-relaxed font-sans">{full}</p>
+            </div>
+
+            {/* Features */}
+            {features.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-[10px] font-mono uppercase tracking-widest text-orange-500/90 font-bold flex items-center gap-1.5">
+                  <CheckCircle size={12} /> Key Features
+                </h3>
+                <ul className="space-y-1.5">
+                  {features.map((feat: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2.5 text-xs text-white/60">
+                      <span
+                        className="mt-[6px] w-1.5 h-1.5 rounded-full shrink-0"
+                        style={{ background: accent }}
+                      />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Tech Stack */}
+            <div className="space-y-2">
+              <h3 className="text-[10px] font-mono uppercase tracking-widest text-orange-500/90 font-bold flex items-center gap-1.5">
+                <Layers size={12} /> Tech Stack
+              </h3>
+              <div className="flex flex-wrap gap-1.5">
+                {project.techStack.map((t: string) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center text-[10.5px] font-mono px-2 py-0.5 rounded border bg-orange-500/10 border-orange-500/30 text-orange-400 select-none"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            {/* Pipeline stats if available */}
+            <div className="grid grid-cols-3 gap-2 py-2.5 px-3 bg-white/[0.02] border border-white/5 rounded-xl font-mono text-[10px] text-white/60">
+              <div className="flex items-center gap-1.5">
+                <GitBranch size={13} className="text-sky-400" />
+                <span>Branch: <strong className="text-white">{project.branch || "main"}</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <GitCommit size={13} className="text-emerald-400" />
+                <span>Commits: <strong className="text-white">{project.commits || 24}</strong></span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-violet-400" />
+                <span>Tests: <strong className="text-white">{project.tests || "10/10"}</strong></span>
+              </div>
+            </div>
+
+            {/* Author & Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
+              <div className="flex items-center gap-2 text-xs text-white/50 font-mono">
+                <Users size={14} className="text-orange-500/80 shrink-0" />
+                <span>
+                  Author: <span className="text-white font-semibold">{project.author || "Aryan Buha"}</span>
+                </span>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => alert(`Opening Sandbox IDE for ${project.name}...`)}
+                  className="px-4 py-2 rounded-lg text-xs font-semibold bg-sky-500/10 border border-sky-500/20 text-sky-400 hover:bg-sky-500/20 transition-all flex items-center gap-1 bg-transparent"
+                >
+                  <Terminal size={13} /> Open IDE
+                </button>
+                {project.github && (
+                  <a
+                    href={project.github.startsWith("http") ? project.github : `https://${project.github}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-900 border border-white/10 text-white/90 hover:bg-slate-800 transition-all flex items-center gap-1"
+                  >
+                    <Github size={13} /> GitHub <ExternalLink size={10} className="opacity-60" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+};
+
+interface ProjectFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (newProject: any) => void;
+  defaultAuthor?: string;
+}
+
+const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  defaultAuthor = 'Aryan Buha',
+}) => {
+  const [title, setTitle] = useState('');
+  const [shortDesc, setShortDesc] = useState('');
+  const [fullDesc, setFullDesc] = useState('');
+  const [techStack, setTechStack] = useState('');
+  const [features, setFeatures] = useState<string[]>(['']);
+  const [githubUrl, setGithubUrl] = useState('');
+  const [category, setCategory] = useState<'Web' | 'Mobile' | 'AI / ML' | 'Systems' | 'Open Source'>('Web');
+  const [imageUrl, setImageUrl] = useState('');
+  const [galleryUrls, setGalleryUrls] = useState<string[]>(['']);
+  const [authorName, setAuthorName] = useState(defaultAuthor);
+  const [isPublished, setIsPublished] = useState(true);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitle('');
+      setShortDesc('');
+      setFullDesc('');
+      setTechStack('');
+      setFeatures(['']);
+      setGithubUrl('');
+      setCategory('Web');
+      setImageUrl('');
+      setGalleryUrls(['']);
+      setAuthorName(defaultAuthor);
+      setIsPublished(true);
+      setErrors({});
+      setSubmitting(false);
+    }
+  }, [isOpen, defaultAuthor]);
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!title.trim()) e.title = 'Project title is required.';
+    if (!shortDesc.trim()) e.shortDesc = 'Short description is required.';
+    if (!fullDesc.trim()) e.fullDesc = 'Full description is required.';
+    if (!techStack.trim()) e.techStack = 'Enter at least one technology.';
+    if (!githubUrl.trim()) e.githubUrl = 'GitHub repository URL is required.';
+    if (!authorName.trim()) e.authorName = 'Author name is required.';
+    return e;
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      if (ev.target?.result) {
+        setImageUrl(ev.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+
+    setSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const techArray = techStack
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const validFeatures = features.filter((f) => f.trim());
+    const validGallery = galleryUrls.filter((u) => u.trim());
+
+    const newProject = {
+      id: `proj-${Date.now()}`,
+      name: title.trim(),
+      lang: techArray.slice(0, 3).join(' · '),
+      progress: 10,
+      status: 'Active Ideation',
+      github: githubUrl.replace(/^https?:\/\//i, ''),
+      branch: 'main',
+      commits: 1,
+      tests: '0/0',
+      deployStatus: isPublished ? 'success' : 'idle',
+      activity: [0, 0, 0, 0, 1, 2, 4, 3],
+      techStack: techArray,
+      category: category,
+      image: imageUrl.trim() || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop',
+      desc: shortDesc.trim(),
+      shortDescription: shortDesc.trim(),
+      fullDescription: fullDesc.trim(),
+      features: validFeatures.length > 0 ? validFeatures : ['Initial workspace configuration completed.'],
+      author: authorName.trim(),
+      images: [imageUrl.trim(), ...validGallery].filter(Boolean),
+      isPublished: isPublished,
+    };
+
+    onSubmit(newProject);
+    setSubmitting(false);
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div
+        className="fixed inset-0 z-[9500] flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-md px-4 py-8 sm:py-12"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 24 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.93, opacity: 0, y: 12 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-xl bg-slate-955 border border-white/10 rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.9)] my-auto text-left font-sans"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+            <div>
+              <h2 className="text-base font-display font-bold text-white uppercase">Submit a Capstone Project</h2>
+              <p className="text-[10px] text-white/50 font-mono mt-0.5">Community Build Vault</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-white/60 hover:text-white transition-all p-1.5 hover:bg-white/10 rounded-lg"
+              aria-label="Close form"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
+            {/* Title */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Project Title <span className="text-orange-500">*</span></label>
+              <input
+                type="text"
+                placeholder="e.g. Nexus OS"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+              />
+              {errors.title && <p className="text-[10px] text-red-400 font-mono">{errors.title}</p>}
+            </div>
+
+            {/* Category */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Category</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value as any)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition cursor-pointer"
+              >
+                <option value="Web">Web Development</option>
+                <option value="Mobile">Mobile Applications</option>
+                <option value="AI / ML">AI & Machine Learning</option>
+                <option value="Systems">Low-level Systems</option>
+                <option value="Open Source">Open Source Packages</option>
+              </select>
+            </div>
+
+            {/* Short Description */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Short Description <span className="text-orange-500">*</span></label>
+              <input
+                type="text"
+                placeholder="Brief 2-3 sentence overview..."
+                value={shortDesc}
+                onChange={(e) => setShortDesc(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+              />
+              {errors.shortDesc && <p className="text-[10px] text-red-400 font-mono">{errors.shortDesc}</p>}
+            </div>
+
+            {/* Full Description */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Full Description <span className="text-orange-500">*</span></label>
+              <textarea
+                rows={3}
+                placeholder="Describe architecture, motivation, features, and compile setup details..."
+                value={fullDesc}
+                onChange={(e) => setFullDesc(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition resize-none"
+              />
+              {errors.fullDesc && <p className="text-[10px] text-red-400 font-mono">{errors.fullDesc}</p>}
+            </div>
+
+            {/* Tech Stack */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Tech Stack <span className="text-orange-500">*</span></label>
+              <input
+                type="text"
+                placeholder="React, TypeScript, Rust, Assembly (comma-separated)"
+                value={techStack}
+                onChange={(e) => setTechStack(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+              />
+              {errors.techStack && <p className="text-[10px] text-red-400 font-mono">{errors.techStack}</p>}
+            </div>
+
+            {/* Key Features (dynamic list) */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Key Features</label>
+              <div className="space-y-2">
+                {features.map((feat, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder={`Feature bullet point #${idx + 1}`}
+                      value={feat}
+                      onChange={(e) => {
+                        const arr = [...features];
+                        arr[idx] = e.target.value;
+                        setFeatures(arr);
+                      }}
+                      className="flex-1 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+                    />
+                    {features.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setFeatures(features.filter((_, i) => i !== idx))}
+                        className="px-2.5 py-2.5 rounded-xl border border-white/10 text-white/50 hover:text-red-400 hover:border-red-500/30 transition-all bg-transparent"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setFeatures([...features, ''])}
+                  className="flex items-center gap-1.5 text-[10px] text-orange-500 hover:text-orange-400 font-mono transition-all bg-transparent border-none cursor-pointer"
+                >
+                  <Plus size={12} /> Add Feature Bullet
+                </button>
+              </div>
+            </div>
+
+            {/* GitHub URL */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">GitHub Repository <span className="text-orange-500">*</span></label>
+              <input
+                type="text"
+                placeholder="github.com/username/repo-name"
+                value={githubUrl}
+                onChange={(e) => setGithubUrl(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+              />
+              {errors.githubUrl && <p className="text-[10px] text-red-400 font-mono">{errors.githubUrl}</p>}
+            </div>
+
+            {/* Main Cover Image */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Cover Image URL / Upload</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Paste image web address (https://...)"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className="flex-1 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-3 py-2 rounded-xl border border-white/10 text-white/70 hover:bg-white/5 transition flex items-center gap-1 text-[11px] font-mono bg-transparent"
+                >
+                  <Upload size={12} /> Upload
+                </button>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              {imageUrl && (
+                <div className="relative rounded-xl border border-white/10 overflow-hidden h-24 w-full bg-slate-900">
+                  <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setImageUrl('')}
+                    className="absolute top-1.5 right-1.5 p-1 bg-black/60 hover:bg-black/90 rounded-full text-white/80 transition"
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Extra Gallery Images */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Extra Gallery Image URLs</label>
+              <div className="space-y-2">
+                {galleryUrls.map((gUrl, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder={`Gallery URL #${idx + 1}`}
+                      value={gUrl}
+                      onChange={(e) => {
+                        const arr = [...galleryUrls];
+                        arr[idx] = e.target.value;
+                        setGalleryUrls(arr);
+                      }}
+                      className="flex-1 bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+                    />
+                    {galleryUrls.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setGalleryUrls(galleryUrls.filter((_, i) => i !== idx))}
+                        className="px-2.5 py-2.5 rounded-xl border border-white/10 text-white/50 hover:text-red-400 hover:border-red-500/30 transition-all bg-transparent"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setGalleryUrls([...galleryUrls, ''])}
+                  className="flex items-center gap-1.5 text-[10px] text-orange-500 hover:text-orange-400 font-mono transition-all bg-transparent border-none cursor-pointer"
+                >
+                  <Plus size={12} /> Add Gallery Image
+                </button>
+              </div>
+            </div>
+
+            {/* Author Name */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono uppercase tracking-wide text-white/70 block">Author Name <span className="text-orange-500">*</span></label>
+              <input
+                type="text"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-orange-500/50 transition"
+              />
+              {errors.authorName && <p className="text-[10px] text-red-400 font-mono">{errors.authorName}</p>}
+            </div>
+
+            {/* Publish immediately toggle */}
+            <div className="flex items-center justify-between p-3.5 rounded-xl border border-white/15 bg-white/[0.01]">
+              <div>
+                <p className="text-xs font-bold text-white font-display">Publish Immediately</p>
+                <p className="text-[10px] text-white/50 mt-0.5">
+                  Published projects appear automatically in the Community Vault.
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isPublished}
+                onClick={() => setIsPublished(!isPublished)}
+                className={`relative inline-flex h-5 w-9 shrink-0 rounded-full border border-white/20 transition-colors duration-200 focus:outline-none ${isPublished ? 'bg-orange-500' : 'bg-slate-900'}`}
+              >
+                <span
+                  className={`inline-block h-3.5 w-3.5 mt-0.5 rounded-full bg-white shadow transition-transform duration-200 ${isPublished ? 'translate-x-4.5' : 'translate-x-0.5'}`}
+                />
+              </button>
+            </div>
+          </form>
+
+          {/* Footer */}
+          <div className="flex justify-between items-center px-6 py-4 border-t border-white/10">
+            <span className="text-[9px] font-mono text-white/40"><span className="text-orange-500">*</span> Required fields</span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border border-white/10 text-white/60 hover:text-white rounded-xl text-xs font-semibold hover:bg-white/5 transition bg-transparent"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="px-5 py-2 bg-gradient-to-r from-orange-400 to-amber-500 text-slate-950 font-bold rounded-xl text-xs hover:opacity-90 active:scale-95 transition flex items-center gap-1 shadow-md shadow-orange-500/20 border-none cursor-pointer"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin" /> Submitting...
+                  </>
+                ) : (
+                  'Submit Project'
+                )}
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+};
+
 // -------------------------------------------------------------
 // FLAGSHIP STUDENT DASHBOARD (SGOS)
 // -------------------------------------------------------------
@@ -655,46 +1399,167 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
 
   const [streakCount, setStreakCount] = useState(12);
   const [claimedStreakToday, setClaimedStreakToday] = useState(false);
-  const [techSkill, setTechSkill] = useState(82);
-  const [designSkill, setDesignSkill] = useState(74);
-  const [commsSkill, setCommsSkill] = useState(88);
-  const [researchSkill, setResearchSkill] = useState(70);
+  const [techSkill, setTechSkill] = useState(78); // Quantitative methods
+  const [designSkill, setDesignSkill] = useState(36); // Fundraising / pitching
+  const [commsSkill, setCommsSkill] = useState(52); // Team leadership
+  const [researchSkill, setResearchSkill] = useState(64); // Scientific writing
+  const [assessmentStep, setAssessmentStep] = useState(2); // Starts on Step 2 "Skills" as requested
+  const [selectedRoadmapPhase, setSelectedRoadmapPhase] = useState(2); // Starts with Phase 2 "In Progress" selected
 
   useEffect(() => {
     const avg = Math.round((techSkill + designSkill + commsSkill + researchSkill) / 4);
     setSuccessScore(avg + 6);
   }, [techSkill, designSkill, commsSkill, researchSkill]);
 
-  const [projectsList, setProjectsList] = useState([
+  const [projectSearchQuery, setProjectSearchQuery] = useState("");
+  const [selectedDetailProject, setSelectedDetailProject] = useState<any | null>(null);
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+
+  const [projectsList, setProjectsList] = useState<any[]>([
     {
+      id: "nexus-os",
+      name: "Nexus OS",
+      lang: "Rust · C · Assembly",
+      progress: 95,
+      status: "Active Dev",
+      github: "github.com/vimarsh/nexus-os",
+      branch: "main",
+      commits: 284,
+      tests: "24/24",
+      deployStatus: "success",
+      activity: [10, 20, 15, 30, 25, 40, 50, 48],
+      techStack: ["Rust", "C", "Assembly"],
+      category: "Systems",
+      image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600&auto=format&fit=crop",
+      desc: "A microkernel-based operating system focused on real-time processing and extreme security, built from scratch.",
+      shortDescription: "A microkernel-based operating system focused on real-time processing and extreme security, built from scratch.",
+      fullDescription: "Nexus OS is a next-generation microkernel operating system written in Rust. It utilizes zero-dependency kernels, capability-based security contexts, and lock-free data structures to achieve extreme execution efficiency and real-time processing guarantees. Built for critical embedded systems and secure sandbox execution.",
+      features: [
+        "Capability-based access control and microkernel isolation",
+        "Lock-free communication channels for multi-core IPC",
+        "Boot time under 50 milliseconds on target ARM boards",
+        "Deterministic real-time task scheduler"
+      ],
+      author: "Vimarsh Core Team",
+      images: [
+        "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop"
+      ],
+      isPublished: true,
+      links: {
+        github: "https://github.com/vimarsh/nexus-os",
+      }
+    },
+    {
+      id: "vimarsh-connect",
+      name: "Vimarsh Connect",
+      lang: "Next.js · TypeScript · Prisma",
+      progress: 78,
+      status: "In Progress",
+      github: "github.com/vimarsh/vimarsh-connect",
+      branch: "main",
+      commits: 112,
+      tests: "16/18",
+      deployStatus: "success",
+      activity: [12, 18, 15, 24, 30, 28, 42, 38],
+      techStack: ["Next.js", "TypeScript", "Prisma"],
+      category: "Web",
+      image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop",
+      desc: "Decentralized social platform for student developers to collaborate, share code snippets, and build in public.",
+      shortDescription: "Decentralized social platform for student developers to collaborate, share code snippets, and build in public.",
+      fullDescription: "Vimarsh Connect is a modern, high-performance decentralized platform that connects student developers around the world. It provides real-time chat, code snippets sharing galleries, interactive whiteboard boards, and integrates seamlessly with GitHub hooks to display live project feeds and commits.",
+      features: [
+        "Real-time reactive chat engine with WebSockets",
+        "Interactive canvas whiteboard for sketching system designs",
+        "Automatic GitHub repo integration and activity feeds",
+        "End-to-end user data privacy controls"
+      ],
+      author: "Vimarsh Web Team",
+      images: [
+        "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=600&auto=format&fit=crop"
+      ],
+      isPublished: true,
+      links: {
+        github: "https://github.com/vimarsh/vimarsh-connect",
+      }
+    },
+    {
+      id: "visionary-ar",
+      name: "Visionary AR",
+      lang: "Python · PyTorch · OpenCV",
+      progress: 62,
+      status: "Active Dev",
+      github: "github.com/vimarsh/visionary-ar",
+      branch: "dev-main",
+      commits: 85,
+      tests: "12/12",
+      deployStatus: "success",
+      activity: [5, 12, 18, 10, 22, 28, 30, 32],
+      techStack: ["Python", "PyTorch", "OpenCV"],
+      category: "AI / ML",
+      image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=600&auto=format&fit=crop",
+      desc: "Augmented reality assistant that identifies electronic components via camera and overlays live datasheet information.",
+      shortDescription: "Augmented reality assistant that identifies electronic components via camera and overlays live datasheet information.",
+      fullDescription: "Visionary AR is an innovative computer vision tool designed for hardware engineers. By utilizing mobile phone cameras or smart glasses feeds, it uses deep learning classification models (PyTorch) to identify electronic components (resistors, microcontrollers, capacitors) in real-time, overlaying interactive pinout diagrams and linking directly to technical datasheets.",
+      features: [
+        "YOLOv8-based real-time component classification",
+        "Pins coordinate calculation and interactive overlay rendering",
+        "Offline database caching for 100k+ component datasheets",
+        "Bluetooth connectivity with smart glasses"
+      ],
+      author: "Vimarsh AI Team",
+      images: [
+        "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1606166325683-e288e2390a38?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1617854818583-09e7f077a156?q=80&w=600&auto=format&fit=crop"
+      ],
+      isPublished: true,
+      links: {
+        github: "https://github.com/vimarsh/visionary-ar",
+      }
+    },
+    {
+      id: "smartdoc-ai",
       name: "SmartDoc AI Parser",
       lang: "TypeScript · Python",
       progress: 88,
       status: "Analyzing",
       github: "github.com/aryan/smartdoc-ai",
-    },
-    {
-      name: "Cognitive Vector Search",
-      lang: "Rust · PyTorch",
-      progress: 42,
-      status: "Active Ideation",
-      github: "github.com/aryan/cog-search",
+      branch: "main",
+      commits: 142,
+      tests: "12/12",
+      deployStatus: "success",
+      activity: [12, 18, 15, 24, 30, 28, 42, 38],
+      techStack: ["TypeScript", "Python", "Vercel", "FastAPI"],
+      category: "AI / ML",
+      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
+      desc: "AI document intelligence suite that parses scanned files, extracts tabular data, and validates formatting.",
+      shortDescription: "AI document intelligence suite that parses scanned files, extracts tabular data, and validates formatting.",
+      fullDescription: "SmartDoc AI Parser is an enterprise-grade document extraction platform. Built with FastAPI and TypeScript, it parses PDFs, images, and scanned reports using custom OCR models. It identifies structural components, formats tables into clean CSVs, and automatically double-checks values against predefined formatting rules using a custom validation engine.",
+      features: [
+        "Advanced OCR parsing with layout analysis",
+        "Automated table cell segmentation and CSV formatting",
+        "Custom rule-validation compiler for values sanity checks",
+        "Serverless deployment scales to 10k documents/minute"
+      ],
+      author: "Aryan Buha",
+      images: [
+        "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=600&auto=format&fit=crop"
+      ],
+      isPublished: true,
+      links: {
+        github: "https://github.com/aryan/smartdoc-ai",
+      }
     },
   ]);
-  const [newProjName, setNewProjName] = useState("");
-  const handleAddProject = () => {
-    if (!newProjName.trim()) return;
-    setProjectsList((prev) => [
-      ...prev,
-      {
-        name: newProjName,
-        lang: "React · Node",
-        progress: 10,
-        status: "Active Ideation",
-        github: `github.com/aryan/${newProjName.toLowerCase().replace(/\s+/g, "-")}`,
-      },
-    ]);
-    setNewProjName("");
+
+  const handleAddProject = (newProject: any) => {
+    setProjectsList((prev) => [...prev, newProject]);
   };
 
   const [celebrationOpen, setCelebrationOpen] = useState(false);
@@ -886,11 +1751,10 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                   }
                 }}
                 disabled={claimedStreakToday}
-                className={`mt-3 w-full py-1.5 rounded-xl text-[10px] font-bold transition flex items-center justify-center gap-1.5 ${
-                  claimedStreakToday
+                className={`mt-3 w-full py-1.5 rounded-xl text-[10px] font-bold transition flex items-center justify-center gap-1.5 ${claimedStreakToday
                     ? "bg-white/5 border border-white/5 text-muted-foreground cursor-not-allowed"
                     : "bg-orange-500/25 border border-orange-500/20 text-orange-400 hover:bg-orange-500/35 cursor-pointer"
-                }`}
+                  }`}
               >
                 <Flame className="h-3 w-3" />
                 {claimedStreakToday ? "Streak Claimed Today" : "Claim Daily Streak +15 XP"}
@@ -953,13 +1817,12 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                           {m.tag}
                         </span>
                         <span
-                          className={`rounded px-1.5 py-0.5 text-[8px] font-bold uppercase ${
-                            m.difficulty === "Easy"
+                          className={`rounded px-1.5 py-0.5 text-[8px] font-bold uppercase ${m.difficulty === "Easy"
                               ? "bg-emerald-500/10 text-emerald-400"
                               : m.difficulty === "Medium"
                                 ? "bg-sky-500/10 text-sky-400"
                                 : "bg-red-500/10 text-red-400"
-                          }`}
+                            }`}
                         >
                           {m.difficulty}
                         </span>
@@ -1000,6 +1863,128 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ARENA */}
       {currentTab === "arena" && (
         <Page title="Career Growth Arena" subtitle="Navigate your developmental districts in the career city map.">
+          {/* HUD Header */}
+          <div className="grid gap-4 md:grid-cols-3 mb-6 mt-2">
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold">Arena Status</span>
+              <div className="text-2xl font-black text-white mt-1">Level 4 Candidate</div>
+              <div className="text-xs text-muted-foreground mt-1">Active Districts: Skills & Project</div>
+            </div>
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold">Overall Preparedness</span>
+              <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
+                68% <span className="text-xs text-emerald-400 font-normal font-mono">+4% this week</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mt-2">
+                <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-400 rounded-full" style={{ width: '68%' }} />
+              </div>
+            </div>
+            {/* Pro Upgrade Callout Banner */}
+            <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 backdrop-blur-xl group hover:border-amber-500/40 transition duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold flex items-center gap-1">
+                <Sparkles className="h-3 w-3 animate-pulse" /> Pro Upgrade
+              </span>
+              <div className="text-sm font-bold text-white mt-1 leading-snug">Unlock Interview & Career Districts</div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-[10px] text-muted-foreground">Access unlimited simulations & placement matches</span>
+                <button className="px-2.5 py-1 text-[10px] font-bold text-slate-900 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg shadow-md hover:scale-105 transition-all cursor-pointer border-none">
+                  Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Career City Map (Interactive Path) */}
+          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-6 mb-6">
+            <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+            <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">
+              Career City Map / Roadmap Path
+            </h3>
+
+            {/* Node Pipeline container */}
+            <div className="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 py-4 px-2">
+
+              {/* Connecting Line (Desktop) */}
+              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-white/5 -translate-y-1/2 hidden md:block z-0">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500 transition-all duration-500"
+                  style={{ width: '55%' }}
+                />
+              </div>
+
+              {[
+                { id: "foundation", name: "Foundation", status: "Completed", icon: GraduationCap, color: "emerald" },
+                { id: "skills", name: "Skills", status: "In Progress", icon: Brain, color: "sky" },
+                { id: "project", name: "Project", status: "In Progress", icon: Compass, color: "indigo" },
+                { id: "interview", name: "Interview", status: "Locked", icon: Users, color: "violet" },
+                { id: "career", name: "Career", status: "Locked", icon: Briefcase, color: "rose" },
+              ].map((node) => {
+                const Icon = node.icon;
+                const isCompleted = node.status === "Completed";
+                const isInProgress = node.status === "In Progress";
+                const isLocked = node.status === "Locked";
+
+                return (
+                  <button
+                    key={node.id}
+                    onClick={() => {
+                      const element = document.getElementById(`district-${node.id}`);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Add a temporary highlight glow animation class
+                        element.classList.add('ring-4', 'ring-sky-400/35', 'border-sky-400/60');
+                        setTimeout(() => {
+                          element.classList.remove('ring-4', 'ring-sky-400/35', 'border-sky-400/60');
+                        }, 2000);
+                      }
+                    }}
+                    className="relative flex flex-col items-center group z-10 cursor-pointer focus:outline-none bg-transparent border-none"
+                  >
+                    {/* Ring Outer */}
+                    <div className={`relative flex items-center justify-center w-12 h-12 rounded-full border bg-slate-900 transition-all duration-300 
+                      ${isCompleted ? "border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : ""}
+                      ${isInProgress ? "border-sky-500 animate-pulse shadow-[0_0_15px_rgba(56,189,248,0.3)]" : ""}
+                      ${isLocked ? "border-white/10 text-muted-foreground opacity-60" : ""}
+                      group-hover:scale-110 group-hover:border-sky-400/80
+                    `}>
+                      {isCompleted && (
+                        <div className="absolute -top-1 -right-1 bg-emerald-500 text-slate-900 rounded-full p-0.5 z-20">
+                          <Check className="h-2.5 w-2.5 stroke-[3]" />
+                        </div>
+                      )}
+                      {isInProgress && (
+                        <div className="absolute -top-1 -right-1 bg-sky-500 rounded-full w-2.5 h-2.5 animate-ping z-20" />
+                      )}
+
+                      {/* Icon */}
+                      <Icon className={`h-5 w-5 
+                        ${isCompleted ? "text-emerald-400" : ""}
+                        ${isInProgress ? "text-sky-400" : ""}
+                        ${isLocked ? "text-white/30" : ""}
+                      `} />
+                    </div>
+
+                    {/* Node Text */}
+                    <span className="text-[10px] font-mono mt-2 font-bold text-white group-hover:text-sky-400 transition-colors">
+                      {node.name}
+                    </span>
+                    <span className={`text-[8px] font-semibold uppercase 
+                      ${isCompleted ? "text-emerald-400/80" : ""}
+                      ${isInProgress ? "text-sky-400/80" : ""}
+                      ${isLocked ? "text-muted-foreground/60" : ""}
+                    `}>
+                      {node.status}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* District Grid */}
           <div className="grid gap-6 md:grid-cols-5 mt-4">
             {[
               {
@@ -1009,7 +1994,13 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 progress: 92,
                 status: "Completed",
                 icon: GraduationCap,
-                gradient: "from-sky-400 to-blue-500",
+                gradient: "from-emerald-400 to-teal-500",
+                textColor: "text-emerald-400",
+                tasks: [
+                  { title: "Define target profiles & goals", done: true },
+                  { title: "CS / domain core diagnostics", done: true },
+                  { title: "Sign career strategy roadmap", done: false },
+                ]
               },
               {
                 id: "skills",
@@ -1018,7 +2009,13 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 progress: 78,
                 status: "In Progress",
                 icon: Brain,
-                gradient: "from-blue-400 to-indigo-500",
+                gradient: "from-sky-400 to-blue-500",
+                textColor: "text-sky-400",
+                tasks: [
+                  { title: "Learn React & TypeScript", done: true },
+                  { title: "Solve 50+ medium LeetCodes", done: true },
+                  { title: "Master system & DB basics", done: false },
+                ]
               },
               {
                 id: "project",
@@ -1028,6 +2025,12 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 status: "In Progress",
                 icon: Compass,
                 gradient: "from-indigo-400 to-purple-500",
+                textColor: "text-indigo-400",
+                tasks: [
+                  { title: "Build & launch fullstack SaaS", done: true },
+                  { title: "Set up CI/CD pipeline setup", done: false },
+                  { title: "Write E2E and integration tests", done: false },
+                ]
               },
               {
                 id: "interview",
@@ -1035,8 +2038,14 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 desc: "Polish behavioral matrices, practice mock system designs, and rehearse whiteboard code.",
                 progress: 10,
                 status: "Locked",
-                icon: Lock,
+                icon: Users,
                 gradient: "from-purple-400 to-fuchsia-500",
+                textColor: "text-purple-400",
+                tasks: [
+                  { title: "Behavioral framework matrices", done: false },
+                  { title: "Mock system design interview", done: false },
+                  { title: "Live whiteboard rehearsals", done: false },
+                ]
               },
               {
                 id: "career",
@@ -1044,54 +2053,131 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 desc: "Deploy customized match models, schedule interviews, and negotiate placements.",
                 progress: 0,
                 status: "Locked",
-                icon: Lock,
+                icon: Briefcase,
                 gradient: "from-fuchsia-400 to-rose-500",
+                textColor: "text-rose-400",
+                tasks: [
+                  { title: "Optimize LinkedIn & resume", done: false },
+                  { title: "Deploy matchmaking models", done: false },
+                  { title: "Placement offer negotiation", done: false },
+                ]
               },
             ].map((d) => {
               const IconComp = d.icon;
               const isLocked = d.status === "Locked";
+              const isCompleted = d.status === "Completed";
+
               return (
-                <Card
+                <div
                   key={d.id}
-                  className={`flex flex-col justify-between border transition-all duration-300 relative group overflow-hidden ${
-                    isLocked
-                      ? "border-white/5 opacity-55 hover:opacity-75"
-                      : "border-white/10 hover:border-sky-400/30 hover:shadow-2xl"
-                  }`}
+                  id={`district-${d.id}`}
+                  className={`flex flex-col justify-between p-5 rounded-2xl border transition-all duration-500 relative group overflow-hidden bg-slate-950/40 backdrop-blur-md ${isLocked
+                      ? "border-white/5 opacity-60 hover:opacity-85"
+                      : isCompleted
+                        ? "border-emerald-500/20 hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                        : "border-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] ring-1 ring-sky-500/10"
+                    }`}
                 >
-                  <div className="absolute -top-10 -right-10 w-24 h-24 rounded-full bg-white/[0.01] pointer-events-none" />
+                  {/* Decorative background glow */}
+                  <div className={`absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br ${d.gradient} opacity-[0.03] group-hover:opacity-[0.08] blur-xl pointer-events-none transition-all duration-500`} />
+
+                  {/* Card top border line */}
                   {!isLocked && (
-                    <span className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${d.gradient}`} />
+                    <span className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${d.gradient}`} />
                   )}
+
                   <div>
+                    {/* Header: Icon & Status */}
                     <div className="flex justify-between items-center">
-                      <div className={`p-2 rounded-xl bg-white/5 ${isLocked ? "text-muted-foreground" : "text-sky-400"}`}>
-                        <IconComp className="h-4.5 w-4.5" />
+                      <div className={`p-2.5 rounded-xl border bg-white/[0.02] transition-colors duration-300 ${isLocked
+                          ? "border-white/5 text-muted-foreground/60"
+                          : isCompleted
+                            ? "border-emerald-500/25 text-emerald-400 bg-emerald-500/[0.02]"
+                            : "border-sky-500/25 text-sky-400 bg-sky-500/[0.02]"
+                        }`}>
+                        <IconComp className="h-5 w-5" />
                       </div>
-                      <span className="text-[9px] font-mono font-semibold uppercase text-muted-foreground">
-                        {d.status}
-                      </span>
+
+                      <div className="flex items-center gap-1.5">
+                        {isLocked && <Lock className="h-3 w-3 text-muted-foreground/50" />}
+                        <span className={`text-[9px] font-mono font-bold uppercase tracking-wider ${isLocked
+                            ? "text-muted-foreground/60"
+                            : isCompleted
+                              ? "text-emerald-400"
+                              : "text-sky-400 animate-pulse"
+                          }`}>
+                          {d.status}
+                        </span>
+                      </div>
                     </div>
+
+                    {/* Title & Description */}
                     <h4 className="text-base font-black text-white mt-4 tracking-tight leading-snug font-display">
                       {d.name}
                     </h4>
-                    <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                    <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed min-h-[32px]">
                       {d.desc}
                     </p>
+
+                    {/* Sub-Milestones Task List */}
+                    <div className="mt-4 pt-3 border-t border-white/5 space-y-2">
+                      <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
+                        District Milestones
+                      </div>
+                      {d.tasks.map((task, idx) => (
+                        <div key={idx} className="flex items-start gap-2 text-[10px] leading-relaxed">
+                          {isLocked ? (
+                            <div className="mt-0.5 rounded border border-white/10 w-3 h-3 flex items-center justify-center bg-white/[0.01]">
+                              <Lock className="h-1.5 w-1.5 text-muted-foreground/30" />
+                            </div>
+                          ) : task.done ? (
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                          ) : (
+                            <div className="mt-0.5 rounded border border-white/20 w-3 h-3 flex-shrink-0" />
+                          )}
+                          <span className={`${isLocked
+                              ? "text-muted-foreground/40 line-through select-none"
+                              : task.done
+                                ? "text-muted-foreground/80 line-through"
+                                : "text-white/80 font-medium"
+                            }`}>
+                            {task.title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="mt-5">
-                    <div className="flex justify-between text-[9px] font-mono text-muted-foreground mb-1 leading-none">
-                      <span>Progress</span>
-                      <span>{d.progress}%</span>
+
+                  {/* Progress Section */}
+                  <div className="mt-5 pt-3 border-t border-white/5">
+                    <div className="flex justify-between text-[10px] font-mono mb-1.5 leading-none">
+                      <span className="text-muted-foreground">District Progress</span>
+                      <span className={`font-bold ${isLocked ? "text-muted-foreground/60" : d.textColor}`}>
+                        {d.progress}%
+                      </span>
                     </div>
                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                       <div
-                        className={`h-full bg-gradient-to-r ${d.gradient} rounded-full`}
+                        className={`h-full bg-gradient-to-r ${d.gradient} rounded-full transition-all duration-500`}
                         style={{ width: `${d.progress}%` }}
                       />
                     </div>
                   </div>
-                </Card>
+
+                  {/* Lock Overlay on Hover */}
+                  {isLocked && (
+                    <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4 text-center">
+                      <Lock className="h-8 w-8 text-amber-400 mb-2 animate-bounce" />
+                      <div className="text-xs font-bold text-white uppercase font-mono tracking-wider">District Locked</div>
+                      <p className="text-[10px] text-muted-foreground mt-1 max-w-[140px]">
+                        Complete the preceding districts and upgrade to Pro to unlock.
+                      </p>
+                      <button className="mt-3 px-3 py-1.5 text-[9px] font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-lg cursor-pointer transition border-none">
+                        Upgrade to Unlock
+                      </button>
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
@@ -1101,158 +2187,1058 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: CHALLENGES */}
       {currentTab === "challenges" && (
         <Page title="Arena Challenges" subtitle="Tackle daily career tasks, build consistency, and stack XP.">
+          {/* HUD Header */}
+          <div className="grid gap-4 md:grid-cols-3 mb-6 mt-2">
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-orange-400 font-bold flex items-center gap-1">
+                <Flame className="h-3 w-3 animate-pulse" /> Consistency Streak
+              </span>
+              <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
+                5 Days <span className="text-xs text-muted-foreground font-normal">Best: 18 days</span>
+              </div>
+              <div className="text-[10px] text-orange-400/80 font-mono mt-1">On Fire! 1.2x streak multiplier active</div>
+            </div>
+
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold flex items-center gap-1">
+                <Zap className="h-3 w-3" /> Experience Points (XP)
+              </span>
+              <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
+                2,450 XP <span className="text-xs text-sky-400 font-normal font-mono">+250 today</span>
+              </div>
+              <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-2">
+                <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full" style={{ width: '75%' }} />
+              </div>
+            </div>
+
+            {/* Pro Upgrade Callout Banner */}
+            <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 backdrop-blur-xl group hover:border-amber-500/40 transition duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold flex items-center gap-1">
+                <Sparkles className="h-3 w-3 animate-pulse" /> Streak Freeze & Double XP
+              </span>
+              <div className="text-sm font-bold text-white mt-1 leading-snug">Lock in your progress with Pro</div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-[10px] text-muted-foreground">Keep streak alive even if you skip a day</span>
+                <button className="px-2.5 py-1 text-[10px] font-bold text-slate-900 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg shadow-md hover:scale-105 transition-all cursor-pointer border-none">
+                  Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid gap-6 md:grid-cols-3 mt-4">
-            <Card className="md:col-span-2">
-              <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-4 font-display">
-                <Flame className="h-4.5 w-4.5 text-orange-400" /> Weekly Streak Calendar
-              </h3>
-              <div className="grid grid-cols-7 gap-2 text-center">
-                {[
-                  { d: "Mon", done: true },
-                  { d: "Tue", done: true },
-                  { d: "Wed", done: true },
-                  { d: "Thu", done: true },
-                  { d: "Fri", done: true, today: true },
-                  { d: "Sat", done: false },
-                  { d: "Sun", done: false },
-                ].map((day) => (
-                  <div key={day.d} className="rounded-xl border border-white/5 bg-white/[0.01] p-3">
-                    <div className="text-[10px] text-muted-foreground font-mono">{day.d}</div>
-                    <div className="mt-2 flex items-center justify-center">
-                      {day.done ? (
-                        <Flame className="h-5 w-5 text-orange-400 animate-pulse" />
+            {/* Calendar & Quests grid */}
+            <div className="md:col-span-2 space-y-6">
+
+              {/* Weekly Streak Calendar Card */}
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md">
+                <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-orange-500/5 blur-xl pointer-events-none" />
+                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-4 font-display">
+                  <Flame className="h-4.5 w-4.5 text-orange-400 animate-bounce" /> Weekly Streak Calendar
+                </h3>
+
+                <div className="grid grid-cols-7 gap-3 text-center">
+                  {[
+                    { d: "Mon", done: true, date: "Jun 8" },
+                    { d: "Tue", done: true, date: "Jun 9" },
+                    { d: "Wed", done: true, date: "Jun 10" },
+                    { d: "Thu", done: true, date: "Jun 11" },
+                    { d: "Fri", done: true, today: true, date: "Jun 12" },
+                    { d: "Sat", done: false, date: "Jun 13" },
+                    { d: "Sun", done: false, date: "Jun 14" },
+                  ].map((day) => (
+                    <div
+                      key={day.d}
+                      className={`relative rounded-xl border p-3 flex flex-col items-center justify-between transition-all duration-300 min-h-[96px] ${day.today
+                          ? "border-orange-500 bg-orange-500/5 shadow-[0_0_15px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/20"
+                          : day.done
+                            ? "border-emerald-500/20 bg-emerald-500/[0.01]"
+                            : "border-white/5 bg-white/[0.005] opacity-50"
+                        }`}
+                    >
+                      <div>
+                        <div className="text-[10px] text-muted-foreground font-mono font-semibold">{day.d}</div>
+                        <div className="text-[8px] text-muted-foreground/60 font-mono mt-0.5">{day.date}</div>
+                      </div>
+
+                      <div className="my-2 flex items-center justify-center">
+                        {day.done ? (
+                          <Flame className={`h-6 w-6 text-orange-500 ${day.today ? "animate-pulse filter drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" : ""}`} />
+                        ) : (
+                          <div className="w-5 h-5 rounded-full border border-dashed border-white/20 bg-slate-900/60" />
+                        )}
+                      </div>
+
+                      {day.today ? (
+                        <span className="text-[7.5px] text-orange-400 font-extrabold uppercase font-mono tracking-wider">
+                          Today
+                        </span>
+                      ) : day.done ? (
+                        <span className="text-[7.5px] text-emerald-400 font-bold uppercase font-mono">
+                          Done
+                        </span>
                       ) : (
-                        <div className="w-5 h-5 rounded-full border border-white/10 bg-slate-900" />
+                        <span className="text-[7.5px] text-muted-foreground/60 font-mono">
+                          Idle
+                        </span>
                       )}
                     </div>
-                    {day.today && (
-                      <span className="text-[8px] text-sky-400 font-bold uppercase font-mono mt-1 block">
-                        Today
-                      </span>
-                    )}
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </Card>
 
-            <Card className="flex flex-col justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-1 font-display">
-                  Consistency Rewards
+              {/* Daily Quests Card */}
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md">
+                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-4 font-display">
+                  <Trophy className="h-4.5 w-4.5 text-sky-400" /> Daily Arena Quests
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1 leading-normal">
+
+                <div className="space-y-3">
+                  {[
+                    { id: 1, title: "Solve 1 Medium Algorithmic Challenge", xp: "+50 XP", done: false, action: "Go Solve", icon: Brain },
+                    { id: 2, title: "Review 3 Portfolio Projects of Classmates", xp: "+30 XP", done: true, action: "Viewed", icon: Users },
+                    { id: 3, title: "Update 1 Node on Career Growth Arena", xp: "+20 XP", done: false, action: "Go Navigate", icon: Compass },
+                  ].map((quest) => {
+                    const QuestIcon = quest.icon;
+                    return (
+                      <div
+                        key={quest.id}
+                        className={`flex items-center justify-between p-3 rounded-xl border transition-all ${quest.done
+                            ? "border-white/5 bg-white/[0.01] opacity-70"
+                            : "border-white/10 bg-slate-900/40 hover:border-white/15"
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg ${quest.done ? "bg-white/5 text-muted-foreground" : "bg-sky-500/10 text-sky-400"}`}>
+                            <QuestIcon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <div className={`text-xs font-semibold ${quest.done ? "text-muted-foreground line-through" : "text-white"}`}>
+                              {quest.title}
+                            </div>
+                            <div className="text-[9px] font-mono text-sky-400 font-bold mt-0.5">{quest.xp}</div>
+                          </div>
+                        </div>
+
+                        {quest.done ? (
+                          <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[9px] font-mono font-bold flex items-center gap-1">
+                            <Check className="h-3 w-3 stroke-[3]" /> Completed
+                          </span>
+                        ) : (
+                          <button className="px-2.5 py-1 text-[9px] font-bold text-sky-400 border border-sky-400/30 hover:border-sky-400 hover:bg-sky-400/5 rounded-lg transition-all cursor-pointer bg-transparent">
+                            {quest.action}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Consistency Rewards (Ticket style) */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md flex flex-col justify-between">
+              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-amber-500/5 blur-xl pointer-events-none" />
+              <div>
+                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-1 font-display">
+                  <Ticket className="h-4.5 w-4.5 text-sky-400" /> Consistency Rewards
+                </h3>
+                <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
                   Maintain a 15-day streak to claim a premium <strong>Resume Review Voucher</strong>.
                 </p>
+
+                {/* Premium Boarding-Pass Style Ticket Visual */}
+                <div className="relative mt-6 rounded-xl border border-dashed border-amber-500/30 bg-amber-500/[0.02] p-4 overflow-hidden group hover:border-amber-500/50 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
+
+                  {/* Left Side Perforation Circle */}
+                  <div className="absolute top-1/2 -left-2 w-4 h-4 bg-slate-950 border-r border-dashed border-amber-500/30 rounded-full -translate-y-1/2 z-10" />
+                  {/* Right Side Perforation Circle */}
+                  <div className="absolute top-1/2 -right-2 w-4 h-4 bg-slate-950 border-l border-dashed border-amber-500/30 rounded-full -translate-y-1/2 z-10" />
+
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-[8px] font-mono text-amber-500 font-bold uppercase tracking-widest">Premium Voucher</span>
+                      <h4 className="text-xs font-black text-white mt-1 uppercase font-display">RESUME AUDIT PRO</h4>
+                      <p className="text-[9px] text-muted-foreground mt-0.5">Verified Placement Coach Review</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[8px] font-mono text-muted-foreground uppercase">Value</div>
+                      <div className="text-xs font-bold text-amber-400 font-mono">$150</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[8.5px] font-mono">
+                    <span className="text-muted-foreground">ID: #RES-STK-12</span>
+                    <span className="text-amber-500/80 font-bold">12 / 15 DAYS COMPLETED</span>
+                  </div>
+                </div>
+
               </div>
-              <div className="mt-4 pt-3 border-t border-white/5">
-                <div className="flex justify-between text-[10px] font-mono text-muted-foreground mb-1 leading-none">
-                  <span>Progress (12/15)</span>
-                  <span>80%</span>
+
+              {/* Progress and claim action */}
+              <div className="mt-6 pt-4 border-t border-white/5 space-y-3">
+                <div className="flex justify-between text-[10px] font-mono leading-none">
+                  <span className="text-muted-foreground">Streak Progress (12/15)</span>
+                  <span className="text-sky-400 font-bold">80%</span>
                 </div>
                 <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full" style={{ width: "80%" }} />
+                  <div className="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full transition-all duration-500" style={{ width: "80%" }} />
                 </div>
+
+                <button
+                  disabled
+                  className="w-full py-2 rounded-xl border border-white/5 bg-white/[0.02] text-muted-foreground/50 text-[10px] font-mono font-bold flex items-center justify-center gap-1.5 cursor-not-allowed uppercase"
+                >
+                  <Lock className="h-3 w-3" /> Unlocks at 15 Days
+                </button>
               </div>
-            </Card>
+            </div>
+
           </div>
         </Page>
       )}
 
-      {/* TAB: ASSESSMENT */}
       {currentTab === "assessment" && (
-        <Page title="AI Assessment" subtitle="Perform diagnostic skill audits and verify algorithmic strength.">
-          <div className="grid gap-6 md:grid-cols-3 mt-4">
-            <Card className="md:col-span-1">
-              <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-                Adjust Competencies
-              </h3>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-1.5">
-                    <span>Technical Logic</span>
-                    <span>{techSkill}%</span>
+        <Page title="AI Assessment" subtitle="Deep multi-domain analysis of your goals, skills, and risks.">
+
+          {/* Main 3-Column Dashboard Grid */}
+          <div className="grid gap-6 lg:grid-cols-12 mt-4 items-stretch">
+
+            {/* Column 1: Vertical Stepper Sidebar (col-span-3) */}
+            <div className="lg:col-span-3 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/40 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
+
+              <div>
+                {/* Step HUD Card at top */}
+                <div className="mb-6 p-4 rounded-xl border border-white/5 bg-white/[0.02] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-sky-400 animate-pulse" />
+                    <div>
+                      <div className="text-[10px] font-mono text-sky-400 uppercase font-bold">Time Estimate</div>
+                      <div className="text-[11px] font-bold text-white">~6 min remaining</div>
+                    </div>
                   </div>
-                  <input
-                    type="range"
-                    min="10"
-                    max="100"
-                    value={techSkill}
-                    onChange={(e) => setTechSkill(Number(e.target.value))}
-                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                  />
+                  <div className="text-right">
+                    <div className="text-[9px] font-mono text-muted-foreground uppercase">Progress</div>
+                    <div className="text-[11px] font-mono font-bold text-white">Step 2 of 7</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-1.5">
-                    <span>System Architecture</span>
-                    <span>{designSkill}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="10"
-                    max="100"
-                    value={designSkill}
-                    onChange={(e) => setDesignSkill(Number(e.target.value))}
-                    className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                  />
+
+                {/* Vertical Stepper List */}
+                <div className="relative space-y-4 pl-3">
+                  {/* Line connector background */}
+                  <div className="absolute left-6 top-3 bottom-3 w-0.5 bg-white/5 -translate-x-1/2 z-0" />
+
+                  {[
+                    { step: 1, name: "Current Situation", status: "Completed" },
+                    { step: 2, name: "Skills", status: "Active" },
+                    { step: 3, name: "Experience", status: "Upcoming" },
+                    { step: 4, name: "Goals", status: "Upcoming" },
+                    { step: 5, name: "Challenges", status: "Upcoming" },
+                    { step: 6, name: "Timeline", status: "Upcoming" },
+                    { step: 7, name: "Budget", status: "Upcoming" },
+                  ].map((s) => {
+                    const isActive = assessmentStep === s.step;
+                    const isCompleted = assessmentStep > s.step;
+
+                    return (
+                      <button
+                        key={s.step}
+                        onClick={() => setAssessmentStep(s.step)}
+                        className="relative flex items-center gap-3 w-full text-left py-1 group focus:outline-none bg-transparent border-none cursor-pointer z-10"
+                      >
+                        {/* Circle Node */}
+                        <div className={`w-6.5 h-6.5 rounded-full border flex items-center justify-center text-[10px] font-bold font-mono transition-all duration-300 ${isActive
+                            ? "border-sky-500 bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.25)] ring-2 ring-sky-500/15"
+                            : isCompleted
+                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                              : "border-white/10 bg-slate-950 text-muted-foreground/40 group-hover:border-white/20"
+                          }`}>
+                          {isCompleted ? <Check className="h-3 w-3 stroke-[3]" /> : s.step}
+                        </div>
+
+                        <div>
+                          <div className={`text-[11px] font-bold transition-all duration-300 ${isActive
+                              ? "text-sky-400"
+                              : isCompleted
+                                ? "text-white/80"
+                                : "text-muted-foreground/60 group-hover:text-muted-foreground/80"
+                            }`}>
+                            {s.name}
+                          </div>
+                          <span className={`text-[8px] font-semibold uppercase tracking-wider ${isActive
+                              ? "text-sky-400/80 animate-pulse"
+                              : isCompleted
+                                ? "text-emerald-400/80"
+                                : "text-muted-foreground/30"
+                            }`}>
+                            {isActive ? "Active" : isCompleted ? "Completed" : "Locked"}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-            </Card>
-            <Card className="md:col-span-2">
-              <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-                LeetCode Code Sandbox Verifier
-              </h3>
-              <textarea
-                rows={4}
-                value={leetCodeSnippet}
-                onChange={(e) => setLeetCodeSnippet(e.target.value)}
-                className="w-full bg-slate-950 font-mono text-xs text-emerald-400 p-4 rounded-xl border border-white/10 outline-none focus:border-sky-400"
-              />
-              <div className="mt-3 flex gap-2">
-                <button
-                  onClick={runCodeVerification}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer"
-                >
-                  Verify Solution
+
+              {/* Sidebar bottom indicator */}
+              <div className="mt-8 pt-4 border-t border-white/5 text-[9px] font-mono text-muted-foreground/40 text-center">
+                AI Engine: GPT-4o Normalized
+              </div>
+            </div>
+
+            {/* Column 2: The Stepper Question Form (col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl border border-white/10 bg-slate-955/50 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-indigo-500/5 blur-xl pointer-events-none" />
+
+              <div className="flex flex-col h-full justify-between">
+
+                {/* Active Step Content */}
+                <div className="min-h-[280px]">
+                  {assessmentStep === 1 && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div>
+                        <h4 className="text-base font-black text-white font-display">Current Situation</h4>
+                        <p className="text-xs text-muted-foreground mt-1">Please describe your current academic or professional context.</p>
+                      </div>
+                      <div className="space-y-4 mt-6">
+                        <div className="grid gap-2">
+                          <label className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">Primary Sector / Domain</label>
+                          <select className="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-sky-400 transition">
+                            <option>Computer Science & Software Engineering</option>
+                            <option>Biotechnology & Life Sciences</option>
+                            <option>Finance & Quantitative Economics</option>
+                            <option>Creative Design & Product Strategy</option>
+                          </select>
+                        </div>
+                        <div className="grid gap-2">
+                          <label className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">Target Level</label>
+                          <select className="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-sky-400 transition">
+                            <option>Undergraduate Fellow</option>
+                            <option>Graduate Researcher</option>
+                            <option>SaaS Technical Founder</option>
+                            <option>Principal Engineering Lead</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {assessmentStep === 2 && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div>
+                        <h4 className="text-base font-black text-white font-display">Tell us about your skills</h4>
+                        <p className="text-xs text-muted-foreground mt-1">Rate your proficiency. The AI will normalize against your domain peers.</p>
+                      </div>
+
+                      <div className="space-y-5 mt-6">
+                        {/* Quantitative methods Slider */}
+                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
+                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
+                            <span>Quantitative methods</span>
+                            <span className="font-mono text-sky-400 font-bold">{techSkill}%</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={techSkill}
+                            onChange={(e) => setTechSkill(Number(e.target.value))}
+                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                          />
+                        </div>
+
+                        {/* Scientific writing Slider */}
+                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
+                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
+                            <span>Scientific writing</span>
+                            <span className="font-mono text-sky-400 font-bold">{researchSkill}%</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={researchSkill}
+                            onChange={(e) => setResearchSkill(Number(e.target.value))}
+                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                          />
+                        </div>
+
+                        {/* Team leadership Slider */}
+                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
+                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
+                            <span>Team leadership</span>
+                            <span className="font-mono text-sky-400 font-bold">{commsSkill}%</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={commsSkill}
+                            onChange={(e) => setCommsSkill(Number(e.target.value))}
+                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                          />
+                        </div>
+
+                        {/* Fundraising / pitching Slider */}
+                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
+                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
+                            <span>Fundraising / pitching</span>
+                            <span className="font-mono text-sky-400 font-bold">{designSkill}%</span>
+                          </div>
+                          <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={designSkill}
+                            onChange={(e) => setDesignSkill(Number(e.target.value))}
+                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {assessmentStep === 3 && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div>
+                        <h4 className="text-base font-black text-white font-display">Verify Practical Experience</h4>
+                        <p className="text-xs text-muted-foreground mt-1 font-normal">Select items that are verified in your achievements vault.</p>
+                      </div>
+                      <div className="space-y-3 mt-6">
+                        {["Scientific Journals / Papers Published", "Granted Patents or Registrations", "Verified Technical Github Repositories", "Fellowships or Professional Certifications"].map((item, idx) => (
+                          <div key={idx} className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-slate-900/30 hover:border-white/10 cursor-pointer transition">
+                            <input type="checkbox" defaultChecked={idx % 2 === 0} className="rounded accent-sky-400 h-4 w-4 cursor-pointer" />
+                            <span className="text-xs text-white/90 font-medium">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {assessmentStep > 3 && (
+                    <div className="space-y-4 animate-fadeIn text-center py-12">
+                      <Lock className="h-12 w-12 text-amber-500 mx-auto animate-pulse mb-3" />
+                      <h4 className="text-base font-black text-white font-display">District Step Locked</h4>
+                      <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1 leading-relaxed">
+                        This step requires domain alignment files. Standard profile audits are completed up to Step 3. Please upgrade to Pro to submit full diagnostic checklists.
+                      </p>
+                      <button className="mt-5 px-5 py-2 text-xs font-bold text-slate-955 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-xl cursor-pointer hover:scale-105 transition border-none shadow-md shadow-amber-500/10">
+                        Upgrade Diagnostic Plan
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Form Nav Buttons */}
+                <div className="flex justify-between items-center pt-4 border-t border-white/5 mt-auto">
+                  <button
+                    disabled={assessmentStep <= 1}
+                    onClick={() => setAssessmentStep(prev => Math.max(1, prev - 1))}
+                    className="px-4 py-2 rounded-xl border border-white/10 hover:border-white/25 text-xs text-white bg-transparent transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed font-semibold"
+                  >
+                    Back
+                  </button>
+                  <button
+                    disabled={assessmentStep >= 7}
+                    onClick={() => setAssessmentStep(prev => Math.min(7, prev + 1))}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Continue
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            {/* Column 3: Live Preview HUD Dashboard (col-span-4) */}
+            <div className="lg:col-span-4 flex flex-col justify-between p-6 rounded-2xl border border-white/10 bg-slate-955/60 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl pointer-events-none" />
+
+              <div>
+                <span className="text-[9px] font-mono text-indigo-400 font-bold uppercase tracking-widest px-2 py-0.5 rounded border border-indigo-500/20 bg-indigo-500/5 self-start">
+                  Live preview
+                </span>
+
+                {/* Radial predicted success probability */}
+                <div className="mt-6 flex flex-col items-center text-center">
+                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-semibold mb-2">
+                    Predicted success probability
+                  </span>
+
+                  {/* Dial SVG */}
+                  <div className="relative w-28 h-28 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="56"
+                        cy="56"
+                        r="48"
+                        stroke="rgba(255,255,255,0.03)"
+                        strokeWidth="5"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="56"
+                        cy="56"
+                        r="48"
+                        stroke="url(#successGradient)"
+                        strokeWidth="5.5"
+                        fill="transparent"
+                        strokeDasharray="301.6"
+                        strokeDashoffset={301.6 - (301.6 * Math.min(100, Math.round((techSkill * 0.4 + researchSkill * 0.2 + commsSkill * 0.2 + designSkill * 0.2) + 25))) / 100}
+                        strokeLinecap="round"
+                        className="transition-all duration-500"
+                      />
+                      <defs>
+                        <linearGradient id="successGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#38bdf8" />
+                          <stop offset="100%" stopColor="#818cf8" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+
+                    <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
+                      <span className="text-2xl font-black text-white">
+                        {Math.min(100, Math.round((techSkill * 0.4 + researchSkill * 0.2 + commsSkill * 0.2 + designSkill * 0.2) + 25))}%
+                      </span>
+                      <span className="text-[7.5px] text-muted-foreground uppercase mt-1 font-semibold font-mono">Normalized</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sub-Metrics Section */}
+                <div className="mt-6 space-y-3 pt-4 border-t border-white/5">
+                  {/* Strengths */}
+                  <div>
+                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
+                      <span className="text-muted-foreground">Strengths</span>
+                      <span className="text-emerald-400 font-bold">
+                        {Math.min(100, Math.round(techSkill * 0.8 + researchSkill * 0.3))}%
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.round(techSkill * 0.8 + researchSkill * 0.3))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Opportunities */}
+                  <div>
+                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
+                      <span className="text-muted-foreground">Opportunities</span>
+                      <span className="text-sky-400 font-bold">
+                        {Math.min(100, Math.round(commsSkill * 0.7 + designSkill * 0.5))}%
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-sky-400 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min(100, Math.round(commsSkill * 0.7 + designSkill * 0.5))}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Risks */}
+                  <div>
+                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
+                      <span className="text-muted-foreground">Risks</span>
+                      <span className="text-rose-400 font-bold">
+                        {Math.max(0, Math.round(100 - (techSkill * 0.5 + commsSkill * 0.5)))}%
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-rose-400 rounded-full transition-all duration-500"
+                        style={{ width: `${Math.max(0, Math.round(100 - (techSkill * 0.5 + commsSkill * 0.5)))}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* AI Observations bullet list */}
+                <div className="mt-6 pt-4 border-t border-white/5 space-y-2">
+                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
+                    Real-time AI Insights
+                  </div>
+                  <ul className="space-y-2 text-[10px] text-white/85 leading-relaxed">
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-indigo-400 mt-0.5">•</span>
+                      <span>
+                        {techSkill > 70
+                          ? "Strong publication trajectory and technical logic capacity"
+                          : "Moderate quantitative trajectory, standard logic markers"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-indigo-400 mt-0.5">•</span>
+                      <span>
+                        {designSkill > 45
+                          ? "High niche opportunity inside underserved domain segments"
+                          : "Underserved niche opportunity (high demand metrics detected)"}
+                      </span>
+                    </li>
+                    <li className="flex items-start gap-1.5">
+                      <span className="text-indigo-400 mt-0.5">•</span>
+                      <span>
+                        {commsSkill > 50
+                          ? "Mentor coverage fully adequate for alignment search"
+                          : "Recommended scheduling in Advisors Hub to close leadership gaps"}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Action trigger button */}
+              <div className="mt-6 pt-4 border-t border-white/5">
+                <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 flex items-center justify-center gap-1.5 hover:opacity-95 transition cursor-pointer border-none shadow-lg shadow-sky-500/10">
+                  <Download className="h-3.5 w-3.5" /> Generate Deep AI Assessment PDF
                 </button>
-                {verificationResult === "running" && <span className="text-xs text-sky-400 font-mono self-center">Running...</span>}
-                {verificationResult === "success" && <span className="text-xs text-emerald-400 font-mono self-center">✓ Verified!</span>}
               </div>
-            </Card>
+
+            </div>
+
           </div>
+
+          {/* LeetCode Code Sandbox Verifier (Rendered at the bottom) */}
+          <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-slate-955/40 p-5 backdrop-blur-md">
+            <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-2 font-display">
+              <ShieldCheck className="h-4.5 w-4.5 text-emerald-400 animate-pulse" /> LeetCode Code Sandbox Verifier
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Submit your algorithmic codes for automatic compile checking and XP verification triggers.
+            </p>
+            <textarea
+              rows={4}
+              value={leetCodeSnippet}
+              onChange={(e) => setLeetCodeSnippet(e.target.value)}
+              className="w-full bg-slate-950 font-mono text-xs text-emerald-400 p-4 rounded-xl border border-white/10 outline-none focus:border-sky-400 transition"
+            />
+            <div className="mt-3 flex gap-2">
+              <button
+                onClick={runCodeVerification}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
+              >
+                Verify Solution
+              </button>
+              {verificationResult === "running" && <span className="text-xs text-sky-400 font-mono self-center">Running...</span>}
+              {verificationResult === "success" && <span className="text-xs text-emerald-400 font-mono self-center">✓ Verified!</span>}
+            </div>
+          </div>
+
         </Page>
       )}
 
       {/* TAB: ROADMAP */}
       {currentTab === "roadmap" && (
-        <Page title="Career Roadmap" subtitle="Explore your phase-by-phase target schedules.">
-          <Card>
-            <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-              Target Timelines
-            </h3>
-            <div className="space-y-4">
-              {["Phase 1: Basic Credential Building", "Phase 2: Project Workspaces Configuration", "Phase 3: Direct Incubation Drives"].map((p, idx) => (
-                <div key={idx} className="flex gap-4 items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
-                  <span className="h-6 w-6 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center font-bold font-mono text-xs">{idx + 1}</span>
-                  <div className="text-sm text-white font-medium">{p}</div>
+        <Page title="Career Roadmap" subtitle="Navigate your 5-phase career roadmap blueprint.">
+
+          {/* Objective Goal Header HUD */}
+          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-5 mb-6">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 animate-pulse" /> Active Career Objective
+                </span>
+                <h3 className="text-base font-black text-white mt-1 leading-snug font-display">
+                  Goal: Land summer internship at a top product company
+                </h3>
+              </div>
+              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
+                <div className="h-8 w-8 rounded-full border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold font-mono text-xs">
+                  40%
                 </div>
-              ))}
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase">Overall Blueprint</div>
+                  <div className="text-[11px] font-bold text-white">2 of 5 Phases Complete</div>
+                </div>
+              </div>
             </div>
-          </Card>
+          </div>
+
+          {/* 12-Column Blueprint Dashboard Grid */}
+          <div className="grid gap-6 lg:grid-cols-12 items-stretch">
+
+            {/* Left Column: Visual Napkin Flowchart (col-span-7) */}
+            <div className="lg:col-span-7 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-955/40 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
+
+              <div>
+                <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-6">
+                  Interactive Napkin Flowchart
+                </h3>
+
+                {/* Connected Timeline List */}
+                <div className="relative space-y-6 pl-4">
+                  {/* Vertical connector line */}
+                  <div className="absolute left-6 top-4 bottom-4 w-[2px] bg-white/5 -translate-x-1/2 z-0" />
+
+                  {[
+                    {
+                      phase: 1,
+                      title: "Basic Credential Building",
+                      time: "Months 1 - 2",
+                      desc: "Establish core portfolio, resume optimization, and diagnostic score baseline.",
+                      status: "Completed",
+                      color: "emerald",
+                      gradient: "from-emerald-400 to-teal-500",
+                      icon: Award
+                    },
+                    {
+                      phase: 2,
+                      title: "Project Workspaces Configuration",
+                      time: "Months 2 - 3",
+                      desc: "Deploy 3 fullstack SaaS apps and run test verification pipelines.",
+                      status: "In Progress",
+                      color: "sky",
+                      gradient: "from-sky-400 to-blue-500",
+                      icon: Compass
+                    },
+                    {
+                      phase: 3,
+                      title: "Core Competence Scaling",
+                      time: "Months 3 - 4",
+                      desc: "Solve 150+ medium LeetCodes and master system architecture design.",
+                      status: "Next Focus",
+                      color: "indigo",
+                      gradient: "from-indigo-400 to-purple-500",
+                      icon: Brain
+                    },
+                    {
+                      phase: 4,
+                      title: "Direct Incubation Drives",
+                      time: "Months 4 - 5",
+                      desc: "Deploy talent-to-company match model and enter mock interview rounds.",
+                      status: "Scheduled",
+                      color: "violet",
+                      gradient: "from-purple-400 to-fuchsia-500",
+                      icon: Users
+                    },
+                    {
+                      phase: 5,
+                      title: "Placement & Negotiation",
+                      time: "Months 5 - 6",
+                      desc: "Receive target match placements, schedule interviews, and negotiate offers.",
+                      status: "Locked",
+                      color: "rose",
+                      gradient: "from-fuchsia-400 to-rose-500",
+                      icon: Briefcase
+                    }
+                  ].map((p) => {
+                    const PhaseIcon = p.icon;
+                    const isActive = selectedRoadmapPhase === p.phase;
+                    const isCompleted = p.status === "Completed";
+                    const isInProgress = p.status === "In Progress";
+                    const isLocked = p.status === "Locked";
+
+                    return (
+                      <button
+                        key={p.phase}
+                        onClick={() => setSelectedRoadmapPhase(p.phase)}
+                        className={`relative flex items-start gap-4 p-4 rounded-xl border w-full text-left transition-all duration-300 group z-10 focus:outline-none bg-transparent cursor-pointer ${isActive
+                            ? "border-sky-500/40 bg-sky-500/[0.02] shadow-[0_0_15px_rgba(56,189,248,0.1)] ring-1 ring-sky-500/10"
+                            : isCompleted
+                              ? "border-emerald-500/10 hover:border-emerald-500/20 bg-emerald-500/[0.005]"
+                              : "border-white/5 bg-white/[0.002] hover:border-white/10"
+                          }`}
+                      >
+                        {/* Node Circle */}
+                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-mono font-bold shrink-0 transition-all duration-300 ${isActive
+                            ? "border-sky-500 bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.2)]"
+                            : isCompleted
+                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                              : "border-white/10 text-muted-foreground/40"
+                          }`}>
+                          {isCompleted ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : p.phase}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start">
+                            <h4 className={`text-xs font-black tracking-tight leading-none transition-all duration-300 ${isActive ? "text-sky-400" : "text-white"
+                              }`}>
+                              Phase {p.phase}: {p.title}
+                            </h4>
+                            <span className="text-[8px] font-mono text-muted-foreground/60 shrink-0 font-semibold">{p.time}</span>
+                          </div>
+
+                          <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed truncate group-hover:text-clip group-hover:whitespace-normal">
+                            {p.desc}
+                          </p>
+
+                          {/* Indicator badge */}
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <span className={`w-1.5 h-1.5 rounded-full ${isCompleted
+                                ? "bg-emerald-400"
+                                : isInProgress
+                                  ? "bg-sky-400 animate-pulse"
+                                  : isLocked
+                                    ? "bg-muted-foreground/30"
+                                    : "bg-indigo-400"
+                              }`} />
+                            <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${isCompleted
+                                ? "text-emerald-400"
+                                : isInProgress
+                                  ? "text-sky-400"
+                                  : isLocked
+                                    ? "text-muted-foreground/50"
+                                    : "text-indigo-400"
+                              }`}>
+                              {p.status}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Dynamic Phase Details Drawer (col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl pointer-events-none" />
+
+              {[
+                {
+                  phase: 1,
+                  title: "Credential Building",
+                  status: "Completed",
+                  desc: "Configure target roadmap criteria, perform basic resume checks, and hook up GitHub records.",
+                  details: "Your diagnostic baseline is set at 68%. Portfolio contains 2 active workspaces.",
+                  action: "Review Achievements",
+                  color: "emerald",
+                  tasks: [
+                    { title: "Complete diagnostic baseline scores", done: true },
+                    { title: "Verify resume credentials", done: true },
+                    { title: "Connect GitHub profile log repositories", done: true }
+                  ]
+                },
+                {
+                  phase: 2,
+                  title: "Workspaces Configuration",
+                  status: "In Progress",
+                  desc: "Deploy capstone software solutions and run continuous test coverage checks.",
+                  details: "Currently setting up automated unit check test configurations inside the SmartDoc AI project.",
+                  action: "Configure Workspace",
+                  color: "sky",
+                  tasks: [
+                    { title: "Deploy 3 active workspaces to Vercel", done: true },
+                    { title: "Configure Vitest unit testing suites", done: false },
+                    { title: "Run pipeline integration audits", done: false }
+                  ]
+                },
+                {
+                  phase: 3,
+                  title: "Core Competence Scaling",
+                  status: "Locked",
+                  desc: "Tackle logic audits, master data structure behaviors, and complete system design diagnostics.",
+                  details: "Locks automatically open when Phase 2 reaches 80% progress index metrics.",
+                  action: "Unlock Sandbox Verifier",
+                  color: "indigo",
+                  tasks: [
+                    { title: "Solve 150+ medium LeetCode logic audits", done: false },
+                    { title: "Complete system scaling architectures", done: false },
+                    { title: "Submit mock diagnostic verifications", done: false }
+                  ]
+                },
+                {
+                  phase: 4,
+                  title: "Direct Incubation Drives",
+                  status: "Locked",
+                  desc: "Submit credentials to verified coaches and perform match scanning assessments.",
+                  details: "Incubation matching pipelines open in September 2026.",
+                  action: "Book Advisory Slot",
+                  color: "violet",
+                  tasks: [
+                    { title: "Route credentials to committee advisors", done: false },
+                    { title: "Execute matching scanners metrics", done: false },
+                    { title: "Schedule advisor scheduling mocks", done: false }
+                  ]
+                },
+                {
+                  phase: 5,
+                  title: "Placement & Negotiation",
+                  status: "Locked",
+                  desc: "Select preferred talent-to-company routing and complete salary negotiations.",
+                  details: "Summer internship matching algorithms open upon completion of the incubation mock stages.",
+                  action: "Locked",
+                  color: "rose",
+                  tasks: [
+                    { title: "Approve active company placement routing", done: false },
+                    { title: "Execute whiteboard panel simulations", done: false },
+                    { title: "Negotiate salary & benefit contract terms", done: false }
+                  ]
+                }
+              ].filter(p => p.phase === selectedRoadmapPhase).map((p) => {
+                const isLocked = p.status === "Locked";
+                const isCompleted = p.status === "Completed";
+
+                return (
+                  <div key={p.phase} className="flex flex-col h-full justify-between animate-fadeIn">
+                    <div>
+                      {/* Header info */}
+                      <div className="flex justify-between items-center pb-4 border-b border-white/5">
+                        <div>
+                          <span className="text-[9px] font-mono text-muted-foreground uppercase">Selected District Phase</span>
+                          <h3 className="text-sm font-black text-white mt-0.5">
+                            Phase {p.phase}: {p.title}
+                          </h3>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded border text-[9px] font-mono font-bold uppercase tracking-wider ${isCompleted
+                            ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
+                            : p.status === "In Progress"
+                              ? "border-sky-500/20 bg-sky-500/5 text-sky-400 animate-pulse"
+                              : "border-white/10 bg-white/5 text-muted-foreground/60"
+                          }`}>
+                          {p.status}
+                        </span>
+                      </div>
+
+                      {/* Phase description */}
+                      <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
+                        {p.desc}
+                      </p>
+
+                      {/* Sub tasks check checklist */}
+                      <div className="mt-6 space-y-3">
+                        <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
+                          Blueprint Checklist
+                        </div>
+                        {p.tasks.map((task, idx) => (
+                          <div key={idx} className="flex items-start gap-2.5 text-[11px] leading-relaxed">
+                            {isLocked ? (
+                              <div className="mt-0.5 rounded border border-white/10 w-3.5 h-3.5 flex items-center justify-center bg-white/[0.01]">
+                                <Lock className="h-1.5 w-1.5 text-muted-foreground/30" />
+                              </div>
+                            ) : task.done ? (
+                              <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                            ) : (
+                              <div className="mt-0.5 rounded border border-white/20 w-3.5 h-3.5 flex-shrink-0" />
+                            )}
+                            <span className={`${isLocked
+                                ? "text-muted-foreground/40 line-through select-none"
+                                : task.done
+                                  ? "text-muted-foreground/80 line-through"
+                                  : "text-white/80 font-medium"
+                              }`}>
+                              {task.title}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Extra Audit text */}
+                      <div className="mt-6 p-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                        <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
+                          Phase Status Report
+                        </div>
+                        <p className="text-[10px] text-white/70 mt-1 leading-normal">
+                          {p.details}
+                        </p>
+                      </div>
+
+                    </div>
+
+                    {/* Primary actions triggers */}
+                    <div className="mt-8 pt-4 border-t border-white/5">
+                      {isLocked ? (
+                        <button disabled className="w-full py-2.5 rounded-xl border border-white/5 bg-white/[0.02] text-muted-foreground/40 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-not-allowed uppercase">
+                          <Lock className="h-3.5 w-3.5" /> Complete Preceding Phases
+                        </button>
+                      ) : (
+                        <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-955 flex items-center justify-center gap-1.5 hover:opacity-95 transition cursor-pointer border-none shadow-lg shadow-sky-500/10">
+                          {p.action} <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
         </Page>
       )}
 
       {/* TAB: SKILLS */}
       {currentTab === "skills" && (
-        <Page title="Skill Builder" subtitle="Review target competency markers.">
-          <div className="grid gap-4 md:grid-cols-3">
-            {["System Engineering", "Database Scaling", "ML Optimization"].map((s, idx) => (
-              <Card key={idx}>
-                <div className="text-xs text-muted-foreground uppercase font-mono">Competence</div>
-                <h4 className="text-sm font-bold text-white mt-1.5 font-display">{s}</h4>
-                <div className="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full" style={{ width: `${60 + idx * 10}%` }} />
+        <Page title="Skill Builder" subtitle="Master target competency markers and level up your technical profile.">
+          {/* Stats HUD Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: "Skills Tracked", value: "12", delta: "+2 this week", color: "sky" },
+              { label: "Avg Proficiency", value: "68%", delta: "↑4% vs last month", color: "emerald" },
+              { label: "Certifications", value: "3", delta: "1 pending review", color: "violet" },
+              { label: "Learning Streak", value: "9 days", delta: "🔥 Keep going!", color: "amber" },
+            ].map((stat) => (
+              <div key={stat.label} className={`relative overflow-hidden p-4 rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md`}>
+                <div className={`absolute top-0 right-0 w-16 h-16 rounded-full blur-xl opacity-30 ${stat.color === "sky" ? "bg-sky-400" : stat.color === "emerald" ? "bg-emerald-400" : stat.color === "violet" ? "bg-violet-400" : "bg-amber-400"
+                  }`} />
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">{stat.label}</div>
+                <div className={`text-2xl font-black mt-1 ${stat.color === "sky" ? "text-sky-400" : stat.color === "emerald" ? "text-emerald-400" : stat.color === "violet" ? "text-violet-400" : "text-amber-400"
+                  }`}>{stat.value}</div>
+                <div className="text-[10px] text-muted-foreground/60 mt-0.5 font-mono">{stat.delta}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Skills Grid */}
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {[
+              { name: "System Engineering", level: "Advanced", pct: 78, color: "sky", gradient: "from-sky-400 to-blue-500", tags: ["Distributed", "Cloud", "Docker"], xp: 2400 },
+              { name: "Database Scaling", level: "Intermediate", pct: 62, color: "indigo", gradient: "from-indigo-400 to-purple-500", tags: ["SQL", "Redis", "NoSQL"], xp: 1800 },
+              { name: "ML Optimization", level: "Intermediate", pct: 55, color: "violet", gradient: "from-violet-400 to-fuchsia-500", tags: ["PyTorch", "ONNX", "TFLite"], xp: 1550 },
+              { name: "API Architecture", level: "Advanced", pct: 85, color: "emerald", gradient: "from-emerald-400 to-teal-500", tags: ["REST", "GraphQL", "gRPC"], xp: 2800 },
+              { name: "Algorithmic DSA", level: "Intermediate", pct: 70, color: "amber", gradient: "from-amber-400 to-orange-500", tags: ["Trees", "Graphs", "DP"], xp: 2100 },
+              { name: "Security & Auth", level: "Beginner", pct: 35, color: "rose", gradient: "from-rose-400 to-pink-500", tags: ["OAuth", "JWT", "HTTPS"], xp: 900 },
+            ].map((skill) => (
+              <div key={skill.name} className="group relative p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl opacity-10 bg-gradient-to-br ${skill.gradient}`} />
+
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[8px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border ${skill.level === "Advanced" ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-400" :
+                          skill.level === "Intermediate" ? "border-sky-500/30 bg-sky-500/5 text-sky-400" :
+                            "border-amber-500/30 bg-amber-500/5 text-amber-400"
+                        }`}>{skill.level}</span>
+                    </div>
+                    <h4 className="text-sm font-black text-white mt-2">{skill.name}</h4>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-xl font-black bg-gradient-to-r ${skill.gradient} bg-clip-text text-transparent`}>{skill.pct}%</div>
+                    <div className="text-[8px] font-mono text-muted-foreground/50">{skill.xp} XP</div>
+                  </div>
                 </div>
-              </Card>
+
+                {/* Progress bar */}
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mb-3">
+                  <div
+                    className={`h-full rounded-full bg-gradient-to-r ${skill.gradient} transition-all duration-700`}
+                    style={{ width: `${skill.pct}%` }}
+                  />
+                </div>
+
+                {/* Tags */}
+                <div className="flex gap-1.5 flex-wrap">
+                  {skill.tags.map((tag) => (
+                    <span key={tag} className="text-[9px] font-mono px-2 py-0.5 rounded-lg border border-white/5 bg-white/[0.02] text-muted-foreground/60">{tag}</span>
+                  ))}
+                </div>
+
+                {/* Hover CTA */}
+                <button className="mt-4 w-full py-1.5 rounded-xl text-[10px] font-bold border border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/[0.05] hover:text-white transition cursor-pointer opacity-0 group-hover:opacity-100">
+                  Practice Now →
+                </button>
+              </div>
             ))}
           </div>
         </Page>
@@ -1260,30 +3246,245 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
 
       {/* TAB: PROJECTS */}
       {currentTab === "projects" && (
-        <Page title="Projects Vault" subtitle="Track capstone repos and code environments.">
-          <div className="mb-4 flex gap-2">
-            <input
-              type="text"
-              placeholder="New Project Name..."
-              value={newProjName}
-              onChange={(e) => setNewProjName(e.target.value)}
-              className="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-sky-400/50"
-            />
-            <button onClick={handleAddProject} className="rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 px-4 py-2 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer">
-              Add Project
-            </button>
+        <Page title="Projects Vault" subtitle="Track capstone repositories, deployments, and code execution pipelines.">
+
+          {/* CodeVimarsh Header Style */}
+          <div className="relative mb-8 mt-2 p-6 rounded-3xl border border-white/5 bg-slate-900/40 overflow-hidden">
+            <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-orange-500/5 blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full bg-sky-500/5 blur-3xl pointer-events-none" />
+
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="max-w-3xl">
+                <span className="text-[10px] uppercase font-mono tracking-widest text-orange-500 font-extrabold block">
+                  // community builds
+                </span>
+                <h1 className="text-3xl sm:text-4.5xl font-black text-white mt-1.5 tracking-tight font-display uppercase leading-none">
+                  The Build <span className="bg-gradient-to-r from-orange-400 to-amber-500 bg-clip-text text-transparent" style={{ textShadow: '0 0 30px rgba(249,115,22,0.4)' }}>Vault.</span>
+                </h1>
+                <p className="text-xs sm:text-sm text-muted-foreground/80 mt-3 leading-relaxed font-mono">
+                  Explore projects built by the student community — from low-level systems to modern web apps.
+                  <strong className="text-white ml-1 font-mono">{projectsList.length} Capstones Published</strong>.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsAddProjectModalOpen(true)}
+                className="group flex items-center gap-2 whitespace-nowrap bg-orange-500 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.25)] hover:bg-orange-400 hover:shadow-[0_0_30px_rgba(249,115,22,0.45)] active:scale-95 transition-all duration-200 border-none cursor-pointer"
+              >
+                <Plus size={14} className="transition-transform duration-200 group-hover:rotate-90 text-slate-950" />
+                Submit Project
+              </button>
+            </div>
+
+            {/* Search bar */}
+            <div className="mt-6 relative max-w-lg">
+              <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" />
+              <input
+                type="text"
+                placeholder="Search by project name or tech stack..."
+                value={projectSearchQuery}
+                onChange={(e) => setProjectSearchQuery(e.target.value)}
+                className="w-full bg-white/5 hover:bg-white/[0.08] focus:bg-white/[0.08] border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-xs text-white outline-none focus:border-orange-500/50 transition placeholder:text-muted-foreground/35"
+              />
+            </div>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {projectsList.map((p, idx) => (
-              <Card key={idx}>
-                <h4 className="text-sm font-bold text-white font-display">{p.name}</h4>
-                <div className="text-xs text-sky-400 font-mono mt-1">{p.github}</div>
-                <div className="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full" style={{ width: `${p.progress}%` }} />
-                </div>
-              </Card>
+
+          {/* Stats row */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            {[
+              { label: "Total Projects", value: projectsList.length.toString(), color: "sky" },
+              { label: "Avg Progress", value: `${projectsList.length ? Math.round(projectsList.reduce((a, p) => a + p.progress, 0) / projectsList.length) : 0}%`, color: "emerald" },
+              { label: "Deployed Live", value: projectsList.filter(p => p.deployStatus === "success").length.toString(), color: "violet" },
+            ].map((s) => (
+              <div key={s.label} className="relative overflow-hidden p-4 rounded-2xl border border-white/5 bg-slate-900/30 text-center">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-10 bg-white/[0.01] blur-md rounded-full pointer-events-none" />
+                <div className={`text-2xl font-black ${s.color === "sky" ? "text-sky-400" : s.color === "emerald" ? "text-emerald-400" : "text-violet-400"}`}>{s.value}</div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mt-1">{s.label}</div>
+              </div>
             ))}
           </div>
+
+          {/* Projects Grid (3 columns matching CodeVimarsh layout) */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {projectsList
+              .filter(p =>
+                p.name.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
+                p.techStack.some((t: string) => t.toLowerCase().includes(projectSearchQuery.toLowerCase())) ||
+                (p.category || "").toLowerCase().includes(projectSearchQuery.toLowerCase())
+              )
+              .map((p, idx) => {
+                const accent = CATEGORY_COLORS[p.category] ?? '#ff6a00';
+                const preview = p.shortDescription ?? p.desc ?? p.description;
+                const statusColor = p.progress >= 80 ? "emerald" : p.progress >= 40 ? "sky" : "amber";
+
+                const deployPills: Record<string, { text: string; bg: string; glow: string }> = {
+                  success: { text: "Live", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20", glow: "bg-emerald-400" },
+                  building: { text: "Building", bg: "bg-amber-500/10 text-amber-400 border-amber-500/20", glow: "bg-amber-400 animate-ping" },
+                  idle: { text: "Disconnected", bg: "bg-white/5 text-muted-foreground/60 border-white/10", glow: "bg-white/35" },
+                };
+                const deployPill = deployPills[p.deployStatus || "idle"] || deployPills.idle;
+
+                const galleryImages: string[] =
+                  p.images && p.images.length > 0
+                    ? p.images
+                    : p.image
+                      ? [p.image]
+                      : [];
+
+                return (
+                  <motion.article
+                    key={p.id || idx}
+                    layout
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                    className="group relative bg-slate-900/40 border border-white/5 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 ease-out hover:border-orange-500/30 hover:shadow-[0_8px_40px_rgba(249,115,22,0.1)] hover:-translate-y-0.5"
+                  >
+                    {/* Top Accent line gradient */}
+                    <div
+                      className="absolute top-0 inset-x-0 h-[2px] opacity-75 z-10"
+                      style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }}
+                    />
+
+                    {/* Image / Carousel */}
+                    <InlineImageCarousel
+                      images={galleryImages}
+                      alt={p.name}
+                      className="h-44 shrink-0"
+                      overlay={
+                        <>
+                          {/* Category badge */}
+                          <div
+                            className="absolute top-3.5 left-3.5 z-10 px-2.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider border font-mono"
+                            style={{
+                              background: `${accent}18`,
+                              borderColor: `${accent}40`,
+                              color: accent,
+                            }}
+                          >
+                            {p.category || "Web"}
+                          </div>
+
+                          {/* Deploy status overlay */}
+                          <span className={`absolute top-3.5 right-3.5 z-10 flex items-center gap-1 px-2.5 py-0.5 rounded text-[8.5px] font-mono font-semibold uppercase tracking-wider bg-slate-950/85 border ${deployPill.bg}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${deployPill.glow}`} />
+                            {deployPill.text}
+                          </span>
+
+                          {/* Gradient fade at bottom */}
+                          <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-slate-950 to-transparent z-10 pointer-events-none" />
+
+                          {/* Letter placeholder when no images */}
+                          {galleryImages.length === 0 && (
+                            <span
+                              className="absolute inset-0 flex items-center justify-center text-7xl font-black font-display opacity-15 select-none"
+                              style={{ color: accent }}
+                            >
+                              {p.name.charAt(0)}
+                            </span>
+                          )}
+                        </>
+                      }
+                    />
+
+                    {/* Card Content body */}
+                    <div className="p-5 flex-1 flex flex-col justify-between text-left">
+                      <div>
+                        {/* Title */}
+                        <h3 className="text-base font-black text-white group-hover:text-orange-400 transition leading-snug font-display truncate">
+                          {p.name}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-[11px] text-muted-foreground/80 mt-2 leading-relaxed min-h-[36px] line-clamp-2 font-sans">
+                          {preview}
+                        </p>
+
+                        {/* Tech Chips row (Sliced to first 3 + counter) */}
+                        <div className="flex gap-1.5 flex-wrap my-3.5">
+                          {p.techStack.slice(0, 3).map((tech: string) => (
+                            <span key={tech} className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-white/[0.03] border border-white/5 text-muted-foreground/85 hover:text-white transition select-none">
+                              {tech}
+                            </span>
+                          ))}
+                          {p.techStack.length > 3 && (
+                            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-white/[0.03] border border-white/5 text-muted-foreground/40">
+                              +{p.techStack.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Code Pipeline Stats */}
+                        <div className="grid grid-cols-3 gap-1.5 text-[9px] font-mono text-muted-foreground/70 py-2 px-2.5 bg-slate-950/40 border border-white/5 rounded-xl my-3.5">
+                          <div className="flex items-center gap-1 min-w-0" title="Active Branch">
+                            <GitBranch className="h-3 w-3 text-sky-400 shrink-0" />
+                            <span className="truncate text-white/90">{p.branch || "main"}</span>
+                          </div>
+                          <div className="flex items-center gap-1 min-w-0" title="Total Commits">
+                            <GitCommit className="h-3 w-3 text-emerald-400 shrink-0" />
+                            <span className="truncate text-white/90">{p.commits || 1} Commits</span>
+                          </div>
+                          <div className="flex items-center gap-1 min-w-0" title="Tests Validation">
+                            <CheckCircle2 className={`h-3 w-3 shrink-0 ${p.tests === "0/0" ? "text-muted-foreground/40" : "text-emerald-400"}`} />
+                            <span className="truncate text-white/90">{p.tests || "0/0"} Tests</span>
+                          </div>
+                        </div>
+
+                        {/* Progress bar */}
+                        <div className="mt-3.5 mb-2">
+                          <div className="flex justify-between items-center text-[9px] font-mono mb-1 leading-none">
+                            <span className="text-muted-foreground/60">Development Completion</span>
+                            <span className={`font-black ${statusColor === "emerald" ? "text-emerald-400" : statusColor === "sky" ? "text-sky-400" : "text-amber-400"}`}>{p.progress}%</span>
+                          </div>
+                          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-700 bg-gradient-to-r ${statusColor === "emerald" ? "from-emerald-400 to-teal-500" :
+                                  statusColor === "sky" ? "from-sky-400 to-blue-500" :
+                                    "from-amber-400 to-orange-500"
+                                }`}
+                              style={{ width: `${p.progress}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions row */}
+                      <div className="flex gap-2.5 mt-4 pt-3.5 border-t border-white/5">
+                        <button
+                          onClick={() => setSelectedDetailProject(p)}
+                          className="flex-1 py-2 rounded-xl text-[10px] font-bold border border-orange-500/20 bg-orange-500/5 text-orange-400 hover:bg-orange-500/15 hover:border-orange-500/40 transition cursor-pointer flex items-center justify-center gap-1 bg-transparent"
+                        >
+                          More Info <ChevronRight size={13} className="text-orange-400" />
+                        </button>
+                        {p.github && (
+                          <a
+                            href={`https://${p.github}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 py-2 rounded-xl text-[10px] font-bold border border-white/5 bg-white/[0.02] text-muted-foreground hover:bg-white/[0.05] hover:text-white transition cursor-pointer flex items-center justify-center gap-1.5"
+                          >
+                            <Github className="h-3.5 w-3.5" /> View Repo
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </motion.article>
+                );
+              })}
+          </div>
+
+          {/* Details Modal overlay */}
+          <ProjectDetailsModal
+            project={selectedDetailProject}
+            onClose={() => setSelectedDetailProject(null)}
+          />
+
+          {/* Project Submission Form modal */}
+          <ProjectFormModal
+            isOpen={isAddProjectModalOpen}
+            onClose={() => setIsAddProjectModalOpen(false)}
+            onSubmit={handleAddProject}
+          />
         </Page>
       )}
 
@@ -1306,16 +3507,71 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
 
       {/* TAB: MENTORS */}
       {currentTab === "mentors" && (
-        <Page title="Advisors Hub" subtitle="Interact with verified industry coaches.">
-          <div className="grid gap-4 md:grid-cols-2">
-            {["Dr. Helena Chen", "Marco Rossi"].map((m) => (
-              <Card key={m} className="flex justify-between items-center">
-                <div>
-                  <h4 className="text-sm font-bold text-white font-display">{m}</h4>
-                  <p className="text-xs text-muted-foreground">Advisory Committee</p>
+        <Page title="Advisors Hub" subtitle="Connect with verified industry coaches matched to your career objectives.">
+          {/* Header Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: "Matched Mentors", value: "5", icon: "👥", color: "sky" },
+              { label: "Sessions Booked", value: "3", icon: "📅", color: "emerald" },
+              { label: "Avg Success Rate", value: "93%", icon: "📈", color: "violet" },
+              { label: "Next Session", value: "Tomorrow", icon: "⏰", color: "amber" },
+            ].map((stat) => (
+              <div key={stat.label} className="p-4 rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md">
+                <div className="text-lg mb-1">{stat.icon}</div>
+                <div className={`text-xl font-black ${stat.color === "sky" ? "text-sky-400" : stat.color === "emerald" ? "text-emerald-400" : stat.color === "violet" ? "text-violet-400" : "text-amber-400"}`}>{stat.value}</div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mentors Grid */}
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {[
+              { name: "Dr. Helena Chen", domain: "ML Research", exp: "12 yrs · MIT PhD", rate: 97, rating: 5.0, avail: "Tomorrow", budget: "₹2,400/hr", bio: "Specialist in neural architecture search and model compression. Mentored 40+ researchers to top-tier publications.", tags: ["Deep Learning", "NLP", "Research"] },
+              { name: "Marco Rossi", domain: "SDE Placements", exp: "8 yrs · ex-Meta", rate: 94, rating: 4.9, avail: "This week", budget: "₹1,800/hr", bio: "Senior engineer from Meta specializing in distributed systems. Expert in system design and behavioral rounds.", tags: ["DSA", "System Design", "FAANG"] },
+              { name: "Priya Raghavan", domain: "Product Strategy", exp: "9 yrs · ex-Razorpay", rate: 96, rating: 4.9, avail: "This week", budget: "₹1,800/hr", bio: "Product strategist focusing on growth loops and user research. Helped 30+ candidates land PM roles at top companies.", tags: ["PM", "Growth", "Strategy"] },
+              { name: "Rohan Iyer", domain: "Startup Funding", exp: "6 yrs · 2 exits", rate: 90, rating: 4.8, avail: "Next week", budget: "₹2,000/hr", bio: "Venture builder with 2 successful exits. Expert in pitch decks, financial modeling, and investor outreach.", tags: ["Fundraising", "Pitch", "Startup"] },
+            ].map((mentor) => (
+              <div key={mentor.name} className="group relative p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-white/20 transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 rounded-full blur-2xl opacity-10 bg-sky-400" />
+
+                {/* Avatar + Name */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-sky-400 to-indigo-500 flex items-center justify-center text-sm font-black text-slate-950 shrink-0">
+                    {mentor.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-white">{mentor.name}</h4>
+                    <p className="text-[10px] font-mono text-sky-400">{mentor.domain}</p>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <div className="text-xs font-bold text-amber-400 flex items-center gap-0.5 justify-end">⭐ {mentor.rating}</div>
+                    <div className="text-[9px] font-mono text-emerald-400">{mentor.rate}% success</div>
+                  </div>
                 </div>
-                <button className="px-3.5 py-1.5 rounded-lg bg-sky-500/20 text-sky-400 text-[10px] font-bold cursor-pointer">Book Slot</button>
-              </Card>
+
+                {/* Bio */}
+                <p className="text-[10px] text-muted-foreground leading-relaxed mb-3 line-clamp-2 group-hover:line-clamp-none transition-all">{mentor.bio}</p>
+
+                {/* Tags */}
+                <div className="flex gap-1.5 flex-wrap mb-4">
+                  {mentor.tags.map((tag) => (
+                    <span key={tag} className="text-[9px] font-mono px-2 py-0.5 rounded-lg border border-white/5 bg-white/[0.02] text-muted-foreground/60">{tag}</span>
+                  ))}
+                </div>
+
+                {/* Stats row */}
+                <div className="grid grid-cols-3 gap-2 text-[9px] font-mono text-muted-foreground mb-4 bg-white/[0.01] border border-white/5 rounded-xl p-2.5">
+                  <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {mentor.exp.split(" · ")[0]}</span>
+                  <span className="flex items-center gap-1 text-emerald-400"><Calendar className="h-3 w-3" /> {mentor.avail}</span>
+                  <span className="flex items-center gap-1">{mentor.budget}</span>
+                </div>
+
+                {/* Book button */}
+                <button className="w-full py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-[11px] font-bold text-slate-950 hover:opacity-90 transition cursor-pointer">
+                  Book Session →
+                </button>
+              </div>
             ))}
           </div>
         </Page>
@@ -1332,8 +3588,30 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
 
       {/* TAB: REWARDS */}
       {currentTab === "rewards" && (
-        <Page title="Reward Passes" subtitle="Apple Wallet styled holographic passes.">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-4">
+        <Page title="Reward Center" subtitle="Claim holographic passes and unlock premium career benefits.">
+          {/* XP Header */}
+          <div className="relative mb-6 overflow-hidden p-5 rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-md">
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl opacity-10 bg-amber-400" />
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-mono text-amber-400 uppercase tracking-widest font-bold flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 animate-pulse" /> Reward Wallet
+                </span>
+                <h3 className="text-lg font-black text-white mt-1">Your Career Achievement Passes</h3>
+                <p className="text-[11px] text-muted-foreground mt-0.5">Unlock passes by completing milestones and maintaining streaks.</p>
+              </div>
+              <div className="flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-500 flex items-center justify-center text-slate-950 font-bold text-xs">{xp > 999 ? `${(xp / 1000).toFixed(1)}k` : xp}</div>
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase">Total XP Earned</div>
+                  <div className="text-xs font-bold text-white">{level} Level</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Passes Grid */}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <HolographicTicket
               title="Expert Advisory Pass"
               subtitle="Unlock 1-on-1 consultation slot w/ verified architects"
@@ -1352,13 +3630,76 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
               gradient="from-violet-400 via-purple-400 to-fuchsia-500"
               accentColor="#a78bfa"
             />
+            {/* Locked pass */}
+            <div className="relative p-[1.5px] rounded-2xl bg-gradient-to-r from-white/10 to-white/5 overflow-hidden opacity-50">
+              <div className="h-full bg-slate-950 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-3">
+                <Lock className="h-8 w-8 text-muted-foreground/40" />
+                <h4 className="text-sm font-black text-white/50">Mock Interview Pass</h4>
+                <p className="text-[10px] text-muted-foreground/40 leading-relaxed">Complete 15 Arena Challenges to unlock this premium interview pass.</p>
+                <div className="text-[9px] font-mono text-muted-foreground/30 uppercase">Requires 15-day streak</div>
+              </div>
+            </div>
+          </div>
+        </Page>
+      )}
+
+      {/* FALLBACK: ACHIEVEMENTS TAB */}
+      {currentTab === "achievements" && (
+        <Page title="Achievement Vault" subtitle="Your milestone badges, XP records, and earned credentials.">
+          {/* Summary HUD */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {[
+              { label: "Badges Earned", value: "14", icon: "🏆", color: "amber" },
+              { label: "Total XP", value: xp > 999 ? `${(xp / 1000).toFixed(1)}k` : xp.toString(), icon: "⚡", color: "sky" },
+              { label: "Current Level", value: level.toString(), icon: "🎖️", color: "violet" },
+              { label: "Streak Record", value: "12 days", icon: "🔥", color: "rose" },
+            ].map((s) => (
+              <div key={s.label} className="relative overflow-hidden p-4 rounded-2xl border border-white/5 bg-slate-900/40">
+                <div className="text-xl mb-1">{s.icon}</div>
+                <div className={`text-xl font-black ${s.color === "amber" ? "text-amber-400" : s.color === "sky" ? "text-sky-400" : s.color === "violet" ? "text-violet-400" : "text-rose-400"}`}>{s.value}</div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Badges Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[
+              { title: "First Commit", desc: "Pushed first GitHub repo", icon: "🚀", earned: true, color: "sky" },
+              { title: "Streak Warrior", desc: "7-day active learning streak", icon: "🔥", earned: true, color: "rose" },
+              { title: "Algo Master", desc: "Solved 50 coding challenges", icon: "🧠", earned: true, color: "violet" },
+              { title: "Team Player", desc: "Collaborated on 3 projects", icon: "🤝", earned: true, color: "emerald" },
+              { title: "AI Pioneer", desc: "Completed AI Assessment", icon: "🤖", earned: true, color: "indigo" },
+              { title: "Pitch Perfect", desc: "Delivered first mock pitch", icon: "🎯", earned: false, color: "amber" },
+              { title: "Published", desc: "Submit a research paper", icon: "📄", earned: false, color: "teal" },
+              { title: "Grand Finale", desc: "Land your target internship", icon: "🎓", earned: false, color: "gold" },
+            ].map((badge) => (
+              <div key={badge.title} className={`relative p-4 rounded-2xl border text-center transition-all duration-300 overflow-hidden ${badge.earned
+                  ? "border-white/10 bg-slate-900/40 hover:border-white/20 hover:-translate-y-1"
+                  : "border-white/5 bg-slate-950/20 opacity-40"
+                }`}>
+                {!badge.earned && (
+                  <div className="absolute top-2 right-2">
+                    <Lock className="h-3 w-3 text-muted-foreground/30" />
+                  </div>
+                )}
+                <div className="text-3xl mb-2">{badge.icon}</div>
+                <h4 className={`text-xs font-black ${badge.earned ? "text-white" : "text-white/30"}`}>{badge.title}</h4>
+                <p className={`text-[9px] font-mono mt-1 leading-relaxed ${badge.earned ? "text-muted-foreground/60" : "text-muted-foreground/30"}`}>{badge.desc}</p>
+                {badge.earned && (
+                  <div className="mt-2 text-[8px] font-mono text-emerald-400 flex items-center justify-center gap-1">
+                    <CheckCircle2 className="h-2.5 w-2.5" /> Earned
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </Page>
       )}
 
       {/* FALLBACK TABS */}
-      {["achievements", "community", "profile"].includes(currentTab) && (
-        <Page title={currentTab.toUpperCase()} subtitle="Profile settings and digital logs.">
+      {["community", "profile"].includes(currentTab) && (
+        <Page title={currentTab.charAt(0).toUpperCase() + currentTab.slice(1)} subtitle="Profile settings and digital logs.">
           <Card className="p-6">
             <div className="text-sm text-white font-bold mb-2">Aryan Buha</div>
             <p className="text-xs text-muted-foreground">Ecosystem verified candidate logs.</p>
@@ -2055,11 +4396,10 @@ function FounderDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={slide.slide}
                     onClick={() => setSelectedSlide(slide.slide)}
-                    className={`w-full text-left p-3 rounded-xl border text-xs transition cursor-pointer ${
-                      selectedSlide === slide.slide
+                    className={`w-full text-left p-3 rounded-xl border text-xs transition cursor-pointer ${selectedSlide === slide.slide
                         ? "border-rose-400/40 bg-white/[0.04]"
                         : "border-white/5 bg-white/[0.01] hover:bg-white/[0.03]"
-                    }`}
+                      }`}
                   >
                     <div className="flex justify-between items-center font-bold text-white mb-1">
                       <span>Slide {slide.slide}: {slide.title}</span>
@@ -2235,7 +4575,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
     nrr: 15,
     tam: 10
   });
-  
+
   // Custom metrics slider adjustment for compared startups
   const [comparedMetrics, setComparedMetrics] = useState<Record<number, {
     team: number;
@@ -2267,7 +4607,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
     const metrics = comparedMetrics[id];
     const s = pipeline.find(x => x.id === id);
     if (!metrics || !s) return 0;
-    
+
     // Normalize metrics to 0-100 scale
     const teamNorm = metrics.team * 10;
     const velocityNorm = metrics.velocity * 10;
@@ -2390,7 +4730,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       // Recalculate ddScore for this startup inside pipeline state
       const checkedCount = Object.values(updated[startupId]).filter(Boolean).length;
       const score = Math.round((checkedCount / 5) * 100);
-      
+
       setPipeline(prevPipe =>
         prevPipe.map(s => (s.id === startupId ? { ...s, ddScore: score } : s))
       );
@@ -2616,7 +4956,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                 Fund III deployment remains on trajectory. dry powder stands at <strong className="text-white">₹{dryPowder}M</strong>. We have <strong className="text-white">{pipeline.filter(s => s.stage === "Due Diligence").length} companies</strong> undergoing critical audits.
               </p>
             </div>
-            
+
             {/* Circular Dry Powder Dial */}
             <div className="flex flex-col justify-center rounded-xl bg-white/[0.02] border border-white/5 p-4 relative">
               <div className="text-[9px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">
@@ -2738,7 +5078,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DEAL FLOW */}
       {currentTab === "deal_flow" && (
         <Page title="Venture Deal Flow Kanban" subtitle="Track deal milestones. Drag and advance target startups to Term Sheet checkpoints.">
-          
+
           {/* Add Startup Toggle Button */}
           <div className="mb-4 flex justify-between items-center">
             <span className="text-xs text-muted-foreground">
@@ -2849,7 +5189,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                             {t.sector.split(" & ")[0]}
                           </div>
                           <div className="text-white font-bold text-xs">{t.name}</div>
-                          
+
                           <div className="mt-2 text-[10px] text-muted-foreground space-y-0.5 font-mono">
                             <div>Ask: {t.ask}</div>
                             <div>ARR: {t.arr}</div>
@@ -2901,7 +5241,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: STARTUP DISCOVERY & BATTLEFIELD */}
       {currentTab === "startup_discovery" && (
         <Page title="Startup Discovery Suite" subtitle="Review discovered targets and access the Startup Battlefield side-by-side matching matrix.">
-          
+
           {/* Section 1: Discovered Startups Grid */}
           <div className="mb-8">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5">
@@ -2937,11 +5277,10 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                             setBattlefieldIds([...battlefieldIds, s.id]);
                           }
                         }}
-                        className={`w-full py-1 rounded text-[10px] font-bold cursor-pointer transition ${
-                          isCompared 
-                            ? "bg-rose-500/20 text-rose-300 border border-rose-500/10 hover:bg-rose-500/30" 
+                        className={`w-full py-1 rounded text-[10px] font-bold cursor-pointer transition ${isCompared
+                            ? "bg-rose-500/20 text-rose-300 border border-rose-500/10 hover:bg-rose-500/30"
                             : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/10 hover:bg-emerald-500/30"
-                        }`}
+                          }`}
                       >
                         {isCompared ? "Remove from Battle" : "Add to Battlefield"}
                       </button>
@@ -2955,7 +5294,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
           {/* Section 2: Startup Battlefield Matrix */}
           <Card className="border border-emerald-400/20 relative overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900">
             <div className="absolute top-0 right-0 h-40 w-40 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-            
+
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 mb-4 gap-2">
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono flex items-center gap-1.5">
@@ -3044,9 +5383,8 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                     <div className="flex justify-between items-center mb-3">
                       <h4 className="text-sm font-bold text-white font-display">{s.name}</h4>
                       <div className="flex items-center gap-1.5">
-                        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
-                          score >= 80 ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20" : "bg-amber-400/10 text-amber-400 border border-amber-400/20"
-                        }`}>
+                        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${score >= 80 ? "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20" : "bg-amber-400/10 text-amber-400 border border-amber-400/20"
+                          }`}>
                           {score} Index
                         </span>
                       </div>
@@ -3140,7 +5478,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: INVESTMENT OPPORTUNITIES */}
       {currentTab === "investments" && (
         <Page title="Investment Allocations Pool" subtitle="Deploy Capital commitments to outstanding syndicates and monitor Dry Powder.">
-          
+
           {/* Capital allocation summary */}
           <div className="mb-6 grid gap-4 md:grid-cols-3">
             <Stat label="Primary dry powder" value={`₹${dryPowder}M`} tone="electric" />
@@ -3160,10 +5498,10 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
               const allocation = commitments[s.id] || 20;
               const isCommitted = confirmedCommitments[s.id];
               const capVal = s.val;
-              
+
               // Dynamic Ownership calculation
               const ownership = ((allocation / capVal) * 100).toFixed(2);
-              
+
               return (
                 <Card key={s.id} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="flex-1">
@@ -3199,7 +5537,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                       <div className="text-muted-foreground">Dilution Share:</div>
                       <div className="text-sm font-bold text-white">{ownership}% Ownership</div>
                     </div>
-                    
+
                     {isCommitted ? (
                       <span className="text-[10px] font-bold text-emerald-400 uppercase font-mono bg-emerald-400/10 px-2.5 py-1 rounded">
                         ✓ Capital Committed
@@ -3212,7 +5550,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                         Commit Allocation Check
                       </button>
                     )}
-                    
+
                     {dealCommitStatus[s.id] && (
                       <span className="text-[10px] font-semibold text-amber-400 font-mono mt-1">
                         {dealCommitStatus[s.id]}
@@ -3230,7 +5568,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {currentTab === "investor_copilot" && (
         <Page title="Venture AI Copilot" subtitle="Prompt-driven due diligence and competition auditing.">
           <div className="grid gap-6 md:grid-cols-3">
-            
+
             {/* Quick Actions Panel */}
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Suggested Intelligence Queries</h3>
@@ -3263,11 +5601,10 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
               <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
                 {messages.map((m, idx) => (
                   <div key={idx} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${
-                      m.sender === "user" 
-                        ? "bg-emerald-500 text-slate-950 font-medium" 
+                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${m.sender === "user"
+                        ? "bg-emerald-500 text-slate-950 font-medium"
                         : "bg-white/[0.02] border border-white/5 text-white/90"
-                    }`}>
+                      }`}>
                       <div className="whitespace-pre-line">{m.text}</div>
                     </div>
                   </div>
@@ -3305,7 +5642,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DUE DILIGENCE CENTER */}
       {currentTab === "due_diligence" && (
         <Page title="Due Diligence Core" subtitle="Execute legal, financial, and technical audits. Complete audits to unlock Term Sheet creation.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Startup Selector */}
             <Card className="md:col-span-1">
@@ -3317,11 +5654,10 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                     <button
                       key={s.id}
                       onClick={() => setSelectedDDStartup(s.id)}
-                      className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${
-                        selectedDDStartup === s.id 
-                          ? "bg-emerald-500/10 border-emerald-400/30 text-white" 
+                      className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${selectedDDStartup === s.id
+                          ? "bg-emerald-500/10 border-emerald-400/30 text-white"
                           : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
-                      }`}
+                        }`}
                     >
                       <div>
                         <div className="text-xs font-bold font-display">{s.name}</div>
@@ -3454,7 +5790,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: FOUNDER MEETINGS */}
       {currentTab === "founder_meetings" && (
         <Page title="Founder Pitch Meetings" subtitle="Organize pitch calendar calls and access the Virtual Pitch Room simulator.">
-          
+
           <div className="mb-4 flex justify-between items-center">
             <span className="text-xs text-muted-foreground">Upcoming founder pitches and strategic check-ins.</span>
             <button
@@ -3589,9 +5925,8 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
                 <div>
                   <div className="flex justify-between items-center text-[10px] font-mono mb-2">
                     <span className="text-muted-foreground">{m.date} · {m.time}</span>
-                    <span className={`px-2 py-0.5 rounded-full font-bold ${
-                      m.status === "Confirmed" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
-                    }`}>
+                    <span className={`px-2 py-0.5 rounded-full font-bold ${m.status === "Confirmed" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
+                      }`}>
                       {m.status}
                     </span>
                   </div>
@@ -3617,13 +5952,13 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PORTFOLIO COMPANIES */}
       {currentTab === "portfolio" && (
         <Page title="Portfolio Valuation Matrix" subtitle="Monitor current asset caps, invested checks, and run exit MoIC multiple scenarios.">
-          
+
           {/* Portfolio metrics */}
           {(() => {
             const investedTotal = 120; // in ₹ Millions
             const currentTotal = Math.round(
-              45 * (portfolioExits[1] || 1) + 
-              15 * (portfolioExits[2] || 1) + 
+              45 * (portfolioExits[1] || 1) +
+              15 * (portfolioExits[2] || 1) +
               60 * (portfolioExits[3] || 1)
             );
             const netMultiple = (currentTotal / investedTotal).toFixed(2);
@@ -3696,9 +6031,9 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: INVESTMENT PIPELINE ANALYTICS */}
       {currentTab === "investment_pipeline" && (
         <Page title="Pipeline Funnel & Conversion Analytics" subtitle="Review deal velocity metrics and drop-off indices across active sectors.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
-            
+
             {/* Visual Funnel Card */}
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Deal Flow Pipeline Funnel</h3>
@@ -3754,17 +6089,16 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: MARKET INTELLIGENCE */}
       {currentTab === "market_intel" && (
         <Page title="Market Intelligence Terminal" subtitle="Live tracking of valuation multiples and regulatory sector benchmarks.">
-          
+
           <div className="mb-4 flex gap-2">
             {["all", "SaaS", "DeepTech", "CleanTech", "BioTech"].map(sec => (
               <button
                 key={sec}
                 onClick={() => setMarketIntelFilter(sec)}
-                className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${
-                  marketIntelFilter === sec 
-                    ? "bg-emerald-500 text-slate-950" 
+                className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${marketIntelFilter === sec
+                    ? "bg-emerald-500 text-slate-950"
                     : "bg-white/5 border border-white/10 text-muted-foreground hover:text-white"
-                }`}
+                  }`}
               >
                 {sec.toUpperCase()}
               </button>
@@ -3802,7 +6136,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REPORTS */}
       {currentTab === "reports" && (
         <Page title="Syndicate & Limited Partner Reports" subtitle="Generate LP valuation summaries and export audited deal pipelines.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Report Builder */}
             <Card className="md:col-span-1">
@@ -3893,7 +6227,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: COMMUNITY */}
       {currentTab === "community" && (
         <Page title="Syndicate Investor Forum" subtitle="Co-invest and exchange pipeline leads with verified Venture Partners.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* New Post Form */}
             <Card className="md:col-span-1">
@@ -3977,7 +6311,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PROFILE */}
       {currentTab === "profile" && (
         <Page title="GP Investment Thesis profile" subtitle="Configure check parameters to validate deals match your criteria.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Thesis Details Form */}
             <Card className="md:col-span-2">
@@ -4048,7 +6382,7 @@ function InvestorDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: SETTINGS */}
       {currentTab === "settings" && (
         <Page title="Venture Terminal Configurations" subtitle="Review security permissions, matching scores and digest configurations.">
-          
+
           <Card className="max-w-2xl">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Security & Operations Ledger</h3>
             <div className="space-y-4 text-xs">
@@ -4327,7 +6661,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: HOME */}
       {currentTab === "home" && (
         <Page title="University Command Center" subtitle="Institution Command Tower · Placement, research, and incubator registries.">
-          
+
           {/* Welcome Banner */}
           <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden">
             <div className="md:col-span-2">
@@ -4341,7 +6675,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
                 Campus placement ratios are performing at <strong className="text-emerald-400">94.2%</strong>. Total active grants balance stands at <strong className="text-white">₹75L</strong>. We have <strong className="text-white">{interviews.length} interviews scheduled</strong> today and <strong className="text-white">{incubatorStartups.length} incubated student startups</strong>.
               </p>
             </div>
-            
+
             {/* University Performance Score Dial */}
             <div className="flex flex-col justify-center rounded-xl bg-white/[0.02] border border-white/5 p-4 relative">
               <div className="text-[9px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">
@@ -4447,7 +6781,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5 border-b border-white/5 pb-3">
               <Trophy className="h-4.5 w-4.5 text-blue-400" /> Success Wall Outcomes (Social Proof credentials)
             </h3>
-            
+
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[
                 { title: "Placed at Google", user: "Aman Gupta", detail: "CS senior secured placement as an AI Engineer at Google India.", label: "₹38L Package" },
@@ -4476,24 +6810,23 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: STUDENTS */}
       {currentTab === "students_list" && (
         <Page title="Student Operating Directory" subtitle="Reconcile student directory details, skill scores, and placement statuses.">
-          
+
           <div className="mb-4 flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
             <div className="flex gap-2">
               {["all", "Computer Science", "Electrical Eng", "Mechanical Eng", "BioTech"].map(dept => (
                 <button
                   key={dept}
                   onClick={() => setStudentDeptFilter(dept)}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${
-                    studentDeptFilter === dept 
-                      ? "bg-blue-500 text-slate-950" 
+                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${studentDeptFilter === dept
+                      ? "bg-blue-500 text-slate-950"
                       : "bg-white/5 border border-white/10 text-muted-foreground hover:text-white"
-                  }`}
+                    }`}
                 >
                   {dept.toUpperCase()}
                 </button>
               ))}
             </div>
-            
+
             <input
               type="text"
               placeholder="Search student directories..."
@@ -4524,9 +6857,8 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
                       <tr
                         key={s.id}
                         onClick={() => setSelectedStudentDetailId(s.id)}
-                        className={`hover:bg-white/[0.01] cursor-pointer transition ${
-                          selectedStudentDetailId === s.id ? "bg-blue-500/5" : ""
-                        }`}
+                        className={`hover:bg-white/[0.01] cursor-pointer transition ${selectedStudentDetailId === s.id ? "bg-blue-500/5" : ""
+                          }`}
                       >
                         <td className="py-3.5 font-sans font-bold text-white text-xs">{s.name}</td>
                         <td className="py-3.5 text-[10px] text-muted-foreground">{s.dept} · {s.year}</td>
@@ -4583,7 +6915,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: RESEARCHERS */}
       {currentTab === "researchers_list" && (
         <Page title="Research Investigators Database" subtitle="Track publications, citations indices and patent allocations across academic departments.">
-          
+
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {researchers.map(r => (
               <Card key={r.id}>
@@ -4593,9 +6925,9 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
                     Impact: {r.progress}%
                   </span>
                 </div>
-                
+
                 <h4 className="text-sm font-bold text-white font-display">{r.name}</h4>
-                
+
                 <div className="mt-4 grid grid-cols-3 gap-2 text-center font-mono text-xs text-white">
                   <div className="p-2 bg-white/[0.01] rounded border border-white/5">
                     <div className="text-[10px] text-muted-foreground uppercase">Papers</div>
@@ -4619,14 +6951,14 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: FACULTY PROFILES */}
       {currentTab === "faculty" && (
         <Page title="Faculty Directory" subtitle="Audit faculty contributions, project supervisions, and student mentorship counters.">
-          
+
           <div className="grid gap-6 md:grid-cols-2">
             {faculty.map(f => (
               <Card key={f.id} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                   <h4 className="text-sm font-bold text-white font-display">{f.name}</h4>
                   <p className="text-xs text-muted-foreground font-mono mt-0.5">Department: {f.dept}</p>
-                  
+
                   <div className="mt-3.5 flex flex-wrap gap-2 text-[10px] font-mono">
                     <span className="bg-white/5 px-2 py-0.5 rounded text-white">Publications: {f.publications}</span>
                     <span className="bg-white/5 px-2 py-0.5 rounded text-white">Patents: {f.patents}</span>
@@ -4646,12 +6978,12 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PLACEMENTS */}
       {currentTab === "placements" && (
         <Page title="Campus Placement Command Center" subtitle="Audit placement funnels, companies visits schedules, and package metrics.">
-          
+
           {/* funnel and packages */}
           <div className="grid gap-6 md:grid-cols-3 mb-6">
             <Stat label="Average Placement Package" value="₹12.8L / Annum" tone="electric" />
             <Stat label="Highest Placements Package" value="₹44.0L / Annum" tone="violet" />
-            
+
             <Card>
               <div className="text-xs uppercase tracking-wider text-muted-foreground">Eligible Students Placed</div>
               <div className="mt-2 font-display text-3xl font-semibold text-blue-400">
@@ -4713,7 +7045,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: STARTUP INCUBATOR */}
       {currentTab === "startup_incubator" && (
         <Page title="University Startup Incubator" subtitle="Empower student spin-offs, track incubator funds, and register pitch events.">
-          
+
           <div className="mb-4 flex justify-between items-center">
             <span className="text-xs text-muted-foreground">Active incubated student ventures and mentoring programs.</span>
             <button
@@ -4802,7 +7134,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: INNOVATION HUB */}
       {currentTab === "innovation_hub" && (
         <Page title="University Innovation & Hackathon League" subtitle="Register student teams for innovation challenges and hackathons.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Active Innovation challenges</h3>
@@ -4853,7 +7185,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: INDUSTRY PARTNERSHIPS */}
       {currentTab === "partners" && (
         <Page title="Corporate Partnerships & MoUs" subtitle="Manage university research partnerships, corporate agreements and MoUs.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Memorandum of Understanding (MoUs) Registry</h3>
@@ -4905,7 +7237,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: RESEARCH CENTER */}
       {currentTab === "research_center" && (
         <Page title="University Research Center" subtitle="Audit publication lists, patents filed, and academic citations analytics.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Recent Publications & Abstracts</h3>
@@ -4943,7 +7275,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: GRANTS & FUNDING */}
       {currentTab === "grants" && (
         <Page title="Grants & Research Funding Center" subtitle="Track Government sponsorships, industry grants applications and scholarships.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Grant Applications Status</h3>
@@ -5001,7 +7333,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: EVENTS */}
       {currentTab === "events" && (
         <Page title="University Events Center" subtitle="Schedule hackathons, career recruitment fairs and research roundtables.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">roundtable Panel Events Schedule</h3>
@@ -5075,7 +7407,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REPORTS */}
       {currentTab === "reports" && (
         <Page title="NAAC & NBA Compliance Report Center" subtitle="Generate institution accreditation board reports and board slides.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Report compiler */}
             <Card className="md:col-span-1">
@@ -5084,7 +7416,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
                 <div className="text-xs text-muted-foreground leading-relaxed">
                   Configure metrics parameters to build audited NAAC reports.
                 </div>
-                
+
                 <div className="space-y-2 text-xs">
                   <label className="flex items-center gap-2 text-white/90">
                     <input type="checkbox" defaultChecked className="accent-blue-500" />
@@ -5166,7 +7498,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: AI UNIVERSITY COPILOT */}
       {currentTab === "uni_copilot" && (
         <Page title="University AI Copilot" subtitle="Institution AI assistant for placement predictions, events drafting and grant analysis.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Quick Prompts */}
             <Card className="md:col-span-1">
@@ -5200,11 +7532,10 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
               <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
                 {messages.map((m, idx) => (
                   <div key={idx} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${
-                      m.sender === "user" 
-                        ? "bg-blue-500 text-slate-950 font-medium" 
+                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${m.sender === "user"
+                        ? "bg-blue-500 text-slate-950 font-medium"
                         : "bg-white/[0.02] border border-white/5 text-white/90"
-                    }`}>
+                      }`}>
                       <div className="whitespace-pre-line">{m.text}</div>
                     </div>
                   </div>
@@ -5250,7 +7581,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: COMMUNITY */}
       {currentTab === "community" && (
         <Page title="University Roundtable Forum" subtitle="Participate in campus roundtables and alumni check-ins.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-2 font-mono">roundtable Threads</h3>
@@ -5297,7 +7628,7 @@ function UniversityDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: SETTINGS */}
       {currentTab === "settings" && (
         <Page title="University Portal Configurations" subtitle="Configure NDA templates auto-signatures, 2FA locks and report tokens.">
-          
+
           <Card className="max-w-2xl">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Compliance & Security configurations</h3>
             <div className="space-y-4 text-xs">
@@ -5366,7 +7697,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
   const handleApproveDiscovery = (id: number) => {
     const req = discoveryRequests.find(r => r.id === id);
     if (!req) return;
-    
+
     // Add to clients list
     const nextClientId = Math.max(...clients.map(c => c.id), 0) + 1;
     setClients(prev => [
@@ -5468,11 +7799,11 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
     setRoadmaps(prev => {
       const list = prev[clientId]?.milestones || [];
       const updated = list.map(m => (m.id === milestoneId ? { ...m, done: !m.done } : m));
-      
+
       // Update overall progress in clients state
       const doneCount = updated.filter(m => m.done).length;
       const progressPct = list.length > 0 ? Math.round((doneCount / list.length) * 100) : 0;
-      
+
       setClients(prevClients =>
         prevClients.map(c => (c.id === clientId ? { ...c, progress: progressPct } : c))
       );
@@ -5491,7 +7822,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
   const handleAddMilestone = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newRoadmapTitle || !newRoadmapDate) return;
-    
+
     setRoadmaps(prev => {
       const list = prev[activeRoadmapClient]?.milestones || [];
       const nextId = Math.max(...list.map(m => m.id), 0) + 1;
@@ -5577,7 +7908,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
   const handleSendWorkspaceChat = (e: React.FormEvent) => {
     e.preventDefault();
     if (!workspaceInput.trim()) return;
-    
+
     setWorkspaceChats(prev => {
       const chats = prev[activeWorkspaceClient] || [];
       return {
@@ -5595,7 +7926,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
   const [selectedDocId, setSelectedDocId] = useState(1);
   const [runAuditLoading, setRunAuditLoading] = useState(false);
   const [auditComplete, setAuditComplete] = useState<Record<number, boolean>>({});
-  
+
   const documents = [
     { id: 1, name: "Aarav_Pre-Seed_PitchDeck.pdf", type: "Pitch Deck", client: "Aarav Sharma" },
     { id: 2, name: "Priya_GenAI_Optimization_Abstract.tex", type: "LaTeX Document", client: "Priya Patel" },
@@ -5705,7 +8036,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 Your consulting engine is running at peak capacity. Client satisfaction score is at <strong className="text-emerald-400">98%</strong>. You have <strong className="text-white">{discoveryRequests.length} pending Discovery requests</strong> and <strong className="text-white">{tasks.filter(t => t.column === "review").length} client deliverables</strong> awaiting your audit.
               </p>
             </div>
-            
+
             {/* Reputation Score Dial */}
             <div className="flex flex-col justify-center rounded-xl bg-white/[0.02] border border-white/5 p-4 relative">
               <div className="text-[9px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">
@@ -5819,7 +8150,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5 border-b border-white/5 pb-3">
               <Trophy className="h-4.5 w-4.5 text-amber-400" /> Success Wall Outcomes (Social Proof credentials)
             </h3>
-            
+
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[
                 { title: "AI Placement Secured", user: "Rohan Das", detail: "Secured a 6-month placement as an AI Engineer at NVIDIA.", label: "IIT Placement" },
@@ -5848,24 +8179,23 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: CLIENTS */}
       {currentTab === "clients" && (
         <Page title="Client CRM Directory" subtitle="Consulting CRM hub tracking client status, current goals, and advisor milestones.">
-          
+
           <div className="mb-4 flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
             <div className="flex gap-2">
               {["all", "Student", "Researcher", "Founder", "University"].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setClientFilter(cat)}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${
-                    clientFilter === cat 
-                      ? "bg-amber-400 text-slate-950" 
+                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${clientFilter === cat
+                      ? "bg-amber-400 text-slate-950"
                       : "bg-white/5 border border-white/10 text-muted-foreground hover:text-white"
-                  }`}
+                    }`}
                 >
                   {cat.toUpperCase()}
                 </button>
               ))}
             </div>
-            
+
             <input
               type="text"
               placeholder="Search clients..."
@@ -5896,9 +8226,8 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       <tr
                         key={c.id}
                         onClick={() => setSelectedClientDetailId(c.id)}
-                        className={`hover:bg-white/[0.01] cursor-pointer transition ${
-                          selectedClientDetailId === c.id ? "bg-amber-400/5" : ""
-                        }`}
+                        className={`hover:bg-white/[0.01] cursor-pointer transition ${selectedClientDetailId === c.id ? "bg-amber-400/5" : ""
+                          }`}
                       >
                         <td className="py-3.5 font-sans font-bold text-white text-xs">{c.name}</td>
                         <td className="py-3.5 text-[10px] text-muted-foreground">{c.category}</td>
@@ -5971,7 +8300,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DISCOVERY SESSIONS */}
       {currentTab === "discovery_sessions" && (
         <Page title="Discovery Sessions Desk" subtitle="Review consultation requests and schedule active advisory clients.">
-          
+
           <div className="grid gap-6 md:grid-cols-2">
             {discoveryRequests.length === 0 ? (
               <Card className="col-span-2 text-center p-8 border border-dashed border-white/5">
@@ -5988,10 +8317,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                         Fit Score: {r.score}%
                       </span>
                     </div>
-                    
+
                     <h4 className="text-sm font-bold text-white font-display">{r.name}</h4>
                     <div className="text-xs text-amber-400 font-mono mt-1">Topic: {r.topic}</div>
-                    
+
                     <div className="mt-4 space-y-2 text-xs">
                       <div>
                         <strong className="text-white block font-mono text-[10px] uppercase text-muted-foreground">Goals:</strong>
@@ -6032,7 +8361,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: CONSULTATIONS */}
       {currentTab === "consultations" && (
         <Page title="Advisory Session Hub" subtitle="Manage scheduled slot consultations, note-taking templates and past logs.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* List */}
             <Card className="md:col-span-1">
@@ -6088,7 +8417,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <input
                       type="text"
@@ -6128,16 +8457,15 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ARENA REWARDS */}
       {currentTab === "rewards" && (
         <Page title="Advisor Rewards Arena" subtitle="Review and approve client reward ticket redemptions.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {rewardTickets.map(t => (
               <Card key={t.id} className="flex flex-col justify-between border border-white/5 relative">
                 <div>
                   <div className="flex justify-between items-center text-[10px] font-mono mb-2">
                     <span className="text-muted-foreground">{t.id}</span>
-                    <span className={`px-2 py-0.5 rounded-full font-bold ${
-                      t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400"
-                    }`}>
+                    <span className={`px-2 py-0.5 rounded-full font-bold ${t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400"
+                      }`}>
                       {t.priority}
                     </span>
                   </div>
@@ -6184,7 +8512,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ROADMAPS */}
       {currentTab === "roadmaps" && (
         <Page title="Advisor Roadmap Builder" subtitle="Construct milestones and deadline parameters for advisory clients.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Client selector */}
             <Card className="md:col-span-1">
@@ -6194,11 +8522,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={c.id}
                     onClick={() => setActiveRoadmapClient(c.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${
-                      activeRoadmapClient === c.id 
-                        ? "bg-amber-400/10 border-amber-400/30 text-white" 
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${activeRoadmapClient === c.id
+                        ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
-                    }`}
+                      }`}
                   >
                     <div>
                       <div className="text-xs font-bold font-display">{c.name}</div>
@@ -6300,7 +8627,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: TASKS */}
       {currentTab === "tasks" && (
         <Page title="Tasks Assignment & Review" subtitle="Assign sprint items to clients and audit submitted deliverables.">
-          
+
           <div className="grid gap-4 md:grid-cols-3">
             {["todo", "progress", "review"].map((col) => {
               const list = tasks.filter(t => t.column === col);
@@ -6329,9 +8656,9 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                             </span>
                             <span className="text-[8px] font-mono text-muted-foreground">{t.deadline}</span>
                           </div>
-                          
+
                           <div className="text-white font-bold leading-relaxed">{t.title}</div>
-                          
+
                           <div className="mt-4 flex gap-1.5 justify-end border-t border-white/5 pt-2">
                             {col === "review" ? (
                               <button
@@ -6375,12 +8702,12 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: MEETINGS */}
       {currentTab === "meetings" && (
         <Page title="Advisory Meeting Hub" subtitle="Coordinate Google Meet/Zoom calendar slots and review automated AI session summaries.">
-          
+
           {/* Active room overlay */}
           {activeAdvisoryRoom && (
             <Card className="mb-6 border border-amber-400/40 bg-slate-950/90 max-w-xl p-6 relative overflow-hidden">
               <div className="absolute top-0 right-0 h-40 w-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
-              
+
               <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />
@@ -6460,9 +8787,9 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: WORKSPACE */}
       {currentTab === "workspace" && (
         <Page title="Client Workspace Hub" subtitle="Private collaborative channels, chat grids, and milestone logs.">
-          
+
           <div className="grid gap-6 md:grid-cols-4">
-            
+
             {/* Client sidebar */}
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Collaborators</h3>
@@ -6471,11 +8798,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={c.id}
                     onClick={() => setActiveWorkspaceClient(c.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${
-                      activeWorkspaceClient === c.id 
-                        ? "bg-amber-400/10 border-amber-400/30 text-white" 
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${activeWorkspaceClient === c.id
+                        ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
-                    }`}
+                      }`}
                   >
                     <div>
                       <div className="text-xs font-bold font-display">{c.name}</div>
@@ -6505,11 +8831,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                     <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
                       {chats.map((ch, idx) => (
                         <div key={idx} className={`flex ${ch.sender === "expert" ? "justify-end" : "justify-start"}`}>
-                          <div className={`p-3 rounded-xl max-w-md text-xs leading-relaxed ${
-                            ch.sender === "expert"
+                          <div className={`p-3 rounded-xl max-w-md text-xs leading-relaxed ${ch.sender === "expert"
                               ? "bg-amber-400 text-slate-950 font-medium"
                               : "bg-white/[0.02] border border-white/5 text-white/95"
-                          }`}>
+                            }`}>
                             <div className="font-bold text-[9px] opacity-75 mb-0.5">
                               {ch.sender === "expert" ? "Dr. John (Advisor)" : target.name} · {ch.time}
                             </div>
@@ -6545,7 +8870,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DOCUMENTS */}
       {currentTab === "documents" && (
         <Page title="Document Review vault" subtitle="Review uploaded papers, portfolios, and pitch decks. Audit with annotations.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Library list */}
             <Card className="md:col-span-1">
@@ -6555,11 +8880,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={doc.id}
                     onClick={() => setSelectedDocId(doc.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${
-                      selectedDocId === doc.id 
-                        ? "bg-amber-400/10 border-amber-400/30 text-white" 
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${selectedDocId === doc.id
+                        ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
-                    }`}
+                      }`}
                   >
                     <div>
                       <div className="text-xs font-bold font-mono">{doc.name}</div>
@@ -6630,7 +8954,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: AI EXPERT ASSISTANT */}
       {currentTab === "expert_copilot" && (
         <Page title="Advisor AI Assistant" subtitle="Prompt reports creation, milestone roadmaps, and client analytics briefs.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Prompts list */}
             <Card className="md:col-span-1">
@@ -6664,11 +8988,10 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
                 {orbMessages.map((m, idx) => (
                   <div key={idx} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${
-                      m.sender === "user" 
-                        ? "bg-amber-400 text-slate-950 font-medium" 
+                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${m.sender === "user"
+                        ? "bg-amber-400 text-slate-950 font-medium"
                         : "bg-white/[0.02] border border-white/5 text-white/90"
-                    }`}>
+                      }`}>
                       <div className="whitespace-pre-line">{m.text}</div>
                     </div>
                   </div>
@@ -6714,11 +9037,11 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REVENUE CENTER */}
       {currentTab === "revenue" && (
         <Page title="Advisor Revenue Engine" subtitle="Audit recurring consulting retainers, completed session payouts, and payout transfers.">
-          
+
           <div className="grid gap-6 md:grid-cols-3 mb-6">
             <Stat label="Revenue This Month (YTD)" value="₹2,40,000" tone="electric" />
             <Stat label="Average Consultation value" value="₹8,000 / Session" tone="violet" />
-            
+
             <Card className="flex flex-col justify-between">
               <div>
                 <div className="text-xs uppercase tracking-wider text-muted-foreground">Settled payout balance</div>
@@ -6726,7 +9049,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   ₹2,40,000
                 </div>
               </div>
-              
+
               {payoutLoading ? (
                 <div className="mt-4">
                   <div className="flex justify-between text-[10px] font-mono mb-1">
@@ -6791,7 +9114,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REVIEWS & REPUTATION */}
       {currentTab === "reviews" && (
         <Page title="Advisor Star Reviews & Reputation" subtitle="Audit client comments, reputation metrics and generate share certificates.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             {/* Reputation stats */}
             <Card className="md:col-span-1">
@@ -6871,7 +9194,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ACHIEVEMENT SYSTEM */}
       {currentTab === "rewards_achievements" || currentTab === "achievements" ? (
         <Page title="Expert Reputation Achievements" subtitle="Generate advisor credential certificates and LinkedIn posters.">
-          
+
           {/* Certificate showcase */}
           {certificateRequested && (
             <Card className="mb-6 border-2 border-amber-400 bg-slate-950 p-8 max-w-xl mx-auto text-center relative overflow-hidden">
@@ -6936,7 +9259,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: COMMUNITY */}
       {currentTab === "community" && (
         <Page title="Advisor Roundtable Forums" subtitle="Participate in expert roundtables, exchange credentials and register for masterclasses.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Expert Discussion threads</h3>
@@ -6981,7 +9304,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PROFILE */}
       {currentTab === "profile" && (
         <Page title="Advisor Credentials profile" subtitle="Configure check thesis, average session pricing, and consulting availability.">
-          
+
           <div className="grid gap-6 md:grid-cols-3">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Advisor details</h3>
@@ -7034,7 +9357,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: SETTINGS */}
       {currentTab === "settings" && (
         <Page title="Advisor Configurations Settings" subtitle="Review security permissions, NDA templates approvals, and API sync tags.">
-          
+
           <Card className="max-w-2xl">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Operational configurations</h3>
             <div className="space-y-4 text-xs">

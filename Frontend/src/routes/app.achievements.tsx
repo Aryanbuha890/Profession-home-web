@@ -22,7 +22,8 @@ import {
   Link as LinkIcon,
   X,
   Lock,
-  Globe
+  Globe,
+  Trophy
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -228,6 +229,121 @@ function Achievements() {
       title="Achievement Vault"
       subtitle="Cryptographically verified certificates, papers, patents, and global accolades."
     >
+      {/* ─── HERO SECTION ─── */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-slate-950 backdrop-blur-xl p-6 md:p-8 mb-8">
+        {/* Decorative mesh */}
+        <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: "repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 28px),repeating-linear-gradient(90deg,#fff 0px,#fff 1px,transparent 1px,transparent 28px)" }} />
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-5 bg-amber-400" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl opacity-5 bg-violet-400" />
+
+        <div className="relative flex flex-col md:flex-row items-start md:items-center gap-8">
+          {/* Reputation Score Ring */}
+          <div className="flex flex-col items-center shrink-0">
+            <div className="relative w-32 h-32">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 128 128">
+                <circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="8" />
+                <circle cx="64" cy="64" r="56" fill="none" stroke="url(#repGrad)" strokeWidth="8" strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 56}
+                  strokeDashoffset={2 * Math.PI * 56 * (1 - 0.94)}
+                  className="transition-all duration-1000"
+                />
+                <defs>
+                  <linearGradient id="repGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#fbbf24" />
+                    <stop offset="100%" stopColor="#f59e0b" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-black text-white">94</span>
+                <span className="text-[9px] font-mono text-amber-400 uppercase font-bold">Rep Score</span>
+              </div>
+            </div>
+            <span className="text-[9px] font-mono text-muted-foreground/50 mt-2 uppercase tracking-wider">Professional Reputation</span>
+          </div>
+
+          {/* Main info */}
+          <div className="flex-1">
+            <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-widest text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full mb-3">
+              <Star className="h-3 w-3" /> Verified Professional Identity
+            </span>
+            <h2 className="text-2xl font-black text-white">Aryan Buha</h2>
+            <p className="text-sm text-muted-foreground mt-1">AI/ML Researcher · Computer Science · Professional Home Ecosystem</p>
+
+            {/* Stats pills */}
+            <div className="flex flex-wrap gap-3 mt-4">
+              {[
+                { label: "Achievements", value: items.length.toString(), color: "amber" },
+                { label: "Verified", value: items.filter(i => i.status === "verified").length.toString(), color: "emerald" },
+                { label: "Portfolio Items", value: items.filter(i => i.portfolio).length.toString(), color: "sky" },
+                { label: "Avg Score", value: `${Math.round(items.reduce((a, i) => a + (i.score || 0), 0) / items.length)}`, color: "violet" },
+              ].map(({ label, value, color }) => (
+                <div key={label} className={`px-4 py-2 rounded-xl border text-center ${
+                  color === "amber" ? "border-amber-500/20 bg-amber-500/5" :
+                  color === "emerald" ? "border-emerald-500/20 bg-emerald-500/5" :
+                  color === "sky" ? "border-sky-500/20 bg-sky-500/5" :
+                  "border-violet-500/20 bg-violet-500/5"
+                }`}>
+                  <div className={`text-xl font-black ${
+                    color === "amber" ? "text-amber-400" : color === "emerald" ? "text-emerald-400" : color === "sky" ? "text-sky-400" : "text-violet-400"
+                  }`}>{value}</div>
+                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase mt-0.5">{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Achievement Studio */}
+          <div className="shrink-0">
+            <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md space-y-2 min-w-[180px]">
+              <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider mb-3 flex items-center gap-1">
+                <Sparkles className="h-3 w-3 text-amber-400" /> Achievement Studio
+              </div>
+              {[
+                { label: "LinkedIn Card", icon: "💼" },
+                { label: "Instagram Story", icon: "📸" },
+                { label: "Achievement Poster", icon: "🏆" },
+                { label: "Pro Certificate", icon: "📜" },
+              ].map(({ label, icon }) => (
+                <button key={label} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 text-[10px] text-muted-foreground hover:text-white transition cursor-pointer text-left">
+                  <span>{icon}</span> Generate {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── HALL OF FAME ─── */}
+      <div className="mb-8 p-5 rounded-2xl border border-white/10 bg-gradient-to-br from-amber-500/5 via-orange-500/3 to-slate-900/40 backdrop-blur-md">
+        <h3 className="text-sm font-black text-white mb-4 flex items-center gap-2">
+          <Trophy className="h-4 w-4 text-amber-400" /> Hall of Fame · Top Achievements
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {items.filter(i => (i.score || 0) >= 95).slice(0, 3).map((item, idx) => (
+            <div key={item.id} className={`relative p-4 rounded-xl border overflow-hidden ${
+              idx === 0 ? "border-amber-500/30 bg-amber-500/5" :
+              idx === 1 ? "border-slate-400/20 bg-slate-400/5" :
+              "border-orange-500/20 bg-orange-500/5"
+            }`}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">{idx === 0 ? "🥇" : idx === 1 ? "🥈" : "🥉"}</span>
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">{item.category}</div>
+                  <div className="text-[11px] font-black text-white leading-tight">{item.title}</div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[9px] font-mono text-muted-foreground/50">{item.issuer} · {item.year}</span>
+                <span className={`text-[10px] font-mono font-bold ${
+                  idx === 0 ? "text-amber-400" : idx === 1 ? "text-slate-400" : "text-orange-400"
+                }`}>{item.score}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="max-w-[1400px] mx-auto space-y-6 pb-12">
         
         {/* 1. Header Metrics Dashboard */}
