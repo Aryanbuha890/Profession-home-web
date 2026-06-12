@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { Page, Card, Bar, Stat } from "@/components/app/Page";
 import { useRole, Role } from "@/hooks/useRole";
+import { OnboardingWizard } from "@/components/app/OnboardingWizard";
+import { CopilotChat } from "@/components/app/CopilotChat";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -70,9 +72,31 @@ export const Route = createFileRoute("/app/")({
 });
 
 function DashboardSelector() {
-  const { role } = useRole();
+  const { role, setRole } = useRole();
   const search = Route.useSearch();
   const currentTab = search.tab || "home";
+
+  // Check onboarding status
+  const [onboardingCompleted, setOnboardingCompleted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("ph_onboarding_completed") === "true";
+    }
+    return true; // default fallback
+  });
+
+  if (!onboardingCompleted) {
+    return (
+      <OnboardingWizard
+        onComplete={(selectedRole) => {
+          setRole(selectedRole);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("ph_onboarding_completed", "true");
+          }
+          setOnboardingCompleted(true);
+        }}
+      />
+    );
+  }
 
   switch (role) {
     case "student":
@@ -98,6 +122,150 @@ function DashboardSelector() {
 // HELPER COMPONENTS & DATA
 // -------------------------------------------------------------
 
+const CODE39_PATTERNS: Record<string, string> = {
+  '0': '101001101101', '1': '110100101011', '2': '101100101011', '3': '110110010101',
+  '4': '101001100111', '5': '110100110010', '6': '101100110010', '7': '101001100110',
+  '8': '110100110011', '9': '101100110011', 'A': '110101001011', 'B': '101101001011',
+  'C': '110110100101', 'D': '101011001011', 'E': '110101100101', 'F': '101101100101',
+  'G': '101010011011', 'H': '110101001101', 'I': '101101001101', 'J': '101011001101',
+  'K': '110101010011', 'L': '101101010011', 'M': '110110101001', 'N': '101011010011',
+  'O': '110101101001', 'P': '101101101001', 'Q': '101010110011', 'R': '110101011001',
+  'S': '101101011001', 'T': '101011011001', 'U': '110010101011', 'V': '100110101011',
+  'W': '110011010101', 'X': '100101101011', 'Y': '110010110101', 'Z': '100111010101',
+  '-': '100101011011', '.': '110010101101', ' ': '100110101101', '*': '100101101101'
+};
+
+const ScannableCode39Barcode = ({ value, className = "w-12 text-black" }: { value: string; className?: string }) => {
+  const cleanValue = `*${value.toUpperCase().replace(/[^A-Z0-9\-\.\s]/g, "")}*`;
+  let binaryString = "";
+  for (const char of cleanValue) {
+    binaryString += (CODE39_PATTERNS[char] || CODE39_PATTERNS[' ']) + "0";
+  }
+
+  // Generate crisp 1px lines using HTML divs for perfect physical pixel alignment (prevents subpixel vector blurring on screens)
+  const bars: React.ReactNode[] = [];
+  for (let i = 0; i < binaryString.length; i++) {
+    const isBlack = binaryString[i] === '1';
+    bars.push(
+      <div
+        key={i}
+        style={{ height: '1px' }}
+        className={isBlack ? "bg-black w-full shrink-0" : "bg-white w-full shrink-0"}
+      />
+    );
+  }
+
+  return (
+    <div className={`flex flex-col items-center bg-white p-2 rounded shadow-sm border border-slate-200/80 ${className}`}>
+      <div className="w-full flex flex-col select-none pointer-events-none">
+        {bars}
+      </div>
+    </div>
+  );
+};
+
+const getCategoryStyles = (type: string) => {
+  const t = type.toLowerCase();
+  if (t.includes("vip") || t.includes("summit")) {
+    return {
+      gradient: "linear-gradient(135deg, #7c3aed, #db2777)", // Purple to Pink
+      accent: "#db2777",
+      label: "VIP ACCESS"
+    };
+  }
+  if (t.includes("voucher") || t.includes("arena")) {
+    return {
+      gradient: "linear-gradient(135deg, #f97316, #eab308)", // Orange to Yellow
+      accent: "#f97316",
+      label: "VOUCHER"
+    };
+  }
+  if (t.includes("strategy")) {
+    return {
+      gradient: "linear-gradient(135deg, #e11d48, #be123c)", // Rose to Crimson
+      accent: "#e11d48",
+      label: "STRATEGY"
+    };
+  }
+  if (t.includes("audit")) {
+    return {
+      gradient: "linear-gradient(135deg, #4f46e5, #7c3aed)", // Indigo to Purple
+      accent: "#4f46e5",
+      label: "AUDIT"
+    };
+  }
+  if (t.includes("data")) {
+    return {
+      gradient: "linear-gradient(135deg, #2563eb, #06b6d4)", // Blue to Cyan
+      accent: "#2563eb",
+      label: "DATA"
+    };
+  }
+  return {
+    gradient: "linear-gradient(135deg, #3b82f6, #8b5cf6)", // Blue to Indigo
+    accent: "#3b82f6",
+    label: "PASS"
+  };
+};
+
+const getPrivileges = (type: string): string[] => {
+  const t = type.toLowerCase();
+  if (t.includes("vip")) {
+    return [
+      "Full expert review of resume formatting & ATS optimization",
+      "Interactive checklist scoring with AI criteria matches",
+      "Direct queue placement for hiring agent audits"
+    ];
+  }
+  if (t.includes("voucher")) {
+    return [
+      "1-on-1 virtual mentoring session with verified tech leads",
+      "Architecture critique & code organization assessment",
+      "Pre-scheduled calendar booking window"
+    ];
+  }
+  if (t.includes("strategy")) {
+    return [
+      "30-minute founder growth scaling plan audit",
+      "Pitch deck structure critique & angel funding alignment",
+      "Direct introduction routing to core syndicate partners"
+    ];
+  }
+  if (t.includes("audit")) {
+    return [
+      "Comprehensive slide-by-slide feedback and comment summary",
+      "TAM & financial projection modeling audit",
+      "Founder storytelling check by capital general partners"
+    ];
+  }
+  if (t.includes("summit")) {
+    return [
+      "VIP pass entry to annual GP-LP networking dinner at Bangalore Club",
+      "Exclusive face-to-face pitch time with 12+ general partners",
+      "Print and digital version of Syndicate Fund portfolio booklet"
+    ];
+  }
+  if (t.includes("arena")) {
+    return [
+      "5-minute live demo pitch block to top technical scouts",
+      "Automated profile sync with participating deep-tech founders",
+      "Stripe startup credits allocation packet code"
+    ];
+  }
+  if (t.includes("data")) {
+    return [
+      "3-month premium license extension of Bloomberg terminal metrics",
+      "Access to private benchmarking datasets for SaaS/Marketplaces",
+      "Curated commodity research charts from Syndicate data vault"
+    ];
+  }
+  return [
+    "Standard access to Professional Home student programs",
+    "Participation in weekly community review workshops",
+    "Community discord networking channel entry"
+  ];
+};
+
 function HolographicTicket({
   title,
   subtitle,
@@ -116,6 +284,7 @@ function HolographicTicket({
   accentColor: string;
 }) {
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isScanModalOpen, setIsScanModalOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -123,97 +292,226 @@ function HolographicTicket({
     const rect = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 12, y: -y * 12 });
+    setTilt({ x: x * 6, y: -y * 6 });
   };
 
   const handleMouseLeave = () => {
     setTilt({ x: 0, y: 0 });
   };
 
+  const categoryStyles = getCategoryStyles(type);
+
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="ticket-wrapper cursor-pointer select-none"
-      style={{
-        transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
-        transition: "transform 0.1s ease-out",
-        fontSize: "12px",
-      }}
-    >
-      <div className="ticket" style={{ border: `1.5px solid ${accentColor}40` }}>
-        <div
-          className="t-main"
-          style={{
-            background: `radial-gradient(circle at bottom left, transparent 1em, #0c0f24 1.05em), radial-gradient(circle at bottom right, transparent 1em, #0c0f24 1.05em)`,
-          }}
+    <>
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        className="ticket-wrapper cursor-pointer select-none relative group"
+        style={{
+          transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
+          transition: "transform 0.15s ease-out",
+          fontSize: "12px",
+        }}
+      >
+        {/* Real-size Ticket container - Bigger premium sizes */}
+        <div 
+          className="relative flex h-[210px] w-full max-w-[500px] bg-gradient-to-br from-white to-slate-50/95 border border-slate-200/90 rounded-2xl overflow-hidden shadow-md transition-all duration-300 group-hover:scale-[1.01] group-hover:shadow-xl group-hover:border-slate-300/90"
         >
+          {/* Holographic light reflect overlay */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-20"
+            className="absolute inset-0 pointer-events-none opacity-20 transition duration-300 group-hover:opacity-35"
             style={{
-              background: `radial-gradient(circle at ${tilt.x * 200 + 50}% ${tilt.y * 200 + 50}%, rgba(255,255,255,0.8) 0%, transparent 60%)`,
+              background: `radial-gradient(circle at ${tilt.x * 200 + 50}% ${tilt.y * 200 + 50}%, rgba(0, 0, 0, 0.04) 0%, transparent 60%)`,
             }}
           />
-          <div className="t-content">
-            <div className="t-header">
-              <div className="t-logo">
-                <Ticket className="h-4.5 w-4.5" style={{ color: accentColor }} />
-                <span className="text-white font-mono text-[9px] uppercase tracking-wider font-bold">
-                  Growth Ticket
-                </span>
-              </div>
-              <span
-                className="t-type"
-                style={{
-                  borderColor: accentColor,
-                  color: accentColor,
-                  backgroundColor: `${accentColor}10`,
-                }}
-              >
-                {type}
-              </span>
-            </div>
-            <h4 className="text-base font-black text-white leading-tight uppercase tracking-tight mt-3 mb-1.5 font-display">
-              {title}
-            </h4>
-            <p className="text-[10px] text-muted-foreground leading-normal mb-4">
-              {subtitle}
-            </p>
-            <div className="t-details">
-              <div className="t-detail-item">
-                <span className="t-label">ADMIT PASS</span>
-                <span className="t-value text-white font-mono text-xs">{admitNo}</span>
-              </div>
-              <div className="t-detail-item">
-                <span className="t-label">VALID THRU</span>
-                <span className="t-value text-white font-mono text-xs">{validUntil}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="t-perforation">
-          <div className="t-perf-line" style={{ borderTop: "2.5px dashed rgba(255,255,255,0.1)" }} />
-        </div>
-        <div
-          className="t-stub"
-          style={{
-            background: `radial-gradient(circle at top left, transparent 1em, #090a16 1.05em), radial-gradient(circle at top right, transparent 1em, #090a16 1.05em)`,
-          }}
-        >
-          <div className="t-barcode-container">
-            <div className="t-barcode" style={{ filter: "invert(1) opacity(0.5)" }} />
-            <div className="t-barcode-id">PH-{admitNo.split("-")[1] || admitNo}</div>
-          </div>
-          <div className="t-admit">
-            <span className="t-admit-text">ROLE ZONE</span>
-            <span className="t-admit-num" style={{ color: accentColor }}>
-              S4
+
+          {/* Sweeping premium gloss sheen effect */}
+          <div className="absolute inset-0 w-[120px] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-20 -translate-x-[200px] group-hover:translate-x-[600px] transition-transform duration-1000 ease-out pointer-events-none z-20" />
+
+          {/* Left barcode stub - Always fully visible, raw, scannable barcode */}
+          <div 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsScanModalOpen(true);
+            }}
+            className="w-[84px] shrink-0 flex flex-col items-center justify-center bg-slate-50/40 border-r border-dashed border-slate-200/90 px-2.5 relative"
+          >
+            <ScannableCode39Barcode value={admitNo} className="w-[52px]" />
+            <span className="mt-2 text-[8px] font-mono text-slate-400 font-bold uppercase tracking-widest z-10 select-none">
+              PH-{admitNo.split("-")[1] || admitNo}
             </span>
+          </div>
+
+          {/* Perforation holes & dashed separator */}
+          <div className="absolute top-0 bottom-0 left-[82px] w-4 flex flex-col items-center justify-between pointer-events-none z-20">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#03010a] -mt-1.5 border border-white/5 shadow-inner" />
+            <div className="flex-1 w-[1px] border-l border-dashed border-[#e8e8e8] my-1" />
+            <div className="w-3.5 h-3.5 rounded-full bg-[#03010a] -mb-1.5 border border-white/5 shadow-inner" />
+          </div>
+
+          {/* Main Content (Middle part) */}
+          <div className="flex-1 flex flex-col justify-between p-4 pl-6 bg-transparent relative pr-18 text-slate-800">
+            {/* Flight-like routing details */}
+            <div className="flex items-center justify-between text-[10px] font-mono leading-none border-b border-[#f0f0f0] pb-2">
+              <div>
+                <p className="text-slate-400 text-[9px] uppercase tracking-wide">STUDENT OS</p>
+                <p className="font-extrabold text-base text-slate-700 tracking-tight mt-0.5">STD</p>
+                <p className="text-[9px] text-emerald-500 font-bold mt-0.5">↗ ACTIVE</p>
+              </div>
+              
+              <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="#aeaeae" strokeWidth="1.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+
+              <div className="text-right">
+                <p className="text-slate-400 text-[9px] uppercase tracking-wide">PRO ZONE</p>
+                <p className="font-extrabold text-base tracking-tight mt-0.5" style={{ color: categoryStyles.accent }}>PRO</p>
+                <p className="text-[9px] text-indigo-500 font-bold mt-0.5">↘ LEVEL 4</p>
+              </div>
+            </div>
+
+            {/* Title & Subtitle details */}
+            <div className="my-1.5">
+              <h4 className="text-sm font-bold text-[#2d2d2d] uppercase leading-tight font-display tracking-tight">
+                {title}
+              </h4>
+              <p className="text-[11px] text-slate-500 leading-snug line-clamp-1 mt-0.5">
+                {subtitle}
+              </p>
+            </div>
+
+            {/* Details table matching reference flight ticket (Gate number removed) */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-[#f0f0f0] pt-2 text-[9px] font-mono">
+              <div>
+                <span className="text-slate-400 font-semibold uppercase tracking-wide block leading-none">PASSENGER</span>
+                <span className="text-slate-800 font-extrabold text-xs uppercase leading-tight mt-0.5 block">Aryan Buha</span>
+              </div>
+              <div>
+                <span className="text-slate-400 font-semibold uppercase tracking-wide block leading-none">PASS ID</span>
+                <span className="text-slate-800 font-extrabold text-xs uppercase leading-tight mt-0.5 block">{admitNo}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 font-semibold uppercase tracking-wide block leading-none">CATEGORY</span>
+                <span className="text-slate-800 font-extrabold text-xs uppercase leading-tight mt-0.5 block">{type}</span>
+              </div>
+              <div>
+                <span className="text-slate-400 font-semibold uppercase tracking-wide block leading-none">VALID THRU</span>
+                <span className="text-slate-800 font-extrabold text-xs uppercase leading-tight mt-0.5 block">{validUntil}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Far Right colored strip with icons */}
+          <div 
+            className="absolute right-0 top-0 bottom-0 w-14 flex flex-col items-center justify-between py-4 text-white z-10 overflow-hidden"
+            style={{ background: categoryStyles.gradient }}
+          >
+            {/* Right-side strip gloss reflection overlay */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/10 pointer-events-none mix-blend-overlay z-0" />
+
+            {/* Top student icon (Plane logo replaced with GraduationCap student related logo) */}
+            <GraduationCap className="h-6.5 w-6.5 text-white/95 relative z-10" />
+            
+            {/* Category marker rotated */}
+            <div className="text-[8px] font-mono font-extrabold tracking-widest uppercase rotate-90 my-auto origin-center whitespace-nowrap text-white/90 relative z-10">
+              {categoryStyles.label}
+            </div>
+
+            {/* Bottom PH logo (Professional Home logo in the strip bottom, not in the card body) */}
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-md select-none border border-white/20 relative z-10 transition duration-300 hover:scale-105 active:scale-95">
+              <span className="bg-gradient-to-br from-sky-500 to-indigo-600 bg-clip-text text-transparent font-sans text-[10px] font-black tracking-tighter">PH</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Scanned ticket info modal */}
+      <AnimatePresence>
+        {isScanModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white overflow-hidden shadow-2xl"
+            >
+              {/* Scan beam animation overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/10 to-transparent w-full h-1/2 animate-pulse pointer-events-none" />
+
+              {/* Close button */}
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsScanModalOpen(false);
+                }}
+                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition duration-200"
+              >
+                <X className="h-4 w-4" />
+              </button>
+
+              {/* Header */}
+              <div className="flex flex-col items-center text-center mt-2">
+                <div className="relative flex items-center justify-center h-16 w-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)] mb-4">
+                  {/* Pulsing rings */}
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-20 animate-ping" />
+                  <Check className="h-8 w-8 text-emerald-400" />
+                </div>
+                <h3 className="font-display text-xl font-bold tracking-tight text-white">Boarding Pass Verified</h3>
+                <p className="text-xs text-slate-400 font-mono mt-1 uppercase tracking-widest">PH-SECURE-SCAN-v1.4</p>
+              </div>
+
+              {/* Details Grid */}
+              <div className="mt-6 space-y-3 border-t border-b border-slate-800 py-4 font-mono text-sm">
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500 text-xs">PASSENGER:</span>
+                  <span className="font-bold text-slate-200">Aryan Buha</span>
+                </div>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500 text-xs">PASS ID:</span>
+                  <span className="font-bold text-slate-200 text-emerald-400">{admitNo}</span>
+                </div>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500 text-xs">CATEGORY:</span>
+                  <span className="font-bold px-2 py-0.5 rounded text-[11px] bg-slate-800 border border-slate-700 text-slate-200">
+                    {type}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500 text-xs">VALIDITY:</span>
+                  <span className="font-bold text-slate-200">{validUntil}</span>
+                </div>
+                <div className="flex justify-between items-center py-1">
+                  <span className="text-slate-500 text-xs">STATUS:</span>
+                  <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    ACTIVE & VALID
+                  </span>
+                </div>
+              </div>
+
+              {/* Benefits/Info Section */}
+              <div className="mt-4">
+                <h4 className="text-xs font-bold font-display tracking-wide uppercase text-slate-400 mb-2">Access Privileges:</h4>
+                <ul className="space-y-1.5 text-[11px] text-slate-300 font-sans">
+                  {getPrivileges(type).map((priv, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-0.5">✓</span>
+                      <span>{priv}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Footer note */}
+              <p className="mt-6 text-center text-[10px] text-slate-500 leading-snug">
+                This pass is verified cryptographically by Professional Home. Scan signature: {btoa(admitNo).slice(0, 16)}
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
@@ -1026,13 +1324,9 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: AI COPILOT */}
       {currentTab === "copilot" && (
         <Page title="AI Copilot" subtitle="Interactive contextual help suite.">
-          <Card className="p-6 text-center max-w-md mx-auto">
-            <Bot className="h-8 w-8 text-sky-400 mx-auto mb-3" />
-            <h4 className="text-sm font-bold text-white font-display">Always-On Agent</h4>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Use the floating orb in the bottom-right corner to start typing questions immediately.
-            </p>
-          </Card>
+          <div className="max-w-6xl mx-auto mt-2">
+            <CopilotChat />
+          </div>
         </Page>
       )}
 

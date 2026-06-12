@@ -98,13 +98,14 @@ export function Nav() {
         {/* Call to Actions */}
         <div className="relative ml-auto flex items-center gap-1.5">
           <Link
-            to="/app"
+            to="/login"
             className="hidden sm:inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium text-white/75 hover:text-white hover:bg-white/10"
           >
             Sign in
           </Link>
           <Link
             to="/app"
+            search={{ tab: "home" }}
             className="group relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-full px-4 text-sm font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.7),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-px"
             style={{
               backgroundImage: "linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 110%)",
@@ -154,7 +155,7 @@ export function Nav() {
               ))}
               <div className="flex flex-col gap-2.5 mt-2 pt-2">
                 <Link
-                  to="/app"
+                  to="/login"
                   onClick={() => setMenuOpen(false)}
                   className="flex h-10 items-center justify-center rounded-full border border-white/10 text-sm font-semibold text-white/70 hover:text-white"
                 >
@@ -162,6 +163,7 @@ export function Nav() {
                 </Link>
                 <Link
                   to="/app"
+                  search={{ tab: "home" }}
                   onClick={() => setMenuOpen(false)}
                   className="flex h-10 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white"
                   style={{

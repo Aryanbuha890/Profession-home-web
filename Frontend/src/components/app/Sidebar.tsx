@@ -126,6 +126,32 @@ const roleConfigs: Record<
   },
 };
 
+const SUBROUTE_TABS = new Set([
+  "achievements",
+  "admin",
+  "assessment",
+  "career",
+  "community",
+  "consultant",
+  "copilot",
+  "discovery",
+  "documents",
+  "execution",
+  "experts",
+  "investor",
+  "opportunities",
+  "outcomes",
+  "profile",
+  "reports",
+  "research",
+  "roadmap",
+  "settings",
+  "startup",
+  "tracker",
+  "university",
+  "workspace",
+]);
+
 export function AppSidebar() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -156,13 +182,10 @@ export function AppSidebar() {
           { icon: Map, label: "Career Roadmap", to: "/app", tab: "roadmap" },
           { icon: ListChecks, label: "Skill Builder", to: "/app", tab: "skills" },
           { icon: Folder, label: "Projects", to: "/app", tab: "projects" },
-          { icon: Briefcase, label: "Internships", to: "/app", tab: "internships" },
-          { icon: Briefcase, label: "Jobs", to: "/app", tab: "jobs" },
           { icon: Users, label: "Mentors", to: "/app", tab: "mentors" },
           { icon: Bot, label: "AI Copilot", to: "/app", tab: "copilot" },
           { icon: Award, label: "Achievement Vault", to: "/app", tab: "achievements" },
           { icon: Ticket, label: "Reward Center", to: "/app", tab: "rewards" },
-          { icon: Users, label: "Community", to: "/app", tab: "community" },
           { icon: User, label: "Profile", to: "/app", tab: "profile" },
         ];
       case "researcher":
@@ -381,16 +404,21 @@ export function AppSidebar() {
         {/* Navigation Links */}
         <nav className="mt-4 flex-1 overflow-y-auto px-2 pb-4 space-y-0.5 scrollbar-thin">
           {navItems.map((n) => {
-            const active = currentTab === n.tab;
+            const isSubroute = SUBROUTE_TABS.has(n.tab);
+            const active = isSubroute
+              ? (pathname === `/app/${n.tab}` || (pathname === "/app" && currentTab === n.tab))
+              : (pathname === "/app" && (currentTab === n.tab || (n.tab === "home" && !currentTab)));
+
+            const linkProps = isSubroute
+              ? { to: `/app/${n.tab}` as any }
+              : { to: "/app" as any, search: { tab: n.tab } as any };
+
             const Icon = n.icon;
-            const isTabHome = n.tab === "home";
-            const targetUrl = isTabHome ? "/app" : `/app?tab=${n.tab}`;
 
             return (
               <li key={n.tab} className="list-none">
                 <Link
-                  to="/app"
-                  search={{ tab: n.tab } as any}
+                  {...linkProps}
                   onClick={() => setIsOpen(false)}
                   className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs transition select-none ${
                     active
