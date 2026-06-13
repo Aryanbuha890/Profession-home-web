@@ -635,6 +635,7 @@ export function Pricing() {
             <Link
               key={p.n}
               to="/app"
+              search={{ tab: "home" }}
               className="ticket-wrapper block text-left"
               style={{
                 "--t-accent": p.accent,
@@ -808,7 +809,7 @@ export function Footer() {
               { to: "/", hash: "ecosystem", label: "Ecosystem" },
               { to: "/", hash: "platform", label: "Platform" },
               { to: "/", hash: "pricing", label: "Pricing" },
-              { to: "/app", label: "Login / Sign Up" },
+              { to: "/login", label: "Login / Sign Up" },
             ].map((link) => (
               <li key={link.label}>
                 <Link

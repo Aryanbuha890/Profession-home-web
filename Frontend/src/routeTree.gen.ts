@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +25,7 @@ import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppRoadmapRouteImport } from './routes/app.roadmap'
 import { Route as AppResearchRouteImport } from './routes/app.research'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppOutcomesRouteImport } from './routes/app.outcomes'
 import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
 import { Route as AppInvestorRouteImport } from './routes/app.investor'
@@ -43,9 +46,19 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CookiesRoute = CookiesRouteImport.update({
@@ -106,6 +119,11 @@ const AppResearchRoute = AppResearchRouteImport.update({
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppOutcomesRoute = AppOutcomesRouteImport.update({
@@ -183,7 +201,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/cookies': typeof CookiesRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/admin': typeof AppAdminRoute
@@ -199,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
   '/app/roadmap': typeof AppRoadmapRoute
@@ -212,7 +233,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cookies': typeof CookiesRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/admin': typeof AppAdminRoute
@@ -228,6 +251,7 @@ export interface FileRoutesByTo {
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
   '/app/roadmap': typeof AppRoadmapRoute
@@ -243,7 +267,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/cookies': typeof CookiesRoute
+  '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
+  '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/app/achievements': typeof AppAchievementsRoute
   '/app/admin': typeof AppAdminRoute
@@ -259,6 +285,7 @@ export interface FileRoutesById {
   '/app/investor': typeof AppInvestorRoute
   '/app/opportunities': typeof AppOpportunitiesRoute
   '/app/outcomes': typeof AppOutcomesRoute
+  '/app/profile': typeof AppProfileRoute
   '/app/reports': typeof AppReportsRoute
   '/app/research': typeof AppResearchRoute
   '/app/roadmap': typeof AppRoadmapRoute
@@ -275,7 +302,9 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/cookies'
+    | '/login'
     | '/privacy'
+    | '/signup'
     | '/terms'
     | '/app/achievements'
     | '/app/admin'
@@ -291,6 +320,7 @@ export interface FileRouteTypes {
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/profile'
     | '/app/reports'
     | '/app/research'
     | '/app/roadmap'
@@ -304,7 +334,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cookies'
+    | '/login'
     | '/privacy'
+    | '/signup'
     | '/terms'
     | '/app/achievements'
     | '/app/admin'
@@ -320,6 +352,7 @@ export interface FileRouteTypes {
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/profile'
     | '/app/reports'
     | '/app/research'
     | '/app/roadmap'
@@ -334,7 +367,9 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/cookies'
+    | '/login'
     | '/privacy'
+    | '/signup'
     | '/terms'
     | '/app/achievements'
     | '/app/admin'
@@ -350,6 +385,7 @@ export interface FileRouteTypes {
     | '/app/investor'
     | '/app/opportunities'
     | '/app/outcomes'
+    | '/app/profile'
     | '/app/reports'
     | '/app/research'
     | '/app/roadmap'
@@ -365,7 +401,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   CookiesRoute: typeof CookiesRoute
+  LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
 }
 
@@ -378,11 +416,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cookies': {
@@ -467,6 +519,13 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/app/reports'
       preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/outcomes': {
@@ -585,6 +644,7 @@ interface AppRouteChildren {
   AppInvestorRoute: typeof AppInvestorRoute
   AppOpportunitiesRoute: typeof AppOpportunitiesRoute
   AppOutcomesRoute: typeof AppOutcomesRoute
+  AppProfileRoute: typeof AppProfileRoute
   AppReportsRoute: typeof AppReportsRoute
   AppResearchRoute: typeof AppResearchRoute
   AppRoadmapRoute: typeof AppRoadmapRoute
@@ -611,6 +671,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInvestorRoute: AppInvestorRoute,
   AppOpportunitiesRoute: AppOpportunitiesRoute,
   AppOutcomesRoute: AppOutcomesRoute,
+  AppProfileRoute: AppProfileRoute,
   AppReportsRoute: AppReportsRoute,
   AppResearchRoute: AppResearchRoute,
   AppRoadmapRoute: AppRoadmapRoute,
@@ -628,7 +689,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   CookiesRoute: CookiesRoute,
+  LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
+  SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
