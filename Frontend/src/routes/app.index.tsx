@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Page, Card, Bar, Stat } from "@/components/app/Page";
 import { useRole, Role } from "@/hooks/useRole";
 import { OnboardingWizard } from "@/components/app/OnboardingWizard";
@@ -941,6 +941,26 @@ interface ProjectFormModalProps {
   defaultAuthor?: string;
 }
 
+const sanitizeImageUrl = (url: string) => {
+  const value = url.trim();
+  if (!value) return "";
+  if (value.startsWith("data:image/")) return value;
+
+  try {
+    const parsed = new URL(
+      value,
+      typeof window !== "undefined" ? window.location.origin : "http://localhost"
+    );
+    if (["http:", "https:", "blob:"].includes(parsed.protocol)) {
+      return parsed.href;
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+};
+
 const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   isOpen,
   onClose,
@@ -1021,7 +1041,8 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       .filter(Boolean);
 
     const validFeatures = features.filter((f) => f.trim());
-    const validGallery = galleryUrls.filter((u) => u.trim());
+    const safeImageUrl = sanitizeImageUrl(imageUrl);
+    const validGallery = galleryUrls.map(sanitizeImageUrl).filter(Boolean);
 
     const newProject = {
       id: `proj-${Date.now()}`,
@@ -1037,7 +1058,7 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       activity: [0, 0, 0, 0, 1, 2, 4, 3],
       techStack: techArray,
       category: category,
-      image: imageUrl.trim() || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop',
+      image: safeImageUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop',
       desc: shortDesc.trim(),
       shortDescription: shortDesc.trim(),
       fullDescription: fullDesc.trim(),
@@ -1046,6 +1067,8 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       images: [imageUrl.trim(), ...validGallery].filter(Boolean),
       isPublished: isPublished,
     };
+
+    const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
 
     onSubmit(newProject);
     setSubmitting(false);
@@ -1230,9 +1253,9 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                 onChange={handleImageUpload}
                 className="hidden"
               />
-              {imageUrl && (
+              {safePreviewImageUrl && (
                 <div className="relative rounded-xl border border-white/10 overflow-hidden h-24 w-full bg-slate-900">
-                  <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                  <img src={safePreviewImageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => setImageUrl('')}
@@ -1859,6 +1882,32 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-base font-black text-white tracking-tight uppercase mb-3.5 font-display">
+              Ecosystem Hubs
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card className="flex flex-col justify-between border-[#DFFF00]/30 hover:border-[#DFFF00]/60 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Premium Business Dashboard</h3>
+                  <p className="text-sm text-white/60 mb-4">View advanced business analytics, sales charts, and customer traffic data.</p>
+                </div>
+                <Link to="/app/business" className="flex items-center justify-center gap-2 bg-[#DFFF00]/10 text-[#DFFF00] py-3 rounded-xl font-bold hover:bg-[#DFFF00]/20 transition-colors">
+                  Open Business Dashboard <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Card>
+              <Card className="flex flex-col justify-between border-rose-500/30 hover:border-rose-500/60 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Startup Hub</h3>
+                  <p className="text-sm text-white/60 mb-4">Manage fundraising, milestones, runway, and access the mentor network.</p>
+                </div>
+                <Link to="/app/startup" className="flex items-center justify-center gap-2 bg-rose-500/20 text-rose-400 py-3 rounded-xl font-bold hover:bg-rose-500/30 transition-colors">
+                  Open Startup Hub <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Card>
+            </div>
           </div>
         </Page>
       )}
@@ -5433,6 +5482,32 @@ function FounderDashboard({ currentTab }: { currentTab: string }) {
                 <div className="h-full bg-rose-400 rounded-full" style={{ width: "79%" }} />
               </div>
             </Card>
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-base font-black text-white tracking-tight uppercase mb-3.5 font-display">
+              Ecosystem Hubs
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card className="flex flex-col justify-between border-[#DFFF00]/30 hover:border-[#DFFF00]/60 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Premium Business Dashboard</h3>
+                  <p className="text-sm text-white/60 mb-4">View advanced business analytics, sales charts, and customer traffic data.</p>
+                </div>
+                <Link to="/app/business" className="flex items-center justify-center gap-2 bg-[#DFFF00]/10 text-[#DFFF00] py-3 rounded-xl font-bold hover:bg-[#DFFF00]/20 transition-colors">
+                  Open Business Dashboard <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Card>
+              <Card className="flex flex-col justify-between border-rose-500/30 hover:border-rose-500/60 transition-colors">
+                <div>
+                  <h3 className="text-lg font-bold text-white mb-2">Startup Hub</h3>
+                  <p className="text-sm text-white/60 mb-4">Manage fundraising, milestones, runway, and access the mentor network.</p>
+                </div>
+                <Link to="/app/startup" className="flex items-center justify-center gap-2 bg-rose-500/20 text-rose-400 py-3 rounded-xl font-bold hover:bg-rose-500/30 transition-colors">
+                  Open Startup Hub <ArrowRight className="w-4 h-4" />
+                </Link>
+              </Card>
+            </div>
           </div>
         </Page>
       )}
