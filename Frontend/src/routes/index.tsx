@@ -12,6 +12,11 @@ import {
   Compass,
   Eye,
   Cpu,
+  Bot,
+  Trophy,
+  Coins,
+  Code,
+  Database,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
 import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
@@ -99,17 +104,82 @@ function Hero() {
 
       <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1">
         <motion.div style={{ y }} className="mx-auto max-w-5xl text-center w-full flex flex-col items-center justify-center">
-          {/* Tagline Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-xl animate-fade-up"
-          >
-            <span className="inline-flex items-center rounded-full bg-gradient-to-r from-violet-500 to-blue-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
-              New
-            </span>
-            AI Copilot for research, careers & startups — now live
-          </motion.div>
+          {/* Tagline Badge - 3D Rotating Wordmark */}
+          <div style={{ perspective: "1500px" }} className="mb-8 flex justify-center select-none">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                rotateY: [0, 360],
+                rotateX: [10, -10, 10],
+              }}
+              transition={{
+                opacity: { duration: 0.8 },
+                scale: { duration: 0.8 },
+                y: { duration: 0.8 },
+                rotateY: { duration: 18, ease: "linear", repeat: Infinity },
+                rotateX: { duration: 9, ease: "easeInOut", repeat: Infinity },
+              }}
+              style={{
+                transformStyle: "preserve-3d",
+              }}
+              className="relative flex items-center justify-center px-12 py-6 cursor-grab active:cursor-grabbing"
+            >
+              {/* Layered 3D Text Extrusion (Creates a solid blocky 3D depth of letters) */}
+              <span 
+                className="relative inline-block font-sans font-black tracking-[0.2em] text-xl sm:text-2xl md:text-4xl lg:text-5xl uppercase text-center" 
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {Array.from({ length: 30 }).map((_, i) => {
+                  const zValue = i * 0.85;
+                  const pct = i / 30;
+                  
+                  // Generates smooth lighting shades from base shadow to highlight
+                  let color = "#0a0518"; // deep shadow backplate
+                  if (pct > 0.95) {
+                    color = "#c084fc"; // violet-400 near front
+                  } else if (pct > 0.8) {
+                    color = "#a855f7"; // purple-500
+                  } else if (pct > 0.6) {
+                    color = "#9333ea"; // purple-600
+                  } else if (pct > 0.4) {
+                    color = "#7e22ce"; // purple-700
+                  } else if (pct > 0.2) {
+                    color = "#581c87"; // purple-900
+                  } else if (pct > 0.08) {
+                    color = "#3b0764"; // dark violet shadow
+                  }
+
+                  return (
+                    <span
+                      key={i}
+                      className="absolute inset-0 flex items-center justify-center whitespace-nowrap pointer-events-none"
+                      style={{
+                        transform: `translate3d(0, 0, ${zValue}px)`,
+                        color: color,
+                        filter: i === 0 ? "blur(4px) opacity(0.7)" : "none",
+                        WebkitTextStroke: i < 28 ? "1.5px rgba(0,0,0,0.3)" : "none",
+                      }}
+                    >
+                      PROFESSIONAL HOME
+                    </span>
+                  );
+                })}
+                
+                {/* Frontmost Layer (Glossy holographic styling) */}
+                <span
+                  className="relative flex items-center justify-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-violet-100 to-fuchsia-300 filter drop-shadow-[0_4px_10px_rgba(167,139,250,0.6)]"
+                  style={{
+                    transform: "translate3d(0, 0, 25.5px)",
+                  }}
+                >
+                  PROFESSIONAL HOME
+                </span>
+              </span>
+            </motion.div>
+          </div>
 
           {/* Heading */}
           <motion.h1
@@ -151,6 +221,7 @@ function Hero() {
           >
             <Link
               to="/app"
+              search={{ tab: "home" }}
               className="group relative inline-flex h-12 items-center gap-2 overflow-hidden rounded-full px-6 text-sm font-semibold text-white shadow-[0_18px_40px_-12px_rgba(124,58,237,0.7)] transition-transform hover:-translate-y-0.5"
               style={{
                 backgroundImage: "linear-gradient(120deg, #1B3A6B 0%, #2563EB 45%, #7C3AED 100%)",
@@ -165,25 +236,121 @@ function Hero() {
             </button>
           </motion.div>
 
-          {/* Trust strip indicators */}
+          {/* Trust strip indicators - Replaced with 4 premium HUD status widgets */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] text-white/45"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl px-4"
           >
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> SOC 2 Type II
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> ISO 27001
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> Deployed in 14 countries
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" /> 99.99% uptime
-            </span>
+            {/* System Pulse Widget */}
+            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <span className="absolute flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                  </span>
+                </div>
+                <div className="text-left">
+                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">TELEMETRY // PH-OS</div>
+                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">SYSTEM PULSE: ACTIVE</div>
+                </div>
+              </div>
+              
+              {/* Pulse Audio Ticker Waveform */}
+              <div className="flex items-end gap-0.5 h-6">
+                {[4, 10, 6, 14, 8, 4].map((h, i) => (
+                  <span
+                    key={i}
+                    className="w-0.5 bg-emerald-400/70 rounded-full animate-pulse"
+                    style={{
+                      height: `${h}px`,
+                      animationDuration: `${0.8 + i * 0.15}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* AI Agents Widget */}
+            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(6,182,212,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform duration-300">
+                  <Bot className="h-5 w-5 animate-pulse" />
+                </div>
+                <div className="text-left">
+                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">AGENT CLUSTER</div>
+                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">6 COPILOTS ONLINE</div>
+                </div>
+              </div>
+
+              {/* Glowing active dots */}
+              <div className="flex gap-1 select-none pr-1">
+                {Array.from({ length: 6 }).map((_, idx) => (
+                  <span
+                    key={idx}
+                    className="h-1.5 w-1.5 rounded-full bg-cyan-400/80 animate-ping"
+                    style={{
+                      animationDuration: "1.5s",
+                      animationDelay: `${idx * 200}ms`,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Placement/Success Rate Widget */}
+            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-amber-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:rotate-12 transition-transform duration-300">
+                  <Trophy className="h-5 w-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">OUTCOME METRIC</div>
+                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">94.2% PLACEMENT</div>
+                </div>
+              </div>
+
+              {/* Radial Progress Mini-circle */}
+              <div className="relative h-7 w-7 flex items-center justify-center">
+                <svg className="h-7 w-7 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3.5" />
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="14"
+                    fill="none"
+                    stroke="#f59e0b"
+                    strokeWidth="3.5"
+                    strokeDasharray="88"
+                    strokeDashoffset={88 - 88 * 0.942}
+                    strokeLinecap="round"
+                    className="group-hover:stroke-amber-300 transition-colors duration-300"
+                  />
+                </svg>
+                <span className="absolute text-[8px] font-mono font-bold text-amber-400/90 group-hover:scale-105 transition-transform">94%</span>
+              </div>
+            </div>
+
+            {/* Seed Runway Widget */}
+            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-violet-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(139,92,246,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:translate-y-[-2px] transition-transform duration-300">
+                  <Coins className="h-5 w-5" />
+                </div>
+                <div className="text-left">
+                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">CAPITAL VALUE</div>
+                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">₹40M RUNWAY</div>
+                </div>
+              </div>
+
+              {/* Sparkline mini chart */}
+              <svg className="h-5 w-12 text-violet-400/80 group-hover:text-violet-300 transition-colors duration-300" viewBox="0 0 50 20">
+                <path d="M0,16 Q10,12 20,13 T40,6 T50,2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+                <path d="M0,16 Q10,12 20,13 T40,6 T50,2 L50,20 L0,20 Z" fill="currentColor" opacity="0.12" />
+              </svg>
+            </div>
           </motion.div>
         </motion.div>
       </div>
@@ -813,66 +980,93 @@ function JourneySection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
           >
-            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
-              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
-                <img
-                  src="/Assess.png"
-                  alt="Assess"
-                  className="w-full h-full object-contain scale-[1.7]"
-                />
+            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
+              {/* Background Image Overlay */}
+              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
+                <img src="/Assess.jpg" alt="Assess Background" className="w-full h-full object-cover" />
               </div>
-              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Assess</h3>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
-              </p>
+              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
+                {/* Title */}
+                <h3 className="text-xl font-bold font-mono text-violet-400">
+                  Assess
+                </h3>
+
+                {/* Separator */}
+                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
+
+                {/* Description */}
+                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
+                  Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
+                </p>
+              </div>
             </div>
           </motion.div>
 
-          {/* Card 2: Execute (Slides up in the Center) */}
+          {/* Card 2: Achieve (Slides up in the Center) */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
           >
-            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
-              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
-                <img
-                  src="/Execute.png"
-                  alt="Execute"
-                  className="w-full h-full object-contain scale-[1.7]"
-                />
+            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
+              {/* Background Image Overlay */}
+              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
+                <img src="/Achieve.jpg" alt="Achieve Background" className="w-full h-full object-cover" />
               </div>
-              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Execute</h3>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
-              </p>
+              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
+                {/* Title */}
+                <h3 className="text-xl font-bold font-mono text-violet-400">
+                  Achieve
+                </h3>
+
+                {/* Separator */}
+                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
+
+                {/* Description */}
+                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
+                  Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
+                </p>
+              </div>
             </div>
           </motion.div>
 
-          {/* Card 3: Achieve (Slides in from the Right) */}
+          {/* Card 3: Execute (Slides in from the Right) */}
           <motion.div
             initial={{ opacity: 0, x: 60 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1.5px] rounded-3xl bg-gradient-to-br from-purple-600 via-purple-300 to-white shadow-lg hover:shadow-[0_20px_40px_rgba(139,92,246,0.2)] transition-all duration-300 flex"
+            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
           >
-            <div className="bg-white text-slate-900 rounded-[22px] p-8 flex flex-col items-center text-center h-full w-full">
-              <div className="w-48 h-44 overflow-hidden flex items-center justify-center mb-6 relative rounded-xl">
-                <img
-                  src="/Achieve.png"
-                  alt="Achieve"
-                  className="w-full h-full object-contain scale-[1.7]"
-                />
+            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
+              {/* Background Image Overlay */}
+              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
+                <img src="/Execute.jpg" alt="Execute Background" className="w-full h-full object-cover" />
               </div>
-              <h3 className="text-2xl font-bold text-purple-600 tracking-tight">Achieve</h3>
-              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
-              </p>
+              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
+
+              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
+                {/* Title */}
+                <h3 className="text-xl font-bold font-mono text-violet-400">
+                  Execute
+                </h3>
+
+                {/* Separator */}
+                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
+
+                {/* Description */}
+                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
+                  Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
+                </p>
+              </div>
             </div>
           </motion.div>
         </div>
