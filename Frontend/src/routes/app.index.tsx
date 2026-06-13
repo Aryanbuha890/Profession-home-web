@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Page, Card, Bar, Stat } from "@/components/app/Page";
 import { useRole, Role } from "@/hooks/useRole";
 import { OnboardingWizard } from "@/components/app/OnboardingWizard";
-import { CopilotChat } from "@/components/app/CopilotChat";
+import { CopilotChat, GlowingOrb } from "@/components/app/CopilotChat";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -15,6 +15,8 @@ import {
   Briefcase,
   Bot,
   Award,
+  Circle,
+  Mic,
   Ticket,
   ChevronRight,
   Plus,
@@ -67,6 +69,7 @@ import {
   ChevronLeft,
   ImageOff,
   Upload,
+  Folder,
 } from "lucide-react";
 
 
@@ -3710,14 +3713,360 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
   );
 }
 
-// -------------------------------------------------------------
-// RESEARCHER DASHBOARD
-// -------------------------------------------------------------
+interface ResearchTask {
+  id: string;
+  title: string;
+  done: boolean;
+  isAiRecommended?: boolean;
+}
+
+interface ResearchPhase {
+  phase: number;
+  name: string;
+  desc: string;
+  details: string;
+  action: string;
+  category: "Hypothesis" | "Literature" | "Experiment" | "Drafting" | "Submission";
+  tags: string[];
+  gradient: string;
+  color: "violet" | "sky" | "emerald" | "indigo" | "rose";
+  tasks: ResearchTask[];
+  initials: string;
+  timeline: string;
+}
+
+const CATEGORY_STYLES_RES: Record<string, {
+  text: string;
+  border: string;
+  badge: string;
+  glow: string;
+  accent: string;
+  icon: React.ComponentType<any>;
+}> = {
+  "Hypothesis": {
+    text: "text-violet-400",
+    border: "border-violet-500/20 hover:border-violet-500/40",
+    badge: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    glow: "shadow-[0_0_20px_rgba(168,85,247,0.15)] border-violet-500/30",
+    accent: "#a855f7",
+    icon: Compass
+  },
+  "Literature": {
+    text: "text-sky-400",
+    border: "border-sky-500/20 hover:border-sky-500/40",
+    badge: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+    glow: "shadow-[0_0_20px_rgba(56,189,248,0.15)] border-sky-500/30",
+    accent: "#38bdf8",
+    icon: BookOpen
+  },
+  "Experiment": {
+    text: "text-emerald-400",
+    border: "border-emerald-500/20 hover:border-emerald-500/40",
+    badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    glow: "shadow-[0_0_20px_rgba(16,185,129,0.15)] border-emerald-500/30",
+    accent: "#10b981",
+    icon: Activity
+  },
+  "Drafting": {
+    text: "text-indigo-400",
+    border: "border-indigo-500/20 hover:border-indigo-500/40",
+    badge: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    glow: "shadow-[0_0_20px_rgba(99,102,241,0.15)] border-indigo-500/30",
+    accent: "#6366f1",
+    icon: FileText
+  },
+  "Submission": {
+    text: "text-rose-400",
+    border: "border-rose-500/20 hover:border-rose-500/40",
+    badge: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+    glow: "shadow-[0_0_20px_rgba(244,63,94,0.15)] border-rose-500/30",
+    accent: "#f43f5e",
+    icon: Award
+  }
+};
+
+function ResearchPhaseJourneyCard({
+  phase,
+  status,
+  progress,
+  onViewRoadmap
+}: {
+  phase: ResearchPhase;
+  status: "Done" | "In Progress" | "Upcoming" | "Locked";
+  progress: number;
+  onViewRoadmap: () => void;
+}) {
+  const styles = CATEGORY_STYLES_RES[phase.category];
+  const IconComponent = styles.icon;
+  const isLocked = status === "Locked";
+
+  return (
+    <div className={`relative flex flex-col sm:flex-row gap-5 p-5 rounded-3xl border ${styles.border} bg-slate-900/30 backdrop-blur-md transition-all duration-300 ${isLocked ? 'opacity-60' : 'hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(0,0,0,0.3)]'}`}>
+      {/* Monogram Box & Timeline */}
+      <div className="flex flex-col items-center shrink-0">
+        <div className={`w-24 h-24 rounded-2xl bg-slate-950/80 border flex items-center justify-center font-mono font-black text-2xl text-white ${styles.glow}`}>
+          {isLocked ? <Lock size={24} className="text-muted-foreground/30" /> : phase.initials}
+        </div>
+        <span className="text-[10px] font-mono text-muted-foreground/50 mt-2 tracking-wider">{phase.timeline}</span>
+      </div>
+
+      {/* Phase Details */}
+      <div className="flex-1 flex flex-col justify-between">
+        <div>
+          {/* Top category pill row */}
+          <div className="flex justify-between items-start gap-2">
+            <div>
+              <h4 className="text-md font-black text-white leading-tight font-display">
+                Phase {phase.phase}: {phase.name}
+              </h4>
+              <p className={`text-xs font-bold ${styles.text} mt-0.5 uppercase tracking-wide text-[10px]`}>{phase.category}</p>
+            </div>
+            <span className={`flex items-center gap-1 text-[9px] uppercase font-mono font-bold tracking-widest px-2.5 py-0.5 rounded-full border ${styles.badge}`}>
+              <IconComponent size={10} />
+              {status}
+            </span>
+          </div>
+
+          {/* Description */}
+          <p className="text-xs text-muted-foreground mt-3.5 leading-relaxed">
+            {phase.desc}
+          </p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-1.5 mt-4">
+            {phase.tags.map((tag) => (
+              <span key={tag} className="text-[9px] font-mono px-2 py-0.5 rounded-lg border border-white/5 bg-white/[0.02] text-muted-foreground/50">{tag}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer actions */}
+        <div className="flex items-center justify-between border-t border-white/5 mt-5 pt-3">
+          {/* Progress gauge */}
+          <div className="flex items-center gap-2">
+            <div className="w-16 h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="h-full rounded-full" style={{ width: `${progress}%`, backgroundColor: styles.accent }} />
+            </div>
+            <span className="text-[9px] font-mono text-muted-foreground/60">{progress}% Complete</span>
+          </div>
+
+          {/* View Roadmap button */}
+          <button
+            onClick={onViewRoadmap}
+            disabled={isLocked}
+            className={`flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider py-1.5 px-3.5 rounded-xl border hover:bg-white/5 transition cursor-pointer ${
+              isLocked ? 'border-white/5 text-muted-foreground/30 cursor-not-allowed' : `${styles.text} ${styles.border}`
+            }`}
+          >
+            Explore Phase <ArrowRight size={10} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResearchPhaseRoadmapModal({
+  phase,
+  status,
+  progress,
+  onClose,
+  onToggleTask,
+  onAddTask,
+  onDeleteTask
+}: {
+  phase: ResearchPhase;
+  status: "Done" | "In Progress" | "Upcoming" | "Locked";
+  progress: number;
+  onClose: () => void;
+  onToggleTask: (taskId: string) => void;
+  onAddTask: (title: string) => void;
+  onDeleteTask: (taskId: string) => void;
+}) {
+  const styles = CATEGORY_STYLES_RES[phase.category];
+  const [newTaskInput, setNewTaskInput] = useState("");
+
+  const handleAddNewTask = () => {
+    if (!newTaskInput.trim()) return;
+    onAddTask(newTaskInput.trim());
+    setNewTaskInput("");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        className="relative max-w-4xl w-full border border-white/10 bg-[#0a0c16]/90 rounded-3xl p-6 md:p-8 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.8)] max-h-[90vh] overflow-y-auto"
+      >
+        {/* Glow Effects */}
+        <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-20" style={{ backgroundColor: styles.accent }} />
+        <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-10" style={{ backgroundColor: styles.accent }} />
+
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-6 right-6 p-2 rounded-xl bg-white/5 hover:bg-white/10 text-muted-foreground hover:text-white transition cursor-pointer border-none"
+        >
+          <X size={16} />
+        </button>
+
+        {/* Modal Header */}
+        <div className="max-w-2xl text-left">
+          <span className={`text-[10px] uppercase font-mono tracking-widest font-extrabold block ${styles.text}`}>
+            // Phase {phase.phase} Research Blueprint
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-white mt-1.5 tracking-tight font-display uppercase leading-none">
+            {phase.name}
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground/80 mt-2 font-mono">
+            Focus Period: {phase.timeline} · {status}
+          </p>
+        </div>
+
+        {/* Step-by-Step roadmap flow */}
+        <div className="mt-8">
+          <span className={`text-[9px] font-mono tracking-widest font-bold uppercase block mb-6 text-left ${styles.text}`}>
+            STEP-BY-STEP ROADMAP
+          </span>
+
+          <div className="relative mt-2">
+            {/* Connector Line */}
+            {phase.tasks.length > 1 && (
+              <div className="absolute top-[28px] left-[12.5%] right-[12.5%] h-[2px] bg-white/5 z-0 hidden md:block" />
+            )}
+
+            <div className={`grid gap-6 relative ${
+              phase.tasks.length === 1 ? 'md:grid-cols-1 max-w-sm mx-auto' :
+              phase.tasks.length === 2 ? 'md:grid-cols-2 max-w-xl mx-auto' :
+              phase.tasks.length === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4'
+            }`}>
+              {phase.tasks.map((task, idx) => {
+                const stepNum = String(idx + 1).padStart(2, "0");
+                return (
+                  <div key={task.id} className="text-center relative">
+                    {/* Node Circle */}
+                    <button
+                      onClick={() => onToggleTask(task.id)}
+                      className="w-14 h-14 rounded-full border bg-slate-950 flex items-center justify-center text-white font-mono font-black text-sm mx-auto z-10 relative shadow-[0_0_15px_rgba(0,0,0,0.5)] cursor-pointer transition hover:scale-105 active:scale-95"
+                      style={{ 
+                        borderColor: task.done ? "#10b981" : styles.accent,
+                        boxShadow: task.done ? "0 0 15px rgba(16,185,129,0.2)" : `0 0 15px ${styles.accent}20` 
+                      }}
+                    >
+                      {task.done ? <CheckCircle2 size={16} className="text-emerald-400" /> : stepNum}
+                    </button>
+
+                    {/* Step details card */}
+                    <div className="mt-4 p-4 rounded-2xl border border-white/5 bg-slate-900/30 text-left h-[180px] flex flex-col justify-between overflow-y-auto">
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="text-[8px] font-mono text-muted-foreground uppercase">Step {stepNum}</span>
+                          <button
+                            onClick={() => onDeleteTask(task.id)}
+                            className="text-muted-foreground/30 hover:text-red-400 transition cursor-pointer border-none bg-transparent"
+                          >
+                            <Trash2 size={10} />
+                          </button>
+                        </div>
+                        <h4 className="text-xs font-bold text-white mb-2 leading-relaxed">{task.title}</h4>
+                        {task.isAiRecommended && (
+                          <span className="text-[8px] text-violet-400 font-mono flex items-center gap-0.5 mt-1">
+                            <Sparkles size={8} /> AI Recommended
+                          </span>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => onToggleTask(task.id)}
+                        className={`w-full py-1.5 rounded-lg border text-[9px] font-mono font-bold uppercase tracking-wider flex items-center justify-center gap-1 transition cursor-pointer ${
+                          task.done 
+                            ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" 
+                            : "bg-white/5 border-white/10 text-white/80 hover:bg-white/10"
+                        }`}
+                      >
+                        {task.done ? "✓ Completed" : "Mark as Done"}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Add custom task */}
+        <div className="mt-6 p-4 rounded-2xl border border-white/5 bg-white/[0.01] flex gap-2 max-w-md text-left">
+          <input
+            type="text"
+            placeholder="Add custom research milestone..."
+            value={newTaskInput}
+            onChange={(e) => setNewTaskInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleAddNewTask();
+            }}
+            className="flex-1 bg-slate-900/60 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-violet-500/50"
+          />
+          <button
+            onClick={handleAddNewTask}
+            className="px-4 py-1.5 rounded-xl bg-white/10 border border-white/10 hover:bg-white/20 text-white font-bold flex items-center justify-center cursor-pointer transition text-xs border-none"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+
+        {/* Bottom row Advice & Stats */}
+        <div className="grid gap-6 md:grid-cols-2 mt-8 border-t border-white/5 pt-6 text-left">
+          {/* Advice Column */}
+          <div>
+            <span className={`text-[9px] font-mono tracking-widest font-bold uppercase block mb-3 ${styles.text}`}>
+              ★ ADVISOR REPORT
+            </span>
+            <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] flex items-start gap-3 h-full">
+              <span className="text-2xl text-muted-foreground/30 font-serif leading-none">“</span>
+              <p className="text-xs italic text-white/80 leading-relaxed font-mono font-medium">
+                {phase.details}
+              </p>
+            </div>
+          </div>
+
+          {/* Stats Column */}
+          <div>
+            <span className={`text-[9px] font-mono tracking-widest font-bold uppercase block mb-3 ${styles.text}`}>
+              ⚡ BLUEPRINT STATS
+            </span>
+            <div className="p-4 rounded-2xl border border-white/5 bg-white/[0.01] space-y-3.5 h-full font-mono">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-muted-foreground">Active Status:</span>
+                <span className={`font-bold ${styles.text}`}>{status}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-white font-bold">
+                  {phase.tasks.filter(t => t.done).length} of {phase.tasks.length} Done
+                </span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <span>Phase Progress</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${progress}%`, backgroundColor: styles.accent }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 function ResearcherDashboard({ currentTab }: { currentTab: string }) {
   // LaTeX Abstract AI Optimizer states
   const [latexInput, setLatexInput] = useState(
-    `\\begin{abstract}\nThis paper introduces a novel ML architecture utilizing sparse graph nodes to optimize parsing efficiency...\n\\end{abstract}`
+    `\\begin{abstract}\nThis paper introduces a novel ML architecture utilizing sparse graph nodes to optimize \nparsing efficiency...\n\\end{abstract}`
   );
   const [latexOutput, setLatexOutput] = useState("");
   const [optimizingLatex, setOptimizingLatex] = useState(false);
@@ -3726,7 +4075,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     setOptimizingLatex(true);
     setTimeout(() => {
       setLatexOutput(
-        `\\begin{abstract}\nWe present a state-of-the-art sparse graph representation parser. Our methodology improves citation indexing speeds by 42% while retaining high-fidelity compilation accuracy under tight memory constraints.\n\\end{abstract}`
+        `\\begin{abstract}\nWe present a state-of-the-art sparse graph representation parser. Our methodology improves citation indexing speeds by 42% while retaining high-fidelity compilation accuracy under tight memory constraints.\\end{abstract}`
       );
       setOptimizingLatex(false);
     }, 1200);
@@ -3772,12 +4121,327 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, column: nextCol } : t)));
   };
 
+  // Rewards metrics
+  const [xp, setXp] = useState(4800);
+  const [level, setLevel] = useState(12);
+
+  // Roadmap Phase States
+  const [phases, setPhases] = useState<ResearchPhase[]>([
+    {
+      phase: 1,
+      name: "Hypothesis & SOTA Review",
+      desc: "Define the core research question, construct a bibliography map, and read 20 foundational SOTA papers.",
+      details: "Set up baseline ML diagnostic objectives. Check current ArXiv and NeurIPS publication overlaps.",
+      action: "Review Citations SOTA",
+      category: "Hypothesis",
+      tags: ["SOTA Review", "Lit Survey", "BibTeX Maps"],
+      gradient: "from-violet-400 to-indigo-500",
+      color: "violet",
+      initials: "P1",
+      timeline: "Months 1 - 2",
+      tasks: [
+        { id: "rp1-t1", title: "Read 20 foundational SOTA papers in the target domain", done: true },
+        { id: "rp1-t2", title: "Construct citation bibliography map", done: true },
+        { id: "rp1-t3", title: "Draft target research question abstract", done: false },
+      ],
+    },
+    {
+      phase: 2,
+      name: "Literature & Citation Catalog",
+      desc: "Verify citation reference overlaps and catalogue 50 target papers into the BibTeX repository.",
+      details: "Build reference tables. Identify critical architectural bottlenecks in prior designs.",
+      action: "Run Citation Parser",
+      category: "Literature",
+      tags: ["BibTeX Parsing", "Citation catalog", "Overlap check"],
+      gradient: "from-sky-400 to-blue-500",
+      color: "sky",
+      initials: "P2",
+      timeline: "Months 2 - 3",
+      tasks: [
+        { id: "rp2-t1", title: "Catalogue 50 domain papers in LaTeX bibliography", done: true },
+        { id: "rp2-t2", title: "Write BibTeX reference index scripts", done: false },
+        { id: "rp2-t3", title: "Verify SOTA baseline compatibility", done: false },
+      ],
+    },
+    {
+      phase: 3,
+      name: "Experiment & Benchmark Runs",
+      desc: "Write PyTorch training scripts, configure GPU parameters, and analyze accuracy/loss curves.",
+      details: "Initialize training sandbox loops. Validate metrics against the target SOTA thresholds.",
+      action: "Launch Training Sandbox",
+      category: "Experiment",
+      tags: ["PyTorch Scripting", "GPU Sandbox Run", "Loss Analytics"],
+      gradient: "from-emerald-400 to-teal-500",
+      color: "emerald",
+      initials: "P3",
+      timeline: "Months 3 - 4",
+      tasks: [
+        { id: "rp3-t1", title: "Code primary model and training loops in PyTorch", done: false },
+        { id: "rp3-t2", title: "Run GPU cloud benchmark models", done: false },
+        { id: "rp3-t3", title: "Compile experimental loss/accuracy curves", done: false },
+      ],
+    },
+    {
+      phase: 4,
+      name: "LaTeX Manuscript Drafting",
+      desc: "Draft the LaTeX layout, optimize abstract terminology using AI, and write technical equations.",
+      details: "Compile primary tables and graphics. Coordinate abstract reviews with co-authors.",
+      action: "Optimize LaTeX Draft",
+      category: "Drafting",
+      tags: ["LaTeX Template", "AI Terminology", "Equations Compiler"],
+      gradient: "from-indigo-400 to-purple-500",
+      color: "indigo",
+      initials: "P4",
+      timeline: "Months 4 - 5",
+      tasks: [
+        { id: "rp4-t1", title: "Draft abstract & intro in standard LaTeX formats", done: false },
+        { id: "rp4-t2", title: "Compile figures, diagrams & SOTA comparison tables", done: false },
+        { id: "rp4-t3", title: "Submit first draft to department co-authors", done: false },
+      ],
+    },
+    {
+      phase: 5,
+      name: "Camera-Ready Submission",
+      desc: "Format references, submit to ArXiv, upload code to GitHub, and finalize patent filing drafts.",
+      details: "Ensure double-blind guidelines. Compile LaTeX sources for target journals.",
+      action: "Submit to Conference",
+      category: "Submission",
+      tags: ["ArXiv Submission", "GitHub Code Release", "Patent Drafting"],
+      gradient: "from-fuchsia-400 to-rose-500",
+      color: "rose",
+      initials: "P5",
+      timeline: "Months 5 - 6",
+      tasks: [
+        { id: "rp5-t1", title: "Submit camera-ready manuscript to ArXiv/NeurIPS", done: false },
+        { id: "rp5-t2", title: "Publish verified replication code to GitHub", done: false },
+        { id: "rp5-t3", title: "File provisional patent sequences for the model", done: false },
+      ],
+    },
+  ]);
+
+  const [selectedPhaseId, setSelectedPhaseId] = useState<number | null>(null);
+
+  const calculateProgress = (phaseTasks: ResearchTask[]) => {
+    if (phaseTasks.length === 0) return 0;
+    const completed = phaseTasks.filter((t) => t.done).length;
+    return Math.round((completed / phaseTasks.length) * 100);
+  };
+
+  // Compute dynamic status and percentage for each phase
+  const updatedPhases = phases.map((p, idx) => {
+    const pct = calculateProgress(p.tasks);
+
+    let status: "Done" | "In Progress" | "Upcoming" | "Locked" = "Upcoming";
+    if (pct === 100) {
+      status = "Done";
+    } else if (idx === 0) {
+      status = pct > 0 ? "In Progress" : "Upcoming";
+    } else {
+      const prevPct = calculateProgress(phases[idx - 1].tasks);
+      const prevDone = prevPct === 100;
+      if (prevDone) {
+        status = pct > 0 ? "In Progress" : "Upcoming";
+      } else {
+        status = "Locked";
+      }
+    }
+
+    return {
+      ...p,
+      pct,
+      status,
+    };
+  });
+
+  const activeModalPhase = selectedPhaseId !== null ? updatedPhases.find(p => p.phase === selectedPhaseId) : null;
+
+  const totalCompletedPhases = updatedPhases.filter((p) => p.status === "Done").length;
+  const overallPercentage = Math.round(
+    updatedPhases.reduce((acc, p) => acc + p.pct, 0) / updatedPhases.length
+  );
+
+  const handleToggleTask = (phaseNumber: number, taskId: string) => {
+    setPhases((prevPhases) =>
+      prevPhases.map((p) => {
+        if (p.phase === phaseNumber) {
+          return {
+            ...p,
+            tasks: p.tasks.map((t) => (t.id === taskId ? { ...t, done: !t.done } : t)),
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  const handleAddTask = (phaseNumber: number, title: string) => {
+    if (!title.trim()) return;
+    setPhases((prevPhases) =>
+      prevPhases.map((p) => {
+        if (p.phase === phaseNumber) {
+          return {
+            ...p,
+            tasks: [
+              ...p.tasks,
+              { id: `custom-res-${Date.now()}`, title: title.trim(), done: false },
+            ],
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  const handleDeleteTask = (phaseNumber: number, taskId: string) => {
+    setPhases((prevPhases) =>
+      prevPhases.map((p) => {
+        if (p.phase === phaseNumber) {
+          return {
+            ...p,
+            tasks: p.tasks.filter((t) => t.id !== taskId),
+          };
+        }
+        return p;
+      })
+    );
+  };
+
+  // AI Copilot States
+  const [copilotView, setCopilotView] = useState<"chat" | "tools">("chat");
+  const [chatKey, setChatKey] = useState(0);
+
+  // AI Interactive Tools States
+  const [activeToolId, setActiveToolId] = useState<string | null>(null);
+
+  // BibTeX Citation tool state
+  const [citInput, setCitInput] = useState("Transformers for Computer Vision");
+  const [citOutput, setCitOutput] = useState("");
+  const [loadingCit, setLoadingCit] = useState(false);
+
+  const generateBibTeX = () => {
+    if (!citInput.trim()) return;
+    setLoadingCit(true);
+    setTimeout(() => {
+      setCitOutput(
+        `@article{buha2026sparse,\n  title={Sparse Graph Embeddings for ${citInput.trim()}},\n  author={Buha, Aryan and Chen, Helena},\n  journal={arXiv preprint arXiv:2606.14209},\n  year={2026}\n}`
+      );
+      setLoadingCit(false);
+    }, 1000);
+  };
+
+  // ArXiv Search tool state
+  const [arxivQuery, setArxivQuery] = useState("Sparse Neural Network");
+  const [arxivResults, setArxivResults] = useState<Array<{ title: string; authors: string; summary: string; year: string }>>([]);
+  const [loadingArxiv, setLoadingArxiv] = useState(false);
+
+  const searchArxiv = () => {
+    if (!arxivQuery.trim()) return;
+    setLoadingArxiv(true);
+    setTimeout(() => {
+      setArxivResults([
+        {
+          title: `Sparsification and Model Compression for ${arxivQuery.trim()}`,
+          authors: "Helena Chen, Priya Patel, Marcus Vance",
+          summary: "We propose a novel sparse graph network architecture that prunes 40% of parameter matrices without losing classification accuracy.",
+          year: "2026"
+        },
+        {
+          title: `A Comprehensive Survey on SOTA ${arxivQuery.trim()} baselines`,
+          authors: "Aryan Buha, John Doe",
+          summary: "We compare standard convolutional neural configurations under sparse constraints and present speed indexes.",
+          year: "2025"
+        }
+      ]);
+      setLoadingArxiv(false);
+    }, 1200);
+  };
+
+  // Co-author Matcher from Collaborators tab embedded as tool
+  const [matchingScoreRes, setMatchingScoreRes] = useState<number | null>(null);
+  const [loadingMatch, setLoadingMatch] = useState(false);
+
+  const checkCoauthorMatch = () => {
+    setLoadingMatch(true);
+    setTimeout(() => {
+      const score = Math.round(75 + Math.random() * 23);
+      setMatchingScoreRes(score);
+      setLoadingMatch(false);
+    }, 1000);
+  };
+
+  // Experiment Script Writer state
+  const [selectedModelType, setSelectedModelType] = useState("Transformer");
+  const [scriptOutput, setScriptOutput] = useState("");
+  const [loadingScript, setLoadingScript] = useState(false);
+
+  const writeExperimentScript = () => {
+    setLoadingScript(true);
+    setTimeout(() => {
+      setScriptOutput(
+        `import torch\nimport torch.nn as nn\n\nclass Sparse${selectedModelType}(nn.Module):\n    def __init__(self, vocab_size=10000, embed_dim=256):\n        super().__init__()\n        self.embedding = nn.Embedding(vocab_size, embed_dim)\n        # Sparsified layout initialized\n        self.backbone = nn.Linear(embed_dim, 2)\n        \n    def forward(self, x):\n        embeds = self.embedding(x)\n        return self.backbone(embeds.mean(dim=1))\n\n# GPU routing verifier\ndevice = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nmodel = Sparse${selectedModelType}().to(device)\nprint(f"Model initialized on: {device}")`
+      );
+      setLoadingScript(false);
+    }, 1100);
+  };
+
+  // Patent Draft Assistant state
+  const [patentSubject, setPatentSubject] = useState("Sparse Matrix Convolution Algorithm");
+  const [patentOutput, setPatentOutput] = useState("");
+  const [loadingPatent, setLoadingPatent] = useState(false);
+
+  const draftPatentClaims = () => {
+    if (!patentSubject.trim()) return;
+    setLoadingPatent(true);
+    setTimeout(() => {
+      setPatentOutput(
+        `FIELD OF THE INVENTION:\nThis invention relates to deep machine learning systems, and more particularly to algorithms for compressing sparse graph node models during compilation.\n\nCLAIM 1:\nA computer-implemented method for sparsification of a neural network model, comprising:\n- mapping a target bibliography matrix node,\n- compressing sparse weights by at least 35% using an indexing script,\n- validating output errors against a predetermined accuracy matrix threshold.`
+      );
+      setLoadingPatent(false);
+    }, 1300);
+  };
+
+  // Upload state
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ name: string; size: string; status: string }>>([]);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const fileList = Array.from(e.target.files).map(f => ({
+      name: f.name,
+      size: `${(f.size / (1024 * 1024)).toFixed(2)} MB`,
+      status: "Analyzing"
+    }));
+    setUploadedFiles(prev => [...prev, ...fileList]);
+    setTimeout(() => {
+      setUploadedFiles(prev => prev.map(f => f.status === "Analyzing" ? { ...f, status: "Analyzed ✓" } : f));
+    }, 2000);
+  };
+
+  // Presets trigger handler
+  const handlePresetSelect = (prompt: string) => {
+    if (prompt.includes("ArXiv")) {
+      setActiveToolId("arxiv");
+      setCopilotView("tools");
+    } else if (prompt.includes("LaTeX")) {
+      setActiveToolId("latex");
+      setCopilotView("tools");
+    } else if (prompt.includes("BibTeX")) {
+      setActiveToolId("citation");
+      setCopilotView("tools");
+    } else if (prompt.includes("PyTorch") || prompt.includes("Experiment")) {
+      setActiveToolId("writer");
+      setCopilotView("tools");
+    } else {
+      setCopilotView("chat");
+      setChatKey(k => k + 1);
+    }
+  };
+
   return (
     <>
       {/* TAB: HOME */}
       {currentTab === "home" && (
         <Page title="Research Command Center" subtitle="Manage publications, collaboration metrics, and patents.">
-          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-white/[0.03] to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden">
+          {/* Welcome Card */}
+          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-white/[0.03] to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden text-left">
             <div className="md:col-span-2">
               <span className="text-[9px] font-bold font-mono uppercase tracking-widest text-violet-400 bg-violet-400/10 px-2.5 py-0.5 rounded-full">
                 PI Command Suite
@@ -3785,9 +4449,9 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
               <h2 className="text-2xl font-black text-white mt-2 tracking-tight">
                 Welcome Dr. Aryan 👋
               </h2>
-              <p className="text-xs text-muted-foreground mt-1">
-                You are currently ranked in the top 5% of ML researchers in your department.
-                Your citations increased by 14% this month.
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                You are currently ranked in the **Top 5% of ML researchers** in your department.
+                Your citation indexes increased by **14%** this month. Take control of your publications blueprint.
               </p>
             </div>
             <div className="flex items-center gap-4 bg-white/[0.02] border border-white/5 p-4 rounded-xl relative overflow-hidden">
@@ -3812,41 +4476,39 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                 </div>
               </div>
               <div>
-                <div className="text-xs font-bold text-white">Stage: Exp Validation</div>
+                <div className="text-xs font-bold text-white">Stage: SOTA Benchmarks</div>
                 <div className="text-[10px] text-violet-400 font-mono mt-0.5">Rank #8 Citations</div>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center rounded-xl bg-white/[0.02] border border-white/5 p-4 relative overflow-hidden">
-              <div className="text-[9px] font-semibold text-muted-foreground font-mono uppercase tracking-wider">
-                Current Startup Stage
-              </div>
-              <div className="mt-2.5 flex items-center gap-3">
-                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-rose-400 to-orange-500 text-slate-950 font-black text-xs uppercase text-center font-display leading-tight">
-                  MVP<br />BUILD
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white">Stage 3 of 7: MVP</div>
-                  <div className="text-[10px] text-rose-400 font-mono mt-0.5">Pre-Seed Track active</div>
-                </div>
               </div>
             </div>
           </div>
 
           {/* Dials grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-left">
             <Card>
-              <div className="text-[10px] text-muted-foreground font-mono mt-1.5">428 total citations</div>
+              <div className="text-xs text-muted-foreground uppercase font-mono">Academic citations</div>
+              <div className="text-2xl font-black text-white mt-1">428 total</div>
+              <div className="text-[10px] text-emerald-400 font-mono mt-1.5">↑14% this month</div>
             </Card>
             <Card>
               <div className="text-xs text-muted-foreground uppercase font-mono">Active Patents</div>
-              <div className="text-2xl font-black text-white mt-1">2 filing sequences</div>
+              <div className="text-2xl font-black text-white mt-1">{patents.length} Sequences</div>
               <div className="text-[10px] text-violet-400 font-mono mt-1.5">1 pending examination</div>
+            </Card>
+            <Card>
+              <div className="text-xs text-muted-foreground uppercase font-mono">H-Index Profile</div>
+              <div className="text-2xl font-black text-white mt-1">h-index: 12</div>
+              <div className="text-[10px] text-sky-400 font-mono mt-1.5">Verified Scholar Status</div>
+            </Card>
+            <Card>
+              <div className="text-xs text-muted-foreground uppercase font-mono">Overall Progress</div>
+              <div className="text-2xl font-black text-white mt-1">{overallPercentage}% Done</div>
+              <div className="text-[10px] text-violet-400 font-mono mt-1.5">{totalCompletedPhases} of 5 Districts Conquered</div>
             </Card>
           </div>
         </Page>
       )}
 
-      {/* TAB: RESEARCH ARENA (GALAXY) */}
+      {/* TAB: RESEARCH ARENA */}
       {currentTab === "research_arena" && (
         <Page title="Research Arena (Galaxy)" subtitle="Explore academic targets inside the visual research galaxy.">
           <ResearchGalaxyCanvas />
@@ -3857,7 +4519,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {currentTab === "research_projects" && (
         <Page title="Research Projects" subtitle="Track and configure your active research papers.">
           <Card>
-            <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
+            <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display text-left">
               Literature Workspace Projects
             </h3>
             <div className="space-y-4">
@@ -3865,7 +4527,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                 { title: "Deep Optimization with Sparse Graph Nets", rate: "ML & Logic", progress: 84 },
                 { title: "Multi-Agent Matrix for Solar Grids", rate: "Methodology Stack", progress: 52 },
               ].map((p, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-white/5 bg-white/[0.01]">
+                <div key={idx} className="p-4 rounded-xl border border-white/5 bg-white/[0.01] text-left">
                   <div className="flex justify-between items-center">
                     <h4 className="text-sm font-bold text-white font-display">{p.title}</h4>
                     <span className="text-[10px] text-violet-400 font-semibold font-mono">{p.rate}</span>
@@ -3883,48 +4545,48 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: COLLABORATORS */}
       {currentTab === "collaborators" && (
         <Page title="Collaboration Hub" subtitle="Find academic co-authors and configure compatibility ratios.">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-                AI Compatibility Matcher
+                Co-Author Compatibility
               </h3>
-              <div className="space-y-3.5">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] text-muted-foreground font-mono block mb-1">Scholar Node 1</label>
+                  <label className="text-[10px] text-muted-foreground font-mono block mb-1">Scholar Profile 1</label>
                   <select
-                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
                     value={scholar1}
                     onChange={(e) => setScholar1(e.target.value)}
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
                   >
-                    <option>Dr. Helena Chen</option>
                     <option>Dr. Aryan Buha</option>
-                    <option>Prof. Adeyemi</option>
+                    <option>Dr. Helena Chen</option>
+                    <option>Dr. Marcus Vance</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-[10px] text-muted-foreground font-mono block mb-1">Scholar Node 2</label>
+                  <label className="text-[10px] text-muted-foreground font-mono block mb-1">Scholar Profile 2</label>
                   <select
-                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
                     value={scholar2}
                     onChange={(e) => setScholar2(e.target.value)}
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
                   >
-                    <option>Dr. Aryan Buha</option>
                     <option>Dr. Helena Chen</option>
-                    <option>Prof. Adeyemi</option>
+                    <option>Dr. Aryan Buha</option>
+                    <option>Dr. Marcus Vance</option>
                   </select>
                 </div>
                 <button
                   onClick={calculateMatching}
-                  className="w-full py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer"
+                  className="w-full py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
                 >
-                  Analyze Link Ratios
+                  Verify Matching Ratio
                 </button>
               </div>
             </Card>
 
-            <Card className="md:col-span-2 flex flex-col justify-center items-center text-center">
+            <Card className="md:col-span-2 flex flex-col justify-center items-center text-center bg-slate-950/60 border border-white/5">
               {matchingScore === null ? (
-                <div className="text-xs text-muted-foreground">Select scholar co-authors to calculate compatibility matrix.</div>
+                <div className="text-xs text-muted-foreground">Select scholar profiles and run the compatibility verifier.</div>
               ) : (
                 <div className="space-y-2">
                   <div className="text-4xl font-black text-violet-400 font-display">{matchingScore}%</div>
@@ -3942,7 +4604,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PUBLICATIONS */}
       {currentTab === "publications" && (
         <Page title="Publication Center" subtitle="Draft manuscripts and use LaTeX abstract text optimizers.">
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 text-left">
             <Card>
               <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-2 font-display">
                 LaTeX Abstract Editor
@@ -3956,7 +4618,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
               <button
                 onClick={runLatexOptimizer}
                 disabled={optimizingLatex}
-                className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer"
+                className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
               >
                 {optimizingLatex ? "Optimizing..." : "Optimize Abstract"}
               </button>
@@ -3966,7 +4628,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
               <div className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider mb-2">
                 Optimized LaTeX Output
               </div>
-              <div className="bg-slate-950 p-4 rounded-lg font-mono text-[11px] text-emerald-400 border border-white/5 min-h-[120px] select-text">
+              <div className="bg-slate-950 p-4 rounded-lg font-mono text-[11px] text-emerald-400 border border-white/5 min-h-[120px] select-text leading-relaxed">
                 {latexOutput || "% Click optimize to output clean LaTeX abstract..."}
               </div>
             </Card>
@@ -3974,60 +4636,86 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
         </Page>
       )}
 
-      {/* TAB: GRANTS */}
-      {currentTab === "grants" && (
-        <Page title="Grant Center" subtitle="Review available fellowship scopes and calculate success parameters.">
-          <Card className="max-w-md mx-auto">
-            <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-              RFP Grant Success Probability
-            </h3>
-            <div className="space-y-3.5 text-xs text-white/80">
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span>NSF Fellowship (AI Core Research)</span>
-                <span className="text-emerald-400 font-mono font-semibold">92% Match</span>
+      {/* TAB: RESEARCH ROADMAP */}
+      {currentTab === "research_roadmap" && (
+        <Page title="Research Roadmap" subtitle="Coordinate milestones from hypothesis review to peer camera-ready submissions.">
+          {/* Objective Goal Header HUD */}
+          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-5 mb-6 text-left animate-fadeIn">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/10 rounded-full blur-xl pointer-events-none" />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <span className="text-[10px] uppercase font-mono tracking-wider text-violet-400 font-bold flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 animate-pulse" /> Active Academic Objective
+                </span>
+                <h3 className="text-base font-black text-white mt-1 leading-snug font-display">
+                  Goal: Publish SOTA Sparse Graph Optimization paper at NeurIPS 2026
+                </h3>
               </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span>Horizon Europe (Sparse Graph Networks)</span>
-                <span className="text-sky-400 font-mono font-semibold">74% Match</span>
+              <div className="flex items-center gap-4 bg-white/5 border border-white/10 px-4 py-2.5 rounded-2xl">
+                {/* Circular Gauge */}
+                <div className="relative h-12 w-12 flex items-center justify-center">
+                  <svg className="absolute transform -rotate-90 w-full h-full" viewBox="0 0 36 36">
+                    <path
+                      className="text-white/5"
+                      strokeWidth="3"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      className="text-violet-400 transition-all duration-1000 ease-out"
+                      strokeWidth="3"
+                      strokeDasharray={`${overallPercentage}, 100`}
+                      strokeLinecap="round"
+                      stroke="currentColor"
+                      fill="none"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <span className="text-xs font-mono font-bold text-white">{overallPercentage}%</span>
+                </div>
+                <div>
+                  <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider">Blueprint Tracker</div>
+                  <div className="text-xs font-bold text-white mt-0.5">{totalCompletedPhases} of 5 Districts Conquered</div>
+                </div>
               </div>
             </div>
-          </Card>
-        </Page>
-      )}
-
-      {/* TAB: PATENTS */}
-      {currentTab === "patents" && (
-        <Page title="Patent Center" subtitle="Track filed sequences and validation steps.">
-          <div className="mb-4 flex gap-2">
-            <input
-              type="text"
-              placeholder="Patent Title..."
-              value={newPatentTitle}
-              onChange={(e) => setNewPatentTitle(e.target.value)}
-              className="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none"
-            />
-            <button onClick={handleAddPatent} className="rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 px-4 py-2 text-xs font-bold text-slate-950 cursor-pointer">
-              File Draft
-            </button>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {patents.map((pat) => (
-              <Card key={pat.title}>
-                <h4 className="text-sm font-bold text-white font-display">{pat.title}</h4>
-                <div className="text-[10px] text-violet-400 font-mono mt-1">{pat.stage}</div>
-                <div className="mt-3 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-violet-400 to-indigo-500 rounded-full" style={{ width: `${pat.progress}%` }} />
-                </div>
-              </Card>
+
+          {/* Grid of Roadmap Phase Cards */}
+          <div className="grid gap-6 sm:grid-cols-2 mt-6">
+            {updatedPhases.map((phase) => (
+              <ResearchPhaseJourneyCard
+                key={phase.phase}
+                phase={phase}
+                status={phase.status}
+                progress={phase.pct}
+                onViewRoadmap={() => setSelectedPhaseId(phase.phase)}
+              />
             ))}
           </div>
+
+          {/* Modal Detail overlay */}
+          <AnimatePresence>
+            {activeModalPhase && (
+              <ResearchPhaseRoadmapModal
+                phase={activeModalPhase}
+                status={activeModalPhase.status}
+                progress={activeModalPhase.pct}
+                onClose={() => setSelectedPhaseId(null)}
+                onToggleTask={(taskId) => handleToggleTask(activeModalPhase.phase, taskId)}
+                onAddTask={(title) => handleAddTask(activeModalPhase.phase, title)}
+                onDeleteTask={(taskId) => handleDeleteTask(activeModalPhase.phase, taskId)}
+              />
+            )}
+          </AnimatePresence>
         </Page>
       )}
 
       {/* TAB: RESEARCH TASKS */}
       {currentTab === "research_tasks" && (
         <Page title="Research Tasks" subtitle="Agile Scrum Task Board for experiment iterations.">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 text-left">
             {["todo", "progress", "done"].map((col) => (
               <Card key={col} className="bg-slate-950/40 p-4 border border-white/5">
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 font-mono">{col}</h3>
@@ -4036,12 +4724,12 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                     .filter((t) => t.column === col)
                     .map((t) => (
                       <div key={t.id} className="p-3 bg-slate-900/90 border border-white/5 rounded-lg text-xs">
-                        <div className="text-white/90">{t.title}</div>
-                        <div className="mt-2 flex gap-1.5 justify-end">
+                        <div className="text-white/90 font-medium">{t.title}</div>
+                        <div className="mt-2.5 flex gap-1.5 justify-end">
                           {col !== "todo" && (
                             <button
                               onClick={() => moveTask(t.id, col === "progress" ? "todo" : "progress")}
-                              className="text-[9px] text-muted-foreground hover:text-white"
+                              className="text-[9px] text-muted-foreground hover:text-white border-none bg-transparent cursor-pointer"
                             >
                               ◀ Back
                             </button>
@@ -4049,7 +4737,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                           {col !== "done" && (
                             <button
                               onClick={() => moveTask(t.id, col === "todo" ? "progress" : "done")}
-                              className="text-[9px] text-violet-400 hover:text-white font-semibold"
+                              className="text-[9px] text-violet-400 hover:text-white font-semibold border-none bg-transparent cursor-pointer"
                             >
                               Move ▶
                             </button>
@@ -4064,31 +4752,578 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
         </Page>
       )}
 
-      {/* TAB: DOCUMENT INTELLIGENCE */}
+      {/* TAB: DOCUMENT INTELLIGENCE / CITATION PARSING */}
       {currentTab === "docs" && (
         <Page title="Document Intelligence" subtitle="Chat with datasets, extract citations automatically.">
           <Card className="max-w-md mx-auto p-6 text-center">
             <FileText className="h-8 w-8 text-violet-400 mx-auto mb-3" />
-            <h4 className="text-sm font-bold text-white font-display">Citation Parser</h4>
-            <div className="mt-3 p-4 rounded-xl border border-dashed border-white/10 bg-white/[0.01]">
-              <span className="text-xs text-muted-foreground">Drag PDFs, research papers, or datasets here</span>
+            <h4 className="text-sm font-bold text-white font-display">Citation & dataset Parser</h4>
+            <div className="mt-4 p-5 rounded-2xl border-2 border-dashed border-white/10 bg-slate-900/30 text-center hover:border-violet-500/30 hover:bg-violet-500/[0.01] transition duration-300 relative">
+              <input
+                type="file"
+                multiple
+                onChange={handleFileUpload}
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+              />
+              <Upload className="h-6 w-6 text-muted-foreground/50 mx-auto mb-2" />
+              <span className="text-xs text-muted-foreground block">Click or drag files here to upload</span>
+              <span className="text-[10px] text-muted-foreground/40 mt-1 block">PDF, BibTeX, CSV, LaTeX</span>
             </div>
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 space-y-2 text-left text-xs">
+                <div className="font-bold text-white mb-1 uppercase tracking-widest text-[9px] font-mono text-muted-foreground/60">Uploaded Files</div>
+                {uploadedFiles.map((f, idx) => (
+                  <div key={idx} className="flex justify-between items-center bg-white/[0.02] border border-white/5 rounded-xl p-2.5 font-mono">
+                    <span className="text-white truncate max-w-[180px]">{f.name}</span>
+                    <div className="flex gap-2 items-center">
+                      <span className="text-[10px] text-muted-foreground">{f.size}</span>
+                      <span className={`text-[10px] font-bold ${f.status.includes("Analyzed") ? "text-emerald-400" : "text-violet-400 animate-pulse"}`}>{f.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         </Page>
       )}
 
-      {/* FALLBACK TABS */}
-      {["research_roadmap", "research_copilot", "achievements", "community", "events", "profile"].includes(currentTab) && (
-        <Page title={currentTab.toUpperCase()} subtitle="Academic credentials and citation metrics logs.">
-          <Card className="p-6">
+      {/* TAB: AI RESEARCH COPILOT */}
+      {currentTab === "research_copilot" && (
+        <Page title="AI Research Copilot" subtitle="Dual-mode workspace facilitating citation cataloguing, abstract edits, and model script generation.">
+          
+          {/* HERO BANNER WITH GLOWING ORB */}
+          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-slate-950/80 backdrop-blur-xl p-6 md:p-8 text-left animate-fadeIn">
+            {/* Decorative background grid */}
+            <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "repeating-linear-gradient(0deg,rgba(255,255,255,1) 0px,rgba(255,255,255,1) 1px,transparent 1px,transparent 32px),repeating-linear-gradient(90deg,rgba(255,255,255,1) 0px,rgba(255,255,255,1) 1px,transparent 1px,transparent 32px)" }} />
+            
+            <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-center gap-5">
+                <div className="relative shrink-0">
+                  <GlowingOrb />
+                </div>
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-widest text-violet-400 bg-violet-400/10 border border-violet-400/20 px-2.5 py-1 rounded-full mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+                    Research AI Copilot · Active
+                  </span>
+                  <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Research OS Copilot</h1>
+                  <p className="text-xs text-muted-foreground mt-1.5 max-w-lg leading-relaxed">
+                    AI-powered academic workspace helper. Drag datasets to extract citations, run abstracts checks, or write training scripts.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stats blocks */}
+              <div className="flex gap-4 shrink-0 font-mono">
+                {[
+                  { label: "Sessions", value: "32", icon: MessageSquare },
+                  { label: "LaTeX Audits", value: "8", icon: FileText },
+                  { label: "References", value: "128", icon: BookOpen },
+                ].map(({ label, value, icon: Icon }) => (
+                  <div key={label} className="text-center">
+                    <Icon className="h-4 w-4 text-violet-400 mx-auto mb-1" />
+                    <div className="text-lg font-black text-white">{value}</div>
+                    <div className="text-[9px] text-muted-foreground uppercase">{label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Suggested prompts bubbles */}
+            <div className="relative mt-6 flex flex-wrap gap-2">
+              {[
+                { text: "Generate Research Roadmap", icon: "🗺️" },
+                { text: "Optimize LaTeX Abstract", icon: "📄" },
+                { text: "Search ArXiv Papers", icon: "🔍" },
+                { text: "Verify BibTeX Citations", icon: "📚" },
+                { text: "Review PyTorch Experiment", icon: "🧠" },
+              ].map(({ text, icon }) => (
+                <button
+                  key={text}
+                  onClick={() => handlePresetSelect(text)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/30 text-xs text-white/80 hover:text-white transition-all duration-200 cursor-pointer border-none"
+                >
+                  <span>{icon}</span> {text}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* VIEW TOGGLES */}
+          <div className="flex items-center gap-2 mt-6">
+            <button
+              onClick={() => { setCopilotView("chat"); setActiveToolId(null); }}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border-none ${copilotView === "chat" ? "bg-violet-500/15 border border-violet-500/30 text-violet-400" : "border border-white/5 bg-white/[0.02] text-muted-foreground hover:text-white"}`}
+            >
+              <Bot className="h-3.5 w-3.5" /> Chat Workspace
+            </button>
+            <button
+              onClick={() => setCopilotView("tools")}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border-none ${copilotView === "tools" ? "bg-indigo-500/15 border border-indigo-500/30 text-indigo-400" : "border border-white/5 bg-white/[0.02] text-muted-foreground hover:text-white"}`}
+            >
+              <Layers className="h-3.5 w-3.5" /> AI Tools
+            </button>
+          </div>
+
+          {/* MAIN LAYOUT */}
+          <div className="grid gap-6 lg:grid-cols-[1fr_300px] mt-6 text-left font-sans">
+            {/* LEFT AREA: Chat or Interactive Tools */}
+            <div className="flex flex-col gap-4">
+              {copilotView === "chat" ? (
+                <motion.div
+                  key={`chat-${chatKey}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <CopilotChat />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="tools"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
+                  {/* Tool Active Detail Workspace */}
+                  {activeToolId ? (
+                    <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-md relative overflow-hidden animate-fadeIn">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
+                      
+                      <button
+                        onClick={() => setActiveToolId(null)}
+                        className="mb-4 text-xs text-violet-400 font-mono flex items-center gap-1 hover:text-white transition bg-transparent border-none cursor-pointer"
+                      >
+                        ← Return to AI Tools
+                      </button>
+
+                      {/* Tool 1: BibTeX Citation Generator */}
+                      {activeToolId === "citation" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">BibTeX Citation Parser Generator</h3>
+                          <p className="text-xs text-muted-foreground">Input a research paper topic or DOI below to generate standard compliant BibTeX citations codes.</p>
+                          <div>
+                            <input
+                              type="text"
+                              value={citInput}
+                              onChange={(e) => setCitInput(e.target.value)}
+                              placeholder="e.g. Attention Is All You Need"
+                              className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-violet-500/50"
+                            />
+                          </div>
+                          <button
+                            onClick={generateBibTeX}
+                            disabled={loadingCit}
+                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                          >
+                            {loadingCit ? "Generating..." : "Generate BibTeX Code"}
+                          </button>
+                          
+                          {citOutput && (
+                            <div className="space-y-2 mt-4 animate-fadeIn">
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">BibTeX Code block</span>
+                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed select-all">
+                                {citOutput}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Tool 2: LaTeX Abstract Optimizer */}
+                      {activeToolId === "latex" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">LaTeX Abstract Terminology Optimizer</h3>
+                          <p className="text-xs text-muted-foreground">Polishes vocabulary, removes repetitions, and standardizes math equations for NeurIPS/ICML standards.</p>
+                          <textarea
+                            rows={5}
+                            value={latexInput}
+                            onChange={(e) => setLatexInput(e.target.value)}
+                            className="w-full bg-slate-950 border border-white/10 rounded-xl p-4 font-mono text-xs text-violet-400 outline-none focus:border-violet-500/50"
+                          />
+                          <button
+                            onClick={runLatexOptimizer}
+                            disabled={optimizingLatex}
+                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                          >
+                            {optimizingLatex ? "Optimizing LaTeX Abstract..." : "Optimize Abstract"}
+                          </button>
+
+                          {latexOutput && (
+                            <div className="space-y-2 mt-4 animate-fadeIn">
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Polished LaTeX abstract</span>
+                              <div className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed select-all">
+                                {latexOutput}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Tool 3: ArXiv Paper Search */}
+                      {activeToolId === "arxiv" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">SOTA ArXiv Paper Search</h3>
+                          <p className="text-xs text-muted-foreground">Search and index published papers on ArXiv to check literature gaps.</p>
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={arxivQuery}
+                              onChange={(e) => setArxivQuery(e.target.value)}
+                              placeholder="Search query..."
+                              className="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-violet-500/50"
+                            />
+                            <button
+                              onClick={searchArxiv}
+                              disabled={loadingArxiv}
+                              className="px-4 py-2 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                            >
+                              {loadingArxiv ? "Searching..." : "Search"}
+                            </button>
+                          </div>
+
+                          {arxivResults.length > 0 && (
+                            <div className="space-y-3 mt-4 animate-fadeIn">
+                              {arxivResults.map((r, idx) => (
+                                <div key={idx} className="p-3.5 bg-slate-950/80 border border-white/5 rounded-xl text-xs flex flex-col gap-1.5">
+                                  <div className="flex justify-between items-start">
+                                    <h4 className="font-bold text-white max-w-[280px]">{r.title}</h4>
+                                    <span className="text-[9px] font-mono text-violet-400 bg-violet-400/5 border border-violet-500/20 px-1.5 py-0.5 rounded">{r.year}</span>
+                                  </div>
+                                  <p className="text-[10px] text-muted-foreground italic font-mono">By: {r.authors}</p>
+                                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{r.summary}</p>
+                                  <button
+                                    onClick={() => {
+                                      setCitInput(r.title);
+                                      setActiveToolId("citation");
+                                    }}
+                                    className="mt-2 text-[9px] font-mono text-violet-400 hover:text-white flex items-center gap-1 bg-transparent border-none cursor-pointer self-start"
+                                  >
+                                    Get BibTeX Citation →
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Tool 4: Experiment Script Writer */}
+                      {activeToolId === "writer" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">PyTorch Experiment Script Writer</h3>
+                          <p className="text-xs text-muted-foreground">Select a framework backbone to write a clean GPU training routine.</p>
+                          <div className="flex gap-4 items-center">
+                            <span className="text-xs text-muted-foreground">Model Type:</span>
+                            {["Transformer", "CNN", "GNN"].map(m => (
+                              <button
+                                key={m}
+                                onClick={() => setSelectedModelType(m)}
+                                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border cursor-pointer ${selectedModelType === m ? "bg-violet-400/10 border-violet-400 text-violet-400" : "bg-transparent border-white/10 text-muted-foreground"}`}
+                              >
+                                {m}
+                              </button>
+                            ))}
+                          </div>
+                          <button
+                            onClick={writeExperimentScript}
+                            disabled={loadingScript}
+                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                          >
+                            {loadingScript ? "Writing Script..." : "Generate PyTorch Script"}
+                          </button>
+
+                          {scriptOutput && (
+                            <div className="space-y-2 mt-4 animate-fadeIn">
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Generated PyTorch script</span>
+                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed select-all">
+                                {scriptOutput}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Tool 5: Patent Drafting Assistant */}
+                      {activeToolId === "patent" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">AI Patent Drafting Assistant</h3>
+                          <p className="text-xs text-muted-foreground">Write a core concept summary to output structured patent claims.</p>
+                          <input
+                            type="text"
+                            value={patentSubject}
+                            onChange={(e) => setPatentSubject(e.target.value)}
+                            className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-violet-500/50"
+                          />
+                          <button
+                            onClick={draftPatentClaims}
+                            disabled={loadingPatent}
+                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                          >
+                            {loadingPatent ? "Drafting Claims..." : "Draft Claims"}
+                          </button>
+
+                          {patentOutput && (
+                            <div className="space-y-2 mt-4 animate-fadeIn">
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Patent claims outline</span>
+                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed whitespace-pre-wrap select-all">
+                                {patentOutput}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Tool 6: Co-author Matcher */}
+                      {activeToolId === "matcher" && (
+                        <div className="space-y-4">
+                          <h3 className="text-base font-black text-white font-display">SOTA Co-Author Matcher</h3>
+                          <p className="text-xs text-muted-foreground">Verify matching compatibility based on overlap of citations, SOTA benchmarks, and research domains.</p>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono block mb-1">Scholar Profile 1</span>
+                              <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-white font-bold">Dr. Aryan Buha</div>
+                            </div>
+                            <div>
+                              <span className="text-[10px] text-muted-foreground uppercase font-mono block mb-1">Scholar Profile 2</span>
+                              <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-white font-bold">Dr. Helena Chen</div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={checkCoauthorMatch}
+                            disabled={loadingMatch}
+                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                          >
+                            {loadingMatch ? "Matching..." : "Match Profiles"}
+                          </button>
+
+                          {matchingScoreRes && (
+                            <div className="flex flex-col items-center justify-center p-4 bg-slate-950 rounded-2xl border border-white/5 animate-fadeIn">
+                              <span className="text-3xl font-black text-violet-400 font-display">{matchingScoreRes}%</span>
+                              <span className="text-xs font-bold text-white mt-1">Similarity compatibility score</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      {/* Drag and drop upload zone */}
+                      <div className="relative p-6 rounded-3xl border-2 border-dashed border-white/10 bg-slate-900/30 backdrop-blur-md text-center hover:border-violet-500/30 hover:bg-violet-500/[0.01] transition duration-300 cursor-pointer group">
+                        <input
+                          type="file"
+                          multiple
+                          onChange={handleFileUpload}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                        />
+                        <Upload className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2 group-hover:text-violet-400 transition" />
+                        <h4 className="text-sm font-bold text-white">AI Workspace Upload Zone</h4>
+                        <p className="text-[11px] text-muted-foreground mt-1">Drop research papers, PDF logs, or BibTeX codes for citation mapping</p>
+                        <div className="flex items-center justify-center gap-2 mt-3.5">
+                          {["PDF", "BibTeX", "CSV", "LaTeX"].map((t) => (
+                            <span key={t} className="text-[9px] font-mono px-2.5 py-0.5 rounded border border-white/10 bg-white/[0.03] text-muted-foreground/60">{t}</span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* AI Tools Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        {[
+                          { id: "citation", label: "BibTeX Generator", desc: "Extract citations and compile references code", icon: BookOpen, color: "sky" },
+                          { id: "latex", label: "LaTeX Optimizer", desc: "Polish academic abstract vocabulary SOTA", icon: FileText, color: "violet" },
+                          { id: "arxiv", label: "ArXiv Search", desc: "Audit publications database and references", icon: Search, color: "emerald" },
+                          { id: "writer", label: "Script Writer", desc: "Generate training benchmark PyTorch script", icon: Terminal, color: "amber" },
+                          { id: "patent", label: "Patent Assistant", desc: "Draft provisional patents sequence claims", icon: Award, color: "rose" },
+                          { id: "matcher", label: "Co-author Matcher", desc: "Verify matching compatibility on papers", icon: Users, color: "indigo" },
+                        ].map((t) => {
+                          const IconComponent = t.icon;
+                          const colorClasses: Record<string, string> = {
+                            sky: "text-sky-400 border-sky-500/20 bg-sky-500/5",
+                            violet: "text-violet-400 border-violet-500/20 bg-violet-500/5",
+                            emerald: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+                            amber: "text-amber-400 border-amber-500/20 bg-amber-500/5",
+                            rose: "text-rose-400 border-rose-500/20 bg-rose-500/5",
+                            indigo: "text-indigo-400 border-indigo-500/20 bg-indigo-500/5",
+                          };
+                          return (
+                            <button
+                              key={t.id}
+                              onClick={() => setActiveToolId(t.id)}
+                              className="group relative p-4 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-white/20 hover:-translate-y-1 transition duration-300 text-left overflow-hidden cursor-pointer"
+                            >
+                              <div className={`inline-flex p-2.5 rounded-xl border mb-3 ${colorClasses[t.color]}`}>
+                                <IconComponent className="h-4 w-4" />
+                              </div>
+                              <h4 className="text-xs font-black text-white mb-1 uppercase tracking-wider">{t.label}</h4>
+                              <p className="text-[9px] text-muted-foreground/60 leading-relaxed min-h-[28px]">{t.desc}</p>
+                              <div className="mt-3 flex items-center gap-1 text-[9px] font-mono text-muted-foreground/40 group-hover:text-violet-400 transition">
+                                Launch Utility <ChevronRight className="h-2.5 w-2.5" />
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Voice input Beta */}
+                      <div className="flex items-center gap-3 p-4 rounded-2xl border border-white/10 bg-slate-900/30 backdrop-blur-md">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center shrink-0">
+                          <Mic className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-xs font-black text-white uppercase tracking-wider">Voice Abstract Transcription</h4>
+                          <p className="text-[9px] text-muted-foreground/60 mt-0.5">Speak formulas or ideas — AI transcribes to LaTeX codes</p>
+                        </div>
+                        <span className="text-[8px] font-mono px-2 py-0.5 rounded border border-violet-500/20 bg-violet-500/5 text-violet-400">BETA</span>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </div>
+
+            {/* RIGHT AREA: AI MEMORY & STATS HUD */}
+            <div className="space-y-4">
+              {/* Memory panel */}
+              <div className="p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <Brain className="h-4 w-4 text-violet-400" />
+                  <h3 className="text-xs font-black text-white uppercase tracking-wider">AI Memory Vault</h3>
+                  <span className="ml-auto text-[8px] font-mono text-violet-400 bg-violet-400/10 border border-violet-400/20 px-2 py-0.5 rounded-full">Active</span>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { icon: "🎯", label: "Thesis Focus", value: "Sparse Graph Embedding Optimizations" },
+                    { icon: "⚡", label: "Target Domain", value: "Model Compression, GNNs, SOTA" },
+                    { icon: "🏆", label: "Academic Level", value: "Verified Post-Doc Scholar · 4.8k XP" },
+                    { icon: "📅", label: "Current Period", value: "Hypothesis review · Phase 1 active" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-left">
+                      <span className="text-base leading-none mt-0.5">{item.icon}</span>
+                      <div>
+                        <div className="text-[8px] font-mono text-muted-foreground/50 uppercase tracking-widest leading-none">{item.label}</div>
+                        <div className="text-[10px] font-bold text-white mt-1 leading-snug">{item.value}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent sessions */}
+              <div className="p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="h-4 w-4 text-sky-400" />
+                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Recent Sessions</h3>
+                </div>
+                <div className="space-y-2">
+                  {[
+                    { title: "LaTeX abstract optimization check", time: "2 days ago", tag: "LaTeX" },
+                    { title: "BibTeX code formatting review", time: "1 week ago", tag: "BibTeX" },
+                    { title: "GNN training baseline metrics", time: "2 weeks ago", tag: "Code" },
+                  ].map((s) => (
+                    <button key={s.title} className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition text-left cursor-pointer bg-transparent">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[10px] font-bold text-white truncate">{s.title}</div>
+                        <div className="text-[8px] font-mono text-muted-foreground/40 mt-0.5">{s.time}</div>
+                      </div>
+                      <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border border-violet-500/20 bg-violet-500/5 text-violet-400 shrink-0">{s.tag}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Copilot Impact HUD */}
+              <div className="p-5 rounded-2xl border border-white/10 bg-gradient-to-br from-violet-500/5 to-indigo-500/5 backdrop-blur-md">
+                <div className="flex items-center gap-2 mb-3">
+                  <Trophy className="h-4 w-4 text-amber-400" />
+                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Copilot Impact</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: "24", label: "Ideas Generated", color: "text-sky-400" },
+                    { value: "6", label: "Plans Created", color: "text-violet-400" },
+                    { value: "12", label: "Drafts Polished", color: "text-emerald-400" },
+                    { value: "18h", label: "Time Saved", color: "text-amber-400" },
+                  ].map(({ value, label, color }) => (
+                    <div key={label} className="text-center p-2 rounded-xl bg-white/[0.02] border border-white/5">
+                      <div className={`text-lg font-black ${color}`}>{value}</div>
+                      <div className="text-[8px] font-mono text-muted-foreground/50 mt-0.5 leading-tight">{label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Page>
+      )}
+
+      {/* TAB: ACHIEVEMENTS */}
+      {currentTab === "achievements" && (
+        <Page title="Achievement Vault" subtitle="Your milestone badges, XP records, and earned credentials.">
+          {/* Summary HUD */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-left">
+            {[
+              { label: "Badges Earned", value: "14", icon: "🏆", color: "amber" },
+              { label: "Total XP", value: xp > 999 ? `${(xp / 1000).toFixed(1)}k` : xp.toString(), icon: "⚡", color: "sky" },
+              { label: "Current Level", value: level.toString(), icon: "🎖️", color: "violet" },
+              { label: "Streak Record", value: "12 days", icon: "🔥", color: "rose" },
+            ].map((s) => (
+              <div key={s.label} className="relative overflow-hidden p-4 rounded-2xl border border-white/5 bg-slate-900/40">
+                <div className="text-xl mb-1">{s.icon}</div>
+                <div className={`text-xl font-black ${s.color === "amber" ? "text-amber-400" : s.color === "sky" ? "text-sky-400" : s.color === "violet" ? "text-violet-400" : "text-rose-400"}`}>{s.value}</div>
+                <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Badges Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 text-left">
+            {[
+              { title: "First abstract", desc: "Polished target abstract draft", icon: "🚀", earned: true, color: "sky" },
+              { title: "Streak Scholar", desc: "7-day active research streak", icon: "🔥", earned: true, color: "rose" },
+              { title: "SOTA Master", desc: "Analyzed 50 lit references", icon: "🧠", earned: true, color: "violet" },
+              { title: "Co-author Match", desc: "Matched compatibility check", icon: "🤝", earned: true, color: "emerald" },
+              { title: "AI Pioneer", desc: "Completed AI abstract review", icon: "🤖", earned: true, color: "indigo" },
+              { title: "Pitch Perfect", desc: "Presented methodology pitch", icon: "🎯", earned: false, color: "amber" },
+              { title: "Published", desc: "Submit a research paper draft", icon: "📄", earned: false, color: "teal" },
+              { title: "Grand Finale", desc: "Finalize paper print cameras", icon: "🎓", earned: false, color: "gold" },
+            ].map((badge) => (
+              <div key={badge.title} className={`relative p-4 rounded-2xl border text-center transition-all duration-300 overflow-hidden ${badge.earned
+                  ? "border-white/10 bg-slate-900/40 hover:border-white/20 hover:-translate-y-1"
+                  : "border-white/5 bg-slate-950/20 opacity-40"
+                }`}>
+                {!badge.earned && (
+                  <div className="absolute top-2 right-2">
+                    <Lock className="h-3 w-3 text-muted-foreground/30" />
+                  </div>
+                )}
+                <div className="text-3xl mb-2">{badge.icon}</div>
+                <h4 className={`text-xs font-black ${badge.earned ? "text-white" : "text-white/30"}`}>{badge.title}</h4>
+                <p className={`text-[9px] font-mono mt-1 leading-relaxed ${badge.earned ? "text-muted-foreground/60" : "text-muted-foreground/30"}`}>{badge.desc}</p>
+                {badge.earned && (
+                  <div className="mt-2 text-[8px] font-mono text-emerald-400 flex items-center justify-center gap-1">
+                    <CheckCircle2 className="h-2.5 w-2.5" /> Verified
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </Page>
+      )}
+
+      {/* TAB: PROFILE */}
+      {currentTab === "profile" && (
+        <Page title="Academic Profile" subtitle="Academic credentials and citation metrics logs.">
+          <Card className="p-6 text-left">
             <div className="text-sm text-white font-bold mb-2">Dr. Aryan Buha</div>
-            <p className="text-xs text-muted-foreground">Ecosystem verified academic logs.</p>
+            <p className="text-xs text-muted-foreground">Ecosystem verified academic logs. Department of Machine Learning.</p>
           </Card>
         </Page>
       )}
     </>
   );
 }
+
 
 // -------------------------------------------------------------
 // STARTUP DASHBOARD - FOUNDER OS

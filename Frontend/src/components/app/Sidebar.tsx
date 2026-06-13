@@ -195,15 +195,11 @@ export function AppSidebar() {
           { icon: Folder, label: "Research Projects", to: "/app", tab: "research_projects" },
           { icon: Users, label: "Collaborators", to: "/app", tab: "collaborators" },
           { icon: FileText, label: "Publications", to: "/app", tab: "publications" },
-          { icon: Coins, label: "Grants", to: "/app", tab: "grants" },
-          { icon: Award, label: "Patents", to: "/app", tab: "patents" },
           { icon: Map, label: "Research Roadmaps", to: "/app", tab: "research_roadmap" },
           { icon: ListChecks, label: "Research Tasks", to: "/app", tab: "research_tasks" },
           { icon: FileSearch, label: "Document Intelligence", to: "/app", tab: "docs" },
           { icon: Bot, label: "AI Research Copilot", to: "/app", tab: "research_copilot" },
           { icon: Award, label: "Achievement Vault", to: "/app", tab: "achievements" },
-          { icon: Users, label: "Research Community", to: "/app", tab: "community" },
-          { icon: Calendar, label: "Events", to: "/app", tab: "events" },
           { icon: User, label: "Profile", to: "/app", tab: "profile" },
         ];
       case "founder":
