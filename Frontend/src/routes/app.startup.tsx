@@ -1,71 +1,82 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Page, Card, Bar, Stat, Pill } from "@/components/app/Page";
+import { createFileRoute, Outlet, Link, useLocation } from "@tanstack/react-router";
+import React from "react";
+import { 
+  Home, Compass, ClipboardList, Map, CheckSquare, Bot, 
+  Users, Briefcase, DollarSign, FileText, UsersRound, ShoppingBag, TrendingUp, Trophy
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/app/startup")({
-  head: () => ({ meta: [{ title: "Startup Hub — Professional Home" }] }),
-  component: Startup,
+  component: StartupLayout,
 });
 
-function Startup() {
+const NAV_ITEMS = [
+  { icon: Home, label: 'Home', to: '/app/startup', exact: true },
+  { icon: Compass, label: 'Startup Arena', to: '/app/startup/arena' },
+  { icon: ClipboardList, label: 'Startup Assessment', to: '/app/startup/assessment' },
+  { icon: Map, label: 'Startup Roadmap', to: '/app/startup/roadmap' },
+  { icon: CheckSquare, label: 'Tasks & Execution', to: '/app/startup/tasks' },
+  { icon: Bot, label: 'AI Co-Founder', to: '/app/startup/ai' },
+  { icon: Users, label: 'Mentors', to: '/app/startup/mentors' },
+  { icon: DollarSign, label: 'Funding Center', to: '/app/startup/funding' },
+  { icon: UsersRound, label: 'Team', to: '/app/startup/team' },
+  { icon: ShoppingBag, label: 'Customers', to: '/app/startup/customers' },
+  { icon: TrendingUp, label: 'Analytics', to: '/app/startup/analytics' },
+];
+
+export function StartupLayout() {
+  const location = useLocation();
+
   return (
-    <Page title="Startup Hub" subtitle="From idea to fundraising, with verified design partners">
-      <div className="grid gap-4 lg:grid-cols-4">
-        <Stat label="Runway" value="14 mo" delta="burn $42K/mo" />
-        <Stat label="Pipeline" value="$2.1M" delta="5 LOIs" tone="violet" />
-        <Stat label="Investors" value="38" delta="12 in conversation" />
-        <Stat label="Hires" value="6" delta="2 open roles" tone="violet" />
-      </div>
-      <div className="mt-4 grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">
-            Fundraising tracker
+    <div className="flex h-full min-h-[calc(100vh-80px)] w-full bg-slate-950 text-slate-200 overflow-hidden font-sans selection:bg-coral-500/30 selection:text-coral-200">
+      <aside className="hidden lg:flex flex-col w-72 bg-slate-900/50 border-r border-slate-800/50 backdrop-blur-xl z-20">
+        <div className="p-6 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-coral-600 flex items-center justify-center shadow-lg shadow-coral-500/20">
+            <Compass className="text-white w-6 h-6" />
           </div>
-          <div className="mt-3 space-y-3">
-            <Bar value={62} label="Seed round — $1.5M target" />
-            <Bar value={88} label="Lead investor signed" />
-            <Bar value={44} label="Due diligence (3 firms)" />
+          <div>
+            <h1 className="text-lg font-bold text-white tracking-tight">Startup Hub</h1>
+            <p className="text-xs text-slate-400 font-medium">Founder · Active Runway</p>
           </div>
-        </Card>
-        <Card>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Milestones</div>
-          <ul className="mt-3 space-y-2.5">
-            {[
-              "MVP launched",
-              "10 paying customers",
-              "Hire founding engineer",
-              "Close seed round",
-            ].map((m, i) => (
-              <li
-                key={m}
-                className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] px-3.5 py-2.5 text-xs transition cursor-pointer"
-              >
-                <span className="font-semibold text-white/90">{m}</span>
-                <Pill tone={i < 2 ? "success" : "warn"}>{i < 2 ? "done" : "active"}</Pill>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      </div>
-      <Card className="mt-4">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Mentor network</div>
-        <div className="mt-3.5 flex flex-wrap gap-3">
-          {["Marco Rossi", "Sarah Levin", "Yuki Tanaka", "Karim Haddad", "Prof. Adeyemi"].map(
-            (n, idx) => (
-              <div
-                key={n}
-                className="flex items-center gap-2.5 rounded-full border border-white/5 bg-white/[0.01] hover:bg-white/[0.04] pl-2 pr-4 py-1.5 text-xs text-white/90 transition cursor-pointer"
-              >
-                <div
-                  className={`h-5 w-5 rounded-full bg-gradient-to-br ${["from-sky-400 to-indigo-500", "from-purple-500 to-indigo-500", "from-emerald-400 to-teal-500", "from-amber-400 to-red-500", "from-pink-500 to-rose-500"][idx % 5]} flex items-center justify-center text-[9px] font-bold text-slate-950`}
-                >
-                  {n[0]}
-                </div>
-                <span>{n}</span>
-              </div>
-            ),
-          )}
         </div>
-      </Card>
-    </Page>
+
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-hide">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const isActive = item.exact 
+              ? location.pathname === item.to || location.pathname === item.to + '/'
+              : location.pathname.startsWith(item.to);
+              
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={"w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group " + (isActive ? 'bg-slate-800/80 text-coral-400 shadow-sm' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200')}
+              >
+                <Icon className={"w-5 h-5 " + (isActive ? 'text-coral-400' : 'text-slate-500 group-hover:text-slate-300')} />
+                <span className="font-medium text-sm">{item.label}</span>
+                {isActive && (
+                  <motion.div layoutId="active-nav" className="absolute left-0 w-1 h-8 bg-coral-500 rounded-r-full" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <div className="flex-1 flex flex-col h-full min-w-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-slate-950">
+        <header className="h-20 flex-shrink-0 flex items-center justify-between px-6 lg:px-10 border-b border-slate-800/50 backdrop-blur-md z-10">
+          <h2 className="text-xl font-bold text-white capitalize">
+             {location.pathname.split('/').pop() === 'startup' ? 'Dashboard' : location.pathname.split('/').pop()?.replace('-', ' ')}
+          </h2>
+        </header>
+
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-6 lg:p-10 relative">
+          <div className="max-w-7xl mx-auto">
+            <Outlet />
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }

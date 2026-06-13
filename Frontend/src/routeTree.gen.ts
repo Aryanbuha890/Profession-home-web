@@ -15,28 +15,119 @@ import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
-import { Route as AppWorkspaceRouteImport } from './routes/app.workspace'
 import { Route as AppUniversityRouteImport } from './routes/app.university'
-import { Route as AppTrackerRouteImport } from './routes/app.tracker'
 import { Route as AppStartupRouteImport } from './routes/app.startup'
-import { Route as AppSettingsRouteImport } from './routes/app.settings'
-import { Route as AppRoadmapRouteImport } from './routes/app.roadmap'
 import { Route as AppResearchRouteImport } from './routes/app.research'
-import { Route as AppReportsRouteImport } from './routes/app.reports'
-import { Route as AppOutcomesRouteImport } from './routes/app.outcomes'
-import { Route as AppOpportunitiesRouteImport } from './routes/app.opportunities'
+import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppInvestorRouteImport } from './routes/app.investor'
 import { Route as AppExpertsRouteImport } from './routes/app.experts'
-import { Route as AppExecutionRouteImport } from './routes/app.execution'
-import { Route as AppDocumentsRouteImport } from './routes/app.documents'
-import { Route as AppDiscoveryRouteImport } from './routes/app.discovery'
-import { Route as AppCopilotRouteImport } from './routes/app.copilot'
-import { Route as AppConsultantRouteImport } from './routes/app.consultant'
-import { Route as AppCommunityRouteImport } from './routes/app.community'
-import { Route as AppCareerRouteImport } from './routes/app.career'
-import { Route as AppAssessmentRouteImport } from './routes/app.assessment'
+import { Route as AppBusinessRouteImport } from './routes/app.business'
 import { Route as AppAdminRouteImport } from './routes/app.admin'
-import { Route as AppAchievementsRouteImport } from './routes/app.achievements'
+import { Route as AppUniversityIndexRouteImport } from './routes/app.university/index'
+import { Route as AppStudentIndexRouteImport } from './routes/app.student/index'
+import { Route as AppStartupIndexRouteImport } from './routes/app.startup/index'
+import { Route as AppResearchIndexRouteImport } from './routes/app.research/index'
+import { Route as AppInvestorIndexRouteImport } from './routes/app.investor/index'
+import { Route as AppExpertsIndexRouteImport } from './routes/app.experts/index'
+import { Route as AppAdminIndexRouteImport } from './routes/app.admin/index'
+import { Route as AppUniversityUni_copilotRouteImport } from './routes/app.university/uni_copilot'
+import { Route as AppUniversityStudents_listRouteImport } from './routes/app.university/students_list'
+import { Route as AppUniversityStartup_incubatorRouteImport } from './routes/app.university/startup_incubator'
+import { Route as AppUniversitySettingsRouteImport } from './routes/app.university/settings'
+import { Route as AppUniversityResearchers_listRouteImport } from './routes/app.university/researchers_list'
+import { Route as AppUniversityResearch_centerRouteImport } from './routes/app.university/research_center'
+import { Route as AppUniversityReportsRouteImport } from './routes/app.university/reports'
+import { Route as AppUniversityPlacementsRouteImport } from './routes/app.university/placements'
+import { Route as AppUniversityPartnersRouteImport } from './routes/app.university/partners'
+import { Route as AppUniversityInnovation_hubRouteImport } from './routes/app.university/innovation_hub'
+import { Route as AppUniversityGrantsRouteImport } from './routes/app.university/grants'
+import { Route as AppUniversityFacultyRouteImport } from './routes/app.university/faculty'
+import { Route as AppUniversityEventsRouteImport } from './routes/app.university/events'
+import { Route as AppUniversityCommunityRouteImport } from './routes/app.university/community'
+import { Route as AppUniversityAnalyticsRouteImport } from './routes/app.university/analytics'
+import { Route as AppStudentSkillsRouteImport } from './routes/app.student/skills'
+import { Route as AppStudentRoadmapRouteImport } from './routes/app.student/roadmap'
+import { Route as AppStudentRewardsRouteImport } from './routes/app.student/rewards'
+import { Route as AppStudentProjectsRouteImport } from './routes/app.student/projects'
+import { Route as AppStudentMentorsRouteImport } from './routes/app.student/mentors'
+import { Route as AppStudentJobsRouteImport } from './routes/app.student/jobs'
+import { Route as AppStudentInternshipsRouteImport } from './routes/app.student/internships'
+import { Route as AppStudentCopilotRouteImport } from './routes/app.student/copilot'
+import { Route as AppStudentCommunityRouteImport } from './routes/app.student/community'
+import { Route as AppStudentChallengesRouteImport } from './routes/app.student/challenges'
+import { Route as AppStudentAssessmentRouteImport } from './routes/app.student/assessment'
+import { Route as AppStudentArenaRouteImport } from './routes/app.student/arena'
+import { Route as AppStudentAchievementsRouteImport } from './routes/app.student/achievements'
+import { Route as AppStartupTeamRouteImport } from './routes/app.startup/team'
+import { Route as AppStartupTasksRouteImport } from './routes/app.startup/tasks'
+import { Route as AppStartupRoadmapRouteImport } from './routes/app.startup/roadmap'
+import { Route as AppStartupRewardsRouteImport } from './routes/app.startup/rewards'
+import { Route as AppStartupPitch_decksRouteImport } from './routes/app.startup/pitch_decks'
+import { Route as AppStartupMentorsRouteImport } from './routes/app.startup/mentors'
+import { Route as AppStartupInvestorsRouteImport } from './routes/app.startup/investors'
+import { Route as AppStartupFundingRouteImport } from './routes/app.startup/funding'
+import { Route as AppStartupDocsRouteImport } from './routes/app.startup/docs'
+import { Route as AppStartupCustomersRouteImport } from './routes/app.startup/customers'
+import { Route as AppStartupCommunityRouteImport } from './routes/app.startup/community'
+import { Route as AppStartupAssessmentRouteImport } from './routes/app.startup/assessment'
+import { Route as AppStartupArenaRouteImport } from './routes/app.startup/arena'
+import { Route as AppStartupAnalyticsRouteImport } from './routes/app.startup/analytics'
+import { Route as AppStartupAiRouteImport } from './routes/app.startup/ai'
+import { Route as AppStartupAchievementsRouteImport } from './routes/app.startup/achievements'
+import { Route as AppResearchResearch_tasksRouteImport } from './routes/app.research/research_tasks'
+import { Route as AppResearchResearch_roadmapRouteImport } from './routes/app.research/research_roadmap'
+import { Route as AppResearchResearch_projectsRouteImport } from './routes/app.research/research_projects'
+import { Route as AppResearchResearch_copilotRouteImport } from './routes/app.research/research_copilot'
+import { Route as AppResearchResearch_arenaRouteImport } from './routes/app.research/research_arena'
+import { Route as AppResearchPublicationsRouteImport } from './routes/app.research/publications'
+import { Route as AppResearchPatentsRouteImport } from './routes/app.research/patents'
+import { Route as AppResearchGrantsRouteImport } from './routes/app.research/grants'
+import { Route as AppResearchEventsRouteImport } from './routes/app.research/events'
+import { Route as AppResearchDocsRouteImport } from './routes/app.research/docs'
+import { Route as AppResearchCommunityRouteImport } from './routes/app.research/community'
+import { Route as AppResearchCollaboratorsRouteImport } from './routes/app.research/collaborators'
+import { Route as AppResearchAchievementsRouteImport } from './routes/app.research/achievements'
+import { Route as AppInvestorStartup_discoveryRouteImport } from './routes/app.investor/startup_discovery'
+import { Route as AppInvestorSettingsRouteImport } from './routes/app.investor/settings'
+import { Route as AppInvestorRewardsRouteImport } from './routes/app.investor/rewards'
+import { Route as AppInvestorPortfolioRouteImport } from './routes/app.investor/portfolio'
+import { Route as AppInvestorMarket_intelRouteImport } from './routes/app.investor/market_intel'
+import { Route as AppInvestorInvestor_copilotRouteImport } from './routes/app.investor/investor_copilot'
+import { Route as AppInvestorInvestmentsRouteImport } from './routes/app.investor/investments'
+import { Route as AppInvestorInvestment_pipelineRouteImport } from './routes/app.investor/investment_pipeline'
+import { Route as AppInvestorFounder_meetingsRouteImport } from './routes/app.investor/founder_meetings'
+import { Route as AppInvestorDue_diligenceRouteImport } from './routes/app.investor/due_diligence'
+import { Route as AppInvestorDeal_flowRouteImport } from './routes/app.investor/deal_flow'
+import { Route as AppInvestorCommunityRouteImport } from './routes/app.investor/community'
+import { Route as AppExpertsWorkspaceRouteImport } from './routes/app.experts/workspace'
+import { Route as AppExpertsTasksRouteImport } from './routes/app.experts/tasks'
+import { Route as AppExpertsSettingsRouteImport } from './routes/app.experts/settings'
+import { Route as AppExpertsRoadmapsRouteImport } from './routes/app.experts/roadmaps'
+import { Route as AppExpertsRewardsRouteImport } from './routes/app.experts/rewards'
+import { Route as AppExpertsReviewsRouteImport } from './routes/app.experts/reviews'
+import { Route as AppExpertsRevenueRouteImport } from './routes/app.experts/revenue'
+import { Route as AppExpertsMeetingsRouteImport } from './routes/app.experts/meetings'
+import { Route as AppExpertsExpert_copilotRouteImport } from './routes/app.experts/expert_copilot'
+import { Route as AppExpertsDocumentsRouteImport } from './routes/app.experts/documents'
+import { Route as AppExpertsDiscovery_sessionsRouteImport } from './routes/app.experts/discovery_sessions'
+import { Route as AppExpertsConsultationsRouteImport } from './routes/app.experts/consultations'
+import { Route as AppExpertsCommunityRouteImport } from './routes/app.experts/community'
+import { Route as AppExpertsClientsRouteImport } from './routes/app.experts/clients'
+import { Route as AppExpertsAnalyticsRouteImport } from './routes/app.experts/analytics'
+import { Route as AppAdminUsersRouteImport } from './routes/app.admin/users'
+import { Route as AppAdminUniversitiesRouteImport } from './routes/app.admin/universities'
+import { Route as AppAdminTicketsRouteImport } from './routes/app.admin/tickets'
+import { Route as AppAdminSupportRouteImport } from './routes/app.admin/support'
+import { Route as AppAdminStudentsRouteImport } from './routes/app.admin/students'
+import { Route as AppAdminStartupsRouteImport } from './routes/app.admin/startups'
+import { Route as AppAdminRewardsRouteImport } from './routes/app.admin/rewards'
+import { Route as AppAdminResearchersRouteImport } from './routes/app.admin/researchers'
+import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin/payments'
+import { Route as AppAdminModerationRouteImport } from './routes/app.admin/moderation'
+import { Route as AppAdminInvestorsRouteImport } from './routes/app.admin/investors'
+import { Route as AppAdminExpertsRouteImport } from './routes/app.admin/experts'
+import { Route as AppAdminArena_mgmtRouteImport } from './routes/app.admin/arena_mgmt'
+import { Route as AppAdminAnalyticsRouteImport } from './routes/app.admin/analytics'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -68,19 +159,9 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppWorkspaceRoute = AppWorkspaceRouteImport.update({
-  id: '/workspace',
-  path: '/workspace',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppUniversityRoute = AppUniversityRouteImport.update({
   id: '/university',
   path: '/university',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTrackerRoute = AppTrackerRouteImport.update({
-  id: '/tracker',
-  path: '/tracker',
   getParentRoute: () => AppRoute,
 } as any)
 const AppStartupRoute = AppStartupRouteImport.update({
@@ -88,34 +169,14 @@ const AppStartupRoute = AppStartupRouteImport.update({
   path: '/startup',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRoadmapRoute = AppRoadmapRouteImport.update({
-  id: '/roadmap',
-  path: '/roadmap',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppResearchRoute = AppResearchRouteImport.update({
   id: '/research',
   path: '/research',
   getParentRoute: () => AppRoute,
 } as any)
-const AppReportsRoute = AppReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppOutcomesRoute = AppOutcomesRouteImport.update({
-  id: '/outcomes',
-  path: '/outcomes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppOpportunitiesRoute = AppOpportunitiesRouteImport.update({
-  id: '/opportunities',
-  path: '/opportunities',
+const AppProfileRoute = AppProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInvestorRoute = AppInvestorRouteImport.update({
@@ -128,44 +189,9 @@ const AppExpertsRoute = AppExpertsRouteImport.update({
   path: '/experts',
   getParentRoute: () => AppRoute,
 } as any)
-const AppExecutionRoute = AppExecutionRouteImport.update({
-  id: '/execution',
-  path: '/execution',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDocumentsRoute = AppDocumentsRouteImport.update({
-  id: '/documents',
-  path: '/documents',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDiscoveryRoute = AppDiscoveryRouteImport.update({
-  id: '/discovery',
-  path: '/discovery',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCopilotRoute = AppCopilotRouteImport.update({
-  id: '/copilot',
-  path: '/copilot',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppConsultantRoute = AppConsultantRouteImport.update({
-  id: '/consultant',
-  path: '/consultant',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCommunityRoute = AppCommunityRouteImport.update({
-  id: '/community',
-  path: '/community',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCareerRoute = AppCareerRouteImport.update({
-  id: '/career',
-  path: '/career',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAssessmentRoute = AppAssessmentRouteImport.update({
-  id: '/assessment',
-  path: '/assessment',
+const AppBusinessRoute = AppBusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminRoute = AppAdminRouteImport.update({
@@ -173,10 +199,549 @@ const AppAdminRoute = AppAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAchievementsRoute = AppAchievementsRouteImport.update({
+const AppUniversityIndexRoute = AppUniversityIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppStudentIndexRoute = AppStudentIndexRouteImport.update({
+  id: '/student/',
+  path: '/student/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStartupIndexRoute = AppStartupIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppResearchIndexRoute = AppResearchIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppInvestorIndexRoute = AppInvestorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppExpertsIndexRoute = AppExpertsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppUniversityUni_copilotRoute =
+  AppUniversityUni_copilotRouteImport.update({
+    id: '/uni_copilot',
+    path: '/uni_copilot',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversityStudents_listRoute =
+  AppUniversityStudents_listRouteImport.update({
+    id: '/students_list',
+    path: '/students_list',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversityStartup_incubatorRoute =
+  AppUniversityStartup_incubatorRouteImport.update({
+    id: '/startup_incubator',
+    path: '/startup_incubator',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversitySettingsRoute = AppUniversitySettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityResearchers_listRoute =
+  AppUniversityResearchers_listRouteImport.update({
+    id: '/researchers_list',
+    path: '/researchers_list',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversityResearch_centerRoute =
+  AppUniversityResearch_centerRouteImport.update({
+    id: '/research_center',
+    path: '/research_center',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversityReportsRoute = AppUniversityReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityPlacementsRoute = AppUniversityPlacementsRouteImport.update({
+  id: '/placements',
+  path: '/placements',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityPartnersRoute = AppUniversityPartnersRouteImport.update({
+  id: '/partners',
+  path: '/partners',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityInnovation_hubRoute =
+  AppUniversityInnovation_hubRouteImport.update({
+    id: '/innovation_hub',
+    path: '/innovation_hub',
+    getParentRoute: () => AppUniversityRoute,
+  } as any)
+const AppUniversityGrantsRoute = AppUniversityGrantsRouteImport.update({
+  id: '/grants',
+  path: '/grants',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityFacultyRoute = AppUniversityFacultyRouteImport.update({
+  id: '/faculty',
+  path: '/faculty',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityEventsRoute = AppUniversityEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityCommunityRoute = AppUniversityCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppUniversityAnalyticsRoute = AppUniversityAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppUniversityRoute,
+} as any)
+const AppStudentSkillsRoute = AppStudentSkillsRouteImport.update({
+  id: '/student/skills',
+  path: '/student/skills',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentRoadmapRoute = AppStudentRoadmapRouteImport.update({
+  id: '/student/roadmap',
+  path: '/student/roadmap',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentRewardsRoute = AppStudentRewardsRouteImport.update({
+  id: '/student/rewards',
+  path: '/student/rewards',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentProjectsRoute = AppStudentProjectsRouteImport.update({
+  id: '/student/projects',
+  path: '/student/projects',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentMentorsRoute = AppStudentMentorsRouteImport.update({
+  id: '/student/mentors',
+  path: '/student/mentors',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentJobsRoute = AppStudentJobsRouteImport.update({
+  id: '/student/jobs',
+  path: '/student/jobs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentInternshipsRoute = AppStudentInternshipsRouteImport.update({
+  id: '/student/internships',
+  path: '/student/internships',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentCopilotRoute = AppStudentCopilotRouteImport.update({
+  id: '/student/copilot',
+  path: '/student/copilot',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentCommunityRoute = AppStudentCommunityRouteImport.update({
+  id: '/student/community',
+  path: '/student/community',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentChallengesRoute = AppStudentChallengesRouteImport.update({
+  id: '/student/challenges',
+  path: '/student/challenges',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentAssessmentRoute = AppStudentAssessmentRouteImport.update({
+  id: '/student/assessment',
+  path: '/student/assessment',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentArenaRoute = AppStudentArenaRouteImport.update({
+  id: '/student/arena',
+  path: '/student/arena',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStudentAchievementsRoute = AppStudentAchievementsRouteImport.update({
+  id: '/student/achievements',
+  path: '/student/achievements',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStartupTeamRoute = AppStartupTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupTasksRoute = AppStartupTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupRoadmapRoute = AppStartupRoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupRewardsRoute = AppStartupRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupPitch_decksRoute = AppStartupPitch_decksRouteImport.update({
+  id: '/pitch_decks',
+  path: '/pitch_decks',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupMentorsRoute = AppStartupMentorsRouteImport.update({
+  id: '/mentors',
+  path: '/mentors',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupInvestorsRoute = AppStartupInvestorsRouteImport.update({
+  id: '/investors',
+  path: '/investors',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupFundingRoute = AppStartupFundingRouteImport.update({
+  id: '/funding',
+  path: '/funding',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupDocsRoute = AppStartupDocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupCustomersRoute = AppStartupCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupCommunityRoute = AppStartupCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupAssessmentRoute = AppStartupAssessmentRouteImport.update({
+  id: '/assessment',
+  path: '/assessment',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupArenaRoute = AppStartupArenaRouteImport.update({
+  id: '/arena',
+  path: '/arena',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupAnalyticsRoute = AppStartupAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupAiRoute = AppStartupAiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppStartupAchievementsRoute = AppStartupAchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
-  getParentRoute: () => AppRoute,
+  getParentRoute: () => AppStartupRoute,
+} as any)
+const AppResearchResearch_tasksRoute =
+  AppResearchResearch_tasksRouteImport.update({
+    id: '/research_tasks',
+    path: '/research_tasks',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchResearch_roadmapRoute =
+  AppResearchResearch_roadmapRouteImport.update({
+    id: '/research_roadmap',
+    path: '/research_roadmap',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchResearch_projectsRoute =
+  AppResearchResearch_projectsRouteImport.update({
+    id: '/research_projects',
+    path: '/research_projects',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchResearch_copilotRoute =
+  AppResearchResearch_copilotRouteImport.update({
+    id: '/research_copilot',
+    path: '/research_copilot',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchResearch_arenaRoute =
+  AppResearchResearch_arenaRouteImport.update({
+    id: '/research_arena',
+    path: '/research_arena',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchPublicationsRoute = AppResearchPublicationsRouteImport.update({
+  id: '/publications',
+  path: '/publications',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchPatentsRoute = AppResearchPatentsRouteImport.update({
+  id: '/patents',
+  path: '/patents',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchGrantsRoute = AppResearchGrantsRouteImport.update({
+  id: '/grants',
+  path: '/grants',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchEventsRoute = AppResearchEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchDocsRoute = AppResearchDocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchCommunityRoute = AppResearchCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppResearchCollaboratorsRoute =
+  AppResearchCollaboratorsRouteImport.update({
+    id: '/collaborators',
+    path: '/collaborators',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
+const AppResearchAchievementsRoute = AppResearchAchievementsRouteImport.update({
+  id: '/achievements',
+  path: '/achievements',
+  getParentRoute: () => AppResearchRoute,
+} as any)
+const AppInvestorStartup_discoveryRoute =
+  AppInvestorStartup_discoveryRouteImport.update({
+    id: '/startup_discovery',
+    path: '/startup_discovery',
+    getParentRoute: () => AppInvestorRoute,
+  } as any)
+const AppInvestorSettingsRoute = AppInvestorSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorRewardsRoute = AppInvestorRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorPortfolioRoute = AppInvestorPortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorMarket_intelRoute = AppInvestorMarket_intelRouteImport.update({
+  id: '/market_intel',
+  path: '/market_intel',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorInvestor_copilotRoute =
+  AppInvestorInvestor_copilotRouteImport.update({
+    id: '/investor_copilot',
+    path: '/investor_copilot',
+    getParentRoute: () => AppInvestorRoute,
+  } as any)
+const AppInvestorInvestmentsRoute = AppInvestorInvestmentsRouteImport.update({
+  id: '/investments',
+  path: '/investments',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorInvestment_pipelineRoute =
+  AppInvestorInvestment_pipelineRouteImport.update({
+    id: '/investment_pipeline',
+    path: '/investment_pipeline',
+    getParentRoute: () => AppInvestorRoute,
+  } as any)
+const AppInvestorFounder_meetingsRoute =
+  AppInvestorFounder_meetingsRouteImport.update({
+    id: '/founder_meetings',
+    path: '/founder_meetings',
+    getParentRoute: () => AppInvestorRoute,
+  } as any)
+const AppInvestorDue_diligenceRoute =
+  AppInvestorDue_diligenceRouteImport.update({
+    id: '/due_diligence',
+    path: '/due_diligence',
+    getParentRoute: () => AppInvestorRoute,
+  } as any)
+const AppInvestorDeal_flowRoute = AppInvestorDeal_flowRouteImport.update({
+  id: '/deal_flow',
+  path: '/deal_flow',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppInvestorCommunityRoute = AppInvestorCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AppInvestorRoute,
+} as any)
+const AppExpertsWorkspaceRoute = AppExpertsWorkspaceRouteImport.update({
+  id: '/workspace',
+  path: '/workspace',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsTasksRoute = AppExpertsTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsSettingsRoute = AppExpertsSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsRoadmapsRoute = AppExpertsRoadmapsRouteImport.update({
+  id: '/roadmaps',
+  path: '/roadmaps',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsRewardsRoute = AppExpertsRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsReviewsRoute = AppExpertsReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsRevenueRoute = AppExpertsRevenueRouteImport.update({
+  id: '/revenue',
+  path: '/revenue',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsMeetingsRoute = AppExpertsMeetingsRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsExpert_copilotRoute =
+  AppExpertsExpert_copilotRouteImport.update({
+    id: '/expert_copilot',
+    path: '/expert_copilot',
+    getParentRoute: () => AppExpertsRoute,
+  } as any)
+const AppExpertsDocumentsRoute = AppExpertsDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsDiscovery_sessionsRoute =
+  AppExpertsDiscovery_sessionsRouteImport.update({
+    id: '/discovery_sessions',
+    path: '/discovery_sessions',
+    getParentRoute: () => AppExpertsRoute,
+  } as any)
+const AppExpertsConsultationsRoute = AppExpertsConsultationsRouteImport.update({
+  id: '/consultations',
+  path: '/consultations',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsCommunityRoute = AppExpertsCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsClientsRoute = AppExpertsClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppExpertsAnalyticsRoute = AppExpertsAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppExpertsRoute,
+} as any)
+const AppAdminUsersRoute = AppAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminUniversitiesRoute = AppAdminUniversitiesRouteImport.update({
+  id: '/universities',
+  path: '/universities',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminTicketsRoute = AppAdminTicketsRouteImport.update({
+  id: '/tickets',
+  path: '/tickets',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminSupportRoute = AppAdminSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminStudentsRoute = AppAdminStudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminStartupsRoute = AppAdminStartupsRouteImport.update({
+  id: '/startups',
+  path: '/startups',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminRewardsRoute = AppAdminRewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminResearchersRoute = AppAdminResearchersRouteImport.update({
+  id: '/researchers',
+  path: '/researchers',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminModerationRoute = AppAdminModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminInvestorsRoute = AppAdminInvestorsRouteImport.update({
+  id: '/investors',
+  path: '/investors',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminExpertsRoute = AppAdminExpertsRouteImport.update({
+  id: '/experts',
+  path: '/experts',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminArena_mgmtRoute = AppAdminArena_mgmtRouteImport.update({
+  id: '/arena_mgmt',
+  path: '/arena_mgmt',
+  getParentRoute: () => AppAdminRoute,
+} as any)
+const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppAdminRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -185,58 +750,234 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/app/achievements': typeof AppAchievementsRoute
-  '/app/admin': typeof AppAdminRoute
-  '/app/assessment': typeof AppAssessmentRoute
-  '/app/career': typeof AppCareerRoute
-  '/app/community': typeof AppCommunityRoute
-  '/app/consultant': typeof AppConsultantRoute
-  '/app/copilot': typeof AppCopilotRoute
-  '/app/discovery': typeof AppDiscoveryRoute
-  '/app/documents': typeof AppDocumentsRoute
-  '/app/execution': typeof AppExecutionRoute
-  '/app/experts': typeof AppExpertsRoute
-  '/app/investor': typeof AppInvestorRoute
-  '/app/opportunities': typeof AppOpportunitiesRoute
-  '/app/outcomes': typeof AppOutcomesRoute
-  '/app/reports': typeof AppReportsRoute
-  '/app/research': typeof AppResearchRoute
-  '/app/roadmap': typeof AppRoadmapRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/startup': typeof AppStartupRoute
-  '/app/tracker': typeof AppTrackerRoute
-  '/app/university': typeof AppUniversityRoute
-  '/app/workspace': typeof AppWorkspaceRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/business': typeof AppBusinessRoute
+  '/app/experts': typeof AppExpertsRouteWithChildren
+  '/app/investor': typeof AppInvestorRouteWithChildren
+  '/app/profile': typeof AppProfileRoute
+  '/app/research': typeof AppResearchRouteWithChildren
+  '/app/startup': typeof AppStartupRouteWithChildren
+  '/app/university': typeof AppUniversityRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/app/admin/arena_mgmt': typeof AppAdminArena_mgmtRoute
+  '/app/admin/experts': typeof AppAdminExpertsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
+  '/app/admin/moderation': typeof AppAdminModerationRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/researchers': typeof AppAdminResearchersRoute
+  '/app/admin/rewards': typeof AppAdminRewardsRoute
+  '/app/admin/startups': typeof AppAdminStartupsRoute
+  '/app/admin/students': typeof AppAdminStudentsRoute
+  '/app/admin/support': typeof AppAdminSupportRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
+  '/app/admin/universities': typeof AppAdminUniversitiesRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/experts/analytics': typeof AppExpertsAnalyticsRoute
+  '/app/experts/clients': typeof AppExpertsClientsRoute
+  '/app/experts/community': typeof AppExpertsCommunityRoute
+  '/app/experts/consultations': typeof AppExpertsConsultationsRoute
+  '/app/experts/discovery_sessions': typeof AppExpertsDiscovery_sessionsRoute
+  '/app/experts/documents': typeof AppExpertsDocumentsRoute
+  '/app/experts/expert_copilot': typeof AppExpertsExpert_copilotRoute
+  '/app/experts/meetings': typeof AppExpertsMeetingsRoute
+  '/app/experts/revenue': typeof AppExpertsRevenueRoute
+  '/app/experts/reviews': typeof AppExpertsReviewsRoute
+  '/app/experts/rewards': typeof AppExpertsRewardsRoute
+  '/app/experts/roadmaps': typeof AppExpertsRoadmapsRoute
+  '/app/experts/settings': typeof AppExpertsSettingsRoute
+  '/app/experts/tasks': typeof AppExpertsTasksRoute
+  '/app/experts/workspace': typeof AppExpertsWorkspaceRoute
+  '/app/investor/community': typeof AppInvestorCommunityRoute
+  '/app/investor/deal_flow': typeof AppInvestorDeal_flowRoute
+  '/app/investor/due_diligence': typeof AppInvestorDue_diligenceRoute
+  '/app/investor/founder_meetings': typeof AppInvestorFounder_meetingsRoute
+  '/app/investor/investment_pipeline': typeof AppInvestorInvestment_pipelineRoute
+  '/app/investor/investments': typeof AppInvestorInvestmentsRoute
+  '/app/investor/investor_copilot': typeof AppInvestorInvestor_copilotRoute
+  '/app/investor/market_intel': typeof AppInvestorMarket_intelRoute
+  '/app/investor/portfolio': typeof AppInvestorPortfolioRoute
+  '/app/investor/rewards': typeof AppInvestorRewardsRoute
+  '/app/investor/settings': typeof AppInvestorSettingsRoute
+  '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
+  '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
+  '/app/research/community': typeof AppResearchCommunityRoute
+  '/app/research/docs': typeof AppResearchDocsRoute
+  '/app/research/events': typeof AppResearchEventsRoute
+  '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/patents': typeof AppResearchPatentsRoute
+  '/app/research/publications': typeof AppResearchPublicationsRoute
+  '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
+  '/app/research/research_copilot': typeof AppResearchResearch_copilotRoute
+  '/app/research/research_projects': typeof AppResearchResearch_projectsRoute
+  '/app/research/research_roadmap': typeof AppResearchResearch_roadmapRoute
+  '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
+  '/app/startup/achievements': typeof AppStartupAchievementsRoute
+  '/app/startup/ai': typeof AppStartupAiRoute
+  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
+  '/app/startup/arena': typeof AppStartupArenaRoute
+  '/app/startup/assessment': typeof AppStartupAssessmentRoute
+  '/app/startup/community': typeof AppStartupCommunityRoute
+  '/app/startup/customers': typeof AppStartupCustomersRoute
+  '/app/startup/docs': typeof AppStartupDocsRoute
+  '/app/startup/funding': typeof AppStartupFundingRoute
+  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/mentors': typeof AppStartupMentorsRoute
+  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
+  '/app/startup/rewards': typeof AppStartupRewardsRoute
+  '/app/startup/roadmap': typeof AppStartupRoadmapRoute
+  '/app/startup/tasks': typeof AppStartupTasksRoute
+  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/student/achievements': typeof AppStudentAchievementsRoute
+  '/app/student/arena': typeof AppStudentArenaRoute
+  '/app/student/assessment': typeof AppStudentAssessmentRoute
+  '/app/student/challenges': typeof AppStudentChallengesRoute
+  '/app/student/community': typeof AppStudentCommunityRoute
+  '/app/student/copilot': typeof AppStudentCopilotRoute
+  '/app/student/internships': typeof AppStudentInternshipsRoute
+  '/app/student/jobs': typeof AppStudentJobsRoute
+  '/app/student/mentors': typeof AppStudentMentorsRoute
+  '/app/student/projects': typeof AppStudentProjectsRoute
+  '/app/student/rewards': typeof AppStudentRewardsRoute
+  '/app/student/roadmap': typeof AppStudentRoadmapRoute
+  '/app/student/skills': typeof AppStudentSkillsRoute
+  '/app/university/analytics': typeof AppUniversityAnalyticsRoute
+  '/app/university/community': typeof AppUniversityCommunityRoute
+  '/app/university/events': typeof AppUniversityEventsRoute
+  '/app/university/faculty': typeof AppUniversityFacultyRoute
+  '/app/university/grants': typeof AppUniversityGrantsRoute
+  '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
+  '/app/university/partners': typeof AppUniversityPartnersRoute
+  '/app/university/placements': typeof AppUniversityPlacementsRoute
+  '/app/university/reports': typeof AppUniversityReportsRoute
+  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
+  '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
+  '/app/university/settings': typeof AppUniversitySettingsRoute
+  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
+  '/app/university/students_list': typeof AppUniversityStudents_listRoute
+  '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/experts/': typeof AppExpertsIndexRoute
+  '/app/investor/': typeof AppInvestorIndexRoute
+  '/app/research/': typeof AppResearchIndexRoute
+  '/app/startup/': typeof AppStartupIndexRoute
+  '/app/student/': typeof AppStudentIndexRoute
+  '/app/university/': typeof AppUniversityIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cookies': typeof CookiesRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/app/achievements': typeof AppAchievementsRoute
-  '/app/admin': typeof AppAdminRoute
-  '/app/assessment': typeof AppAssessmentRoute
-  '/app/career': typeof AppCareerRoute
-  '/app/community': typeof AppCommunityRoute
-  '/app/consultant': typeof AppConsultantRoute
-  '/app/copilot': typeof AppCopilotRoute
-  '/app/discovery': typeof AppDiscoveryRoute
-  '/app/documents': typeof AppDocumentsRoute
-  '/app/execution': typeof AppExecutionRoute
-  '/app/experts': typeof AppExpertsRoute
-  '/app/investor': typeof AppInvestorRoute
-  '/app/opportunities': typeof AppOpportunitiesRoute
-  '/app/outcomes': typeof AppOutcomesRoute
-  '/app/reports': typeof AppReportsRoute
-  '/app/research': typeof AppResearchRoute
-  '/app/roadmap': typeof AppRoadmapRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/startup': typeof AppStartupRoute
-  '/app/tracker': typeof AppTrackerRoute
-  '/app/university': typeof AppUniversityRoute
-  '/app/workspace': typeof AppWorkspaceRoute
+  '/app/business': typeof AppBusinessRoute
+  '/app/profile': typeof AppProfileRoute
   '/app': typeof AppIndexRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/app/admin/arena_mgmt': typeof AppAdminArena_mgmtRoute
+  '/app/admin/experts': typeof AppAdminExpertsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
+  '/app/admin/moderation': typeof AppAdminModerationRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/researchers': typeof AppAdminResearchersRoute
+  '/app/admin/rewards': typeof AppAdminRewardsRoute
+  '/app/admin/startups': typeof AppAdminStartupsRoute
+  '/app/admin/students': typeof AppAdminStudentsRoute
+  '/app/admin/support': typeof AppAdminSupportRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
+  '/app/admin/universities': typeof AppAdminUniversitiesRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/experts/analytics': typeof AppExpertsAnalyticsRoute
+  '/app/experts/clients': typeof AppExpertsClientsRoute
+  '/app/experts/community': typeof AppExpertsCommunityRoute
+  '/app/experts/consultations': typeof AppExpertsConsultationsRoute
+  '/app/experts/discovery_sessions': typeof AppExpertsDiscovery_sessionsRoute
+  '/app/experts/documents': typeof AppExpertsDocumentsRoute
+  '/app/experts/expert_copilot': typeof AppExpertsExpert_copilotRoute
+  '/app/experts/meetings': typeof AppExpertsMeetingsRoute
+  '/app/experts/revenue': typeof AppExpertsRevenueRoute
+  '/app/experts/reviews': typeof AppExpertsReviewsRoute
+  '/app/experts/rewards': typeof AppExpertsRewardsRoute
+  '/app/experts/roadmaps': typeof AppExpertsRoadmapsRoute
+  '/app/experts/settings': typeof AppExpertsSettingsRoute
+  '/app/experts/tasks': typeof AppExpertsTasksRoute
+  '/app/experts/workspace': typeof AppExpertsWorkspaceRoute
+  '/app/investor/community': typeof AppInvestorCommunityRoute
+  '/app/investor/deal_flow': typeof AppInvestorDeal_flowRoute
+  '/app/investor/due_diligence': typeof AppInvestorDue_diligenceRoute
+  '/app/investor/founder_meetings': typeof AppInvestorFounder_meetingsRoute
+  '/app/investor/investment_pipeline': typeof AppInvestorInvestment_pipelineRoute
+  '/app/investor/investments': typeof AppInvestorInvestmentsRoute
+  '/app/investor/investor_copilot': typeof AppInvestorInvestor_copilotRoute
+  '/app/investor/market_intel': typeof AppInvestorMarket_intelRoute
+  '/app/investor/portfolio': typeof AppInvestorPortfolioRoute
+  '/app/investor/rewards': typeof AppInvestorRewardsRoute
+  '/app/investor/settings': typeof AppInvestorSettingsRoute
+  '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
+  '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
+  '/app/research/community': typeof AppResearchCommunityRoute
+  '/app/research/docs': typeof AppResearchDocsRoute
+  '/app/research/events': typeof AppResearchEventsRoute
+  '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/patents': typeof AppResearchPatentsRoute
+  '/app/research/publications': typeof AppResearchPublicationsRoute
+  '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
+  '/app/research/research_copilot': typeof AppResearchResearch_copilotRoute
+  '/app/research/research_projects': typeof AppResearchResearch_projectsRoute
+  '/app/research/research_roadmap': typeof AppResearchResearch_roadmapRoute
+  '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
+  '/app/startup/achievements': typeof AppStartupAchievementsRoute
+  '/app/startup/ai': typeof AppStartupAiRoute
+  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
+  '/app/startup/arena': typeof AppStartupArenaRoute
+  '/app/startup/assessment': typeof AppStartupAssessmentRoute
+  '/app/startup/community': typeof AppStartupCommunityRoute
+  '/app/startup/customers': typeof AppStartupCustomersRoute
+  '/app/startup/docs': typeof AppStartupDocsRoute
+  '/app/startup/funding': typeof AppStartupFundingRoute
+  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/mentors': typeof AppStartupMentorsRoute
+  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
+  '/app/startup/rewards': typeof AppStartupRewardsRoute
+  '/app/startup/roadmap': typeof AppStartupRoadmapRoute
+  '/app/startup/tasks': typeof AppStartupTasksRoute
+  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/student/achievements': typeof AppStudentAchievementsRoute
+  '/app/student/arena': typeof AppStudentArenaRoute
+  '/app/student/assessment': typeof AppStudentAssessmentRoute
+  '/app/student/challenges': typeof AppStudentChallengesRoute
+  '/app/student/community': typeof AppStudentCommunityRoute
+  '/app/student/copilot': typeof AppStudentCopilotRoute
+  '/app/student/internships': typeof AppStudentInternshipsRoute
+  '/app/student/jobs': typeof AppStudentJobsRoute
+  '/app/student/mentors': typeof AppStudentMentorsRoute
+  '/app/student/projects': typeof AppStudentProjectsRoute
+  '/app/student/rewards': typeof AppStudentRewardsRoute
+  '/app/student/roadmap': typeof AppStudentRoadmapRoute
+  '/app/student/skills': typeof AppStudentSkillsRoute
+  '/app/university/analytics': typeof AppUniversityAnalyticsRoute
+  '/app/university/community': typeof AppUniversityCommunityRoute
+  '/app/university/events': typeof AppUniversityEventsRoute
+  '/app/university/faculty': typeof AppUniversityFacultyRoute
+  '/app/university/grants': typeof AppUniversityGrantsRoute
+  '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
+  '/app/university/partners': typeof AppUniversityPartnersRoute
+  '/app/university/placements': typeof AppUniversityPlacementsRoute
+  '/app/university/reports': typeof AppUniversityReportsRoute
+  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
+  '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
+  '/app/university/settings': typeof AppUniversitySettingsRoute
+  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
+  '/app/university/students_list': typeof AppUniversityStudents_listRoute
+  '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
+  '/app/admin': typeof AppAdminIndexRoute
+  '/app/experts': typeof AppExpertsIndexRoute
+  '/app/investor': typeof AppInvestorIndexRoute
+  '/app/research': typeof AppResearchIndexRoute
+  '/app/startup': typeof AppStartupIndexRoute
+  '/app/student': typeof AppStudentIndexRoute
+  '/app/university': typeof AppUniversityIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -245,29 +986,120 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/app/achievements': typeof AppAchievementsRoute
-  '/app/admin': typeof AppAdminRoute
-  '/app/assessment': typeof AppAssessmentRoute
-  '/app/career': typeof AppCareerRoute
-  '/app/community': typeof AppCommunityRoute
-  '/app/consultant': typeof AppConsultantRoute
-  '/app/copilot': typeof AppCopilotRoute
-  '/app/discovery': typeof AppDiscoveryRoute
-  '/app/documents': typeof AppDocumentsRoute
-  '/app/execution': typeof AppExecutionRoute
-  '/app/experts': typeof AppExpertsRoute
-  '/app/investor': typeof AppInvestorRoute
-  '/app/opportunities': typeof AppOpportunitiesRoute
-  '/app/outcomes': typeof AppOutcomesRoute
-  '/app/reports': typeof AppReportsRoute
-  '/app/research': typeof AppResearchRoute
-  '/app/roadmap': typeof AppRoadmapRoute
-  '/app/settings': typeof AppSettingsRoute
-  '/app/startup': typeof AppStartupRoute
-  '/app/tracker': typeof AppTrackerRoute
-  '/app/university': typeof AppUniversityRoute
-  '/app/workspace': typeof AppWorkspaceRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/business': typeof AppBusinessRoute
+  '/app/experts': typeof AppExpertsRouteWithChildren
+  '/app/investor': typeof AppInvestorRouteWithChildren
+  '/app/profile': typeof AppProfileRoute
+  '/app/research': typeof AppResearchRouteWithChildren
+  '/app/startup': typeof AppStartupRouteWithChildren
+  '/app/university': typeof AppUniversityRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
+  '/app/admin/arena_mgmt': typeof AppAdminArena_mgmtRoute
+  '/app/admin/experts': typeof AppAdminExpertsRoute
+  '/app/admin/investors': typeof AppAdminInvestorsRoute
+  '/app/admin/moderation': typeof AppAdminModerationRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/researchers': typeof AppAdminResearchersRoute
+  '/app/admin/rewards': typeof AppAdminRewardsRoute
+  '/app/admin/startups': typeof AppAdminStartupsRoute
+  '/app/admin/students': typeof AppAdminStudentsRoute
+  '/app/admin/support': typeof AppAdminSupportRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
+  '/app/admin/universities': typeof AppAdminUniversitiesRoute
+  '/app/admin/users': typeof AppAdminUsersRoute
+  '/app/experts/analytics': typeof AppExpertsAnalyticsRoute
+  '/app/experts/clients': typeof AppExpertsClientsRoute
+  '/app/experts/community': typeof AppExpertsCommunityRoute
+  '/app/experts/consultations': typeof AppExpertsConsultationsRoute
+  '/app/experts/discovery_sessions': typeof AppExpertsDiscovery_sessionsRoute
+  '/app/experts/documents': typeof AppExpertsDocumentsRoute
+  '/app/experts/expert_copilot': typeof AppExpertsExpert_copilotRoute
+  '/app/experts/meetings': typeof AppExpertsMeetingsRoute
+  '/app/experts/revenue': typeof AppExpertsRevenueRoute
+  '/app/experts/reviews': typeof AppExpertsReviewsRoute
+  '/app/experts/rewards': typeof AppExpertsRewardsRoute
+  '/app/experts/roadmaps': typeof AppExpertsRoadmapsRoute
+  '/app/experts/settings': typeof AppExpertsSettingsRoute
+  '/app/experts/tasks': typeof AppExpertsTasksRoute
+  '/app/experts/workspace': typeof AppExpertsWorkspaceRoute
+  '/app/investor/community': typeof AppInvestorCommunityRoute
+  '/app/investor/deal_flow': typeof AppInvestorDeal_flowRoute
+  '/app/investor/due_diligence': typeof AppInvestorDue_diligenceRoute
+  '/app/investor/founder_meetings': typeof AppInvestorFounder_meetingsRoute
+  '/app/investor/investment_pipeline': typeof AppInvestorInvestment_pipelineRoute
+  '/app/investor/investments': typeof AppInvestorInvestmentsRoute
+  '/app/investor/investor_copilot': typeof AppInvestorInvestor_copilotRoute
+  '/app/investor/market_intel': typeof AppInvestorMarket_intelRoute
+  '/app/investor/portfolio': typeof AppInvestorPortfolioRoute
+  '/app/investor/rewards': typeof AppInvestorRewardsRoute
+  '/app/investor/settings': typeof AppInvestorSettingsRoute
+  '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
+  '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
+  '/app/research/community': typeof AppResearchCommunityRoute
+  '/app/research/docs': typeof AppResearchDocsRoute
+  '/app/research/events': typeof AppResearchEventsRoute
+  '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/patents': typeof AppResearchPatentsRoute
+  '/app/research/publications': typeof AppResearchPublicationsRoute
+  '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
+  '/app/research/research_copilot': typeof AppResearchResearch_copilotRoute
+  '/app/research/research_projects': typeof AppResearchResearch_projectsRoute
+  '/app/research/research_roadmap': typeof AppResearchResearch_roadmapRoute
+  '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
+  '/app/startup/achievements': typeof AppStartupAchievementsRoute
+  '/app/startup/ai': typeof AppStartupAiRoute
+  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
+  '/app/startup/arena': typeof AppStartupArenaRoute
+  '/app/startup/assessment': typeof AppStartupAssessmentRoute
+  '/app/startup/community': typeof AppStartupCommunityRoute
+  '/app/startup/customers': typeof AppStartupCustomersRoute
+  '/app/startup/docs': typeof AppStartupDocsRoute
+  '/app/startup/funding': typeof AppStartupFundingRoute
+  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/mentors': typeof AppStartupMentorsRoute
+  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
+  '/app/startup/rewards': typeof AppStartupRewardsRoute
+  '/app/startup/roadmap': typeof AppStartupRoadmapRoute
+  '/app/startup/tasks': typeof AppStartupTasksRoute
+  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/student/achievements': typeof AppStudentAchievementsRoute
+  '/app/student/arena': typeof AppStudentArenaRoute
+  '/app/student/assessment': typeof AppStudentAssessmentRoute
+  '/app/student/challenges': typeof AppStudentChallengesRoute
+  '/app/student/community': typeof AppStudentCommunityRoute
+  '/app/student/copilot': typeof AppStudentCopilotRoute
+  '/app/student/internships': typeof AppStudentInternshipsRoute
+  '/app/student/jobs': typeof AppStudentJobsRoute
+  '/app/student/mentors': typeof AppStudentMentorsRoute
+  '/app/student/projects': typeof AppStudentProjectsRoute
+  '/app/student/rewards': typeof AppStudentRewardsRoute
+  '/app/student/roadmap': typeof AppStudentRoadmapRoute
+  '/app/student/skills': typeof AppStudentSkillsRoute
+  '/app/university/analytics': typeof AppUniversityAnalyticsRoute
+  '/app/university/community': typeof AppUniversityCommunityRoute
+  '/app/university/events': typeof AppUniversityEventsRoute
+  '/app/university/faculty': typeof AppUniversityFacultyRoute
+  '/app/university/grants': typeof AppUniversityGrantsRoute
+  '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
+  '/app/university/partners': typeof AppUniversityPartnersRoute
+  '/app/university/placements': typeof AppUniversityPlacementsRoute
+  '/app/university/reports': typeof AppUniversityReportsRoute
+  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
+  '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
+  '/app/university/settings': typeof AppUniversitySettingsRoute
+  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
+  '/app/university/students_list': typeof AppUniversityStudents_listRoute
+  '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/experts/': typeof AppExpertsIndexRoute
+  '/app/investor/': typeof AppInvestorIndexRoute
+  '/app/research/': typeof AppResearchIndexRoute
+  '/app/startup/': typeof AppStartupIndexRoute
+  '/app/student/': typeof AppStudentIndexRoute
+  '/app/university/': typeof AppUniversityIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -277,58 +1109,234 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/privacy'
     | '/terms'
-    | '/app/achievements'
     | '/app/admin'
-    | '/app/assessment'
-    | '/app/career'
-    | '/app/community'
-    | '/app/consultant'
-    | '/app/copilot'
-    | '/app/discovery'
-    | '/app/documents'
-    | '/app/execution'
+    | '/app/business'
     | '/app/experts'
     | '/app/investor'
-    | '/app/opportunities'
-    | '/app/outcomes'
-    | '/app/reports'
+    | '/app/profile'
     | '/app/research'
-    | '/app/roadmap'
-    | '/app/settings'
     | '/app/startup'
-    | '/app/tracker'
     | '/app/university'
-    | '/app/workspace'
     | '/app/'
+    | '/app/admin/analytics'
+    | '/app/admin/arena_mgmt'
+    | '/app/admin/experts'
+    | '/app/admin/investors'
+    | '/app/admin/moderation'
+    | '/app/admin/payments'
+    | '/app/admin/researchers'
+    | '/app/admin/rewards'
+    | '/app/admin/startups'
+    | '/app/admin/students'
+    | '/app/admin/support'
+    | '/app/admin/tickets'
+    | '/app/admin/universities'
+    | '/app/admin/users'
+    | '/app/experts/analytics'
+    | '/app/experts/clients'
+    | '/app/experts/community'
+    | '/app/experts/consultations'
+    | '/app/experts/discovery_sessions'
+    | '/app/experts/documents'
+    | '/app/experts/expert_copilot'
+    | '/app/experts/meetings'
+    | '/app/experts/revenue'
+    | '/app/experts/reviews'
+    | '/app/experts/rewards'
+    | '/app/experts/roadmaps'
+    | '/app/experts/settings'
+    | '/app/experts/tasks'
+    | '/app/experts/workspace'
+    | '/app/investor/community'
+    | '/app/investor/deal_flow'
+    | '/app/investor/due_diligence'
+    | '/app/investor/founder_meetings'
+    | '/app/investor/investment_pipeline'
+    | '/app/investor/investments'
+    | '/app/investor/investor_copilot'
+    | '/app/investor/market_intel'
+    | '/app/investor/portfolio'
+    | '/app/investor/rewards'
+    | '/app/investor/settings'
+    | '/app/investor/startup_discovery'
+    | '/app/research/achievements'
+    | '/app/research/collaborators'
+    | '/app/research/community'
+    | '/app/research/docs'
+    | '/app/research/events'
+    | '/app/research/grants'
+    | '/app/research/patents'
+    | '/app/research/publications'
+    | '/app/research/research_arena'
+    | '/app/research/research_copilot'
+    | '/app/research/research_projects'
+    | '/app/research/research_roadmap'
+    | '/app/research/research_tasks'
+    | '/app/startup/achievements'
+    | '/app/startup/ai'
+    | '/app/startup/analytics'
+    | '/app/startup/arena'
+    | '/app/startup/assessment'
+    | '/app/startup/community'
+    | '/app/startup/customers'
+    | '/app/startup/docs'
+    | '/app/startup/funding'
+    | '/app/startup/investors'
+    | '/app/startup/mentors'
+    | '/app/startup/pitch_decks'
+    | '/app/startup/rewards'
+    | '/app/startup/roadmap'
+    | '/app/startup/tasks'
+    | '/app/startup/team'
+    | '/app/student/achievements'
+    | '/app/student/arena'
+    | '/app/student/assessment'
+    | '/app/student/challenges'
+    | '/app/student/community'
+    | '/app/student/copilot'
+    | '/app/student/internships'
+    | '/app/student/jobs'
+    | '/app/student/mentors'
+    | '/app/student/projects'
+    | '/app/student/rewards'
+    | '/app/student/roadmap'
+    | '/app/student/skills'
+    | '/app/university/analytics'
+    | '/app/university/community'
+    | '/app/university/events'
+    | '/app/university/faculty'
+    | '/app/university/grants'
+    | '/app/university/innovation_hub'
+    | '/app/university/partners'
+    | '/app/university/placements'
+    | '/app/university/reports'
+    | '/app/university/research_center'
+    | '/app/university/researchers_list'
+    | '/app/university/settings'
+    | '/app/university/startup_incubator'
+    | '/app/university/students_list'
+    | '/app/university/uni_copilot'
+    | '/app/admin/'
+    | '/app/experts/'
+    | '/app/investor/'
+    | '/app/research/'
+    | '/app/startup/'
+    | '/app/student/'
+    | '/app/university/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cookies'
     | '/privacy'
     | '/terms'
-    | '/app/achievements'
+    | '/app/business'
+    | '/app/profile'
+    | '/app'
+    | '/app/admin/analytics'
+    | '/app/admin/arena_mgmt'
+    | '/app/admin/experts'
+    | '/app/admin/investors'
+    | '/app/admin/moderation'
+    | '/app/admin/payments'
+    | '/app/admin/researchers'
+    | '/app/admin/rewards'
+    | '/app/admin/startups'
+    | '/app/admin/students'
+    | '/app/admin/support'
+    | '/app/admin/tickets'
+    | '/app/admin/universities'
+    | '/app/admin/users'
+    | '/app/experts/analytics'
+    | '/app/experts/clients'
+    | '/app/experts/community'
+    | '/app/experts/consultations'
+    | '/app/experts/discovery_sessions'
+    | '/app/experts/documents'
+    | '/app/experts/expert_copilot'
+    | '/app/experts/meetings'
+    | '/app/experts/revenue'
+    | '/app/experts/reviews'
+    | '/app/experts/rewards'
+    | '/app/experts/roadmaps'
+    | '/app/experts/settings'
+    | '/app/experts/tasks'
+    | '/app/experts/workspace'
+    | '/app/investor/community'
+    | '/app/investor/deal_flow'
+    | '/app/investor/due_diligence'
+    | '/app/investor/founder_meetings'
+    | '/app/investor/investment_pipeline'
+    | '/app/investor/investments'
+    | '/app/investor/investor_copilot'
+    | '/app/investor/market_intel'
+    | '/app/investor/portfolio'
+    | '/app/investor/rewards'
+    | '/app/investor/settings'
+    | '/app/investor/startup_discovery'
+    | '/app/research/achievements'
+    | '/app/research/collaborators'
+    | '/app/research/community'
+    | '/app/research/docs'
+    | '/app/research/events'
+    | '/app/research/grants'
+    | '/app/research/patents'
+    | '/app/research/publications'
+    | '/app/research/research_arena'
+    | '/app/research/research_copilot'
+    | '/app/research/research_projects'
+    | '/app/research/research_roadmap'
+    | '/app/research/research_tasks'
+    | '/app/startup/achievements'
+    | '/app/startup/ai'
+    | '/app/startup/analytics'
+    | '/app/startup/arena'
+    | '/app/startup/assessment'
+    | '/app/startup/community'
+    | '/app/startup/customers'
+    | '/app/startup/docs'
+    | '/app/startup/funding'
+    | '/app/startup/investors'
+    | '/app/startup/mentors'
+    | '/app/startup/pitch_decks'
+    | '/app/startup/rewards'
+    | '/app/startup/roadmap'
+    | '/app/startup/tasks'
+    | '/app/startup/team'
+    | '/app/student/achievements'
+    | '/app/student/arena'
+    | '/app/student/assessment'
+    | '/app/student/challenges'
+    | '/app/student/community'
+    | '/app/student/copilot'
+    | '/app/student/internships'
+    | '/app/student/jobs'
+    | '/app/student/mentors'
+    | '/app/student/projects'
+    | '/app/student/rewards'
+    | '/app/student/roadmap'
+    | '/app/student/skills'
+    | '/app/university/analytics'
+    | '/app/university/community'
+    | '/app/university/events'
+    | '/app/university/faculty'
+    | '/app/university/grants'
+    | '/app/university/innovation_hub'
+    | '/app/university/partners'
+    | '/app/university/placements'
+    | '/app/university/reports'
+    | '/app/university/research_center'
+    | '/app/university/researchers_list'
+    | '/app/university/settings'
+    | '/app/university/startup_incubator'
+    | '/app/university/students_list'
+    | '/app/university/uni_copilot'
     | '/app/admin'
-    | '/app/assessment'
-    | '/app/career'
-    | '/app/community'
-    | '/app/consultant'
-    | '/app/copilot'
-    | '/app/discovery'
-    | '/app/documents'
-    | '/app/execution'
     | '/app/experts'
     | '/app/investor'
-    | '/app/opportunities'
-    | '/app/outcomes'
-    | '/app/reports'
     | '/app/research'
-    | '/app/roadmap'
-    | '/app/settings'
     | '/app/startup'
-    | '/app/tracker'
+    | '/app/student'
     | '/app/university'
-    | '/app/workspace'
-    | '/app'
   id:
     | '__root__'
     | '/'
@@ -336,29 +1344,120 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/privacy'
     | '/terms'
-    | '/app/achievements'
     | '/app/admin'
-    | '/app/assessment'
-    | '/app/career'
-    | '/app/community'
-    | '/app/consultant'
-    | '/app/copilot'
-    | '/app/discovery'
-    | '/app/documents'
-    | '/app/execution'
+    | '/app/business'
     | '/app/experts'
     | '/app/investor'
-    | '/app/opportunities'
-    | '/app/outcomes'
-    | '/app/reports'
+    | '/app/profile'
     | '/app/research'
-    | '/app/roadmap'
-    | '/app/settings'
     | '/app/startup'
-    | '/app/tracker'
     | '/app/university'
-    | '/app/workspace'
     | '/app/'
+    | '/app/admin/analytics'
+    | '/app/admin/arena_mgmt'
+    | '/app/admin/experts'
+    | '/app/admin/investors'
+    | '/app/admin/moderation'
+    | '/app/admin/payments'
+    | '/app/admin/researchers'
+    | '/app/admin/rewards'
+    | '/app/admin/startups'
+    | '/app/admin/students'
+    | '/app/admin/support'
+    | '/app/admin/tickets'
+    | '/app/admin/universities'
+    | '/app/admin/users'
+    | '/app/experts/analytics'
+    | '/app/experts/clients'
+    | '/app/experts/community'
+    | '/app/experts/consultations'
+    | '/app/experts/discovery_sessions'
+    | '/app/experts/documents'
+    | '/app/experts/expert_copilot'
+    | '/app/experts/meetings'
+    | '/app/experts/revenue'
+    | '/app/experts/reviews'
+    | '/app/experts/rewards'
+    | '/app/experts/roadmaps'
+    | '/app/experts/settings'
+    | '/app/experts/tasks'
+    | '/app/experts/workspace'
+    | '/app/investor/community'
+    | '/app/investor/deal_flow'
+    | '/app/investor/due_diligence'
+    | '/app/investor/founder_meetings'
+    | '/app/investor/investment_pipeline'
+    | '/app/investor/investments'
+    | '/app/investor/investor_copilot'
+    | '/app/investor/market_intel'
+    | '/app/investor/portfolio'
+    | '/app/investor/rewards'
+    | '/app/investor/settings'
+    | '/app/investor/startup_discovery'
+    | '/app/research/achievements'
+    | '/app/research/collaborators'
+    | '/app/research/community'
+    | '/app/research/docs'
+    | '/app/research/events'
+    | '/app/research/grants'
+    | '/app/research/patents'
+    | '/app/research/publications'
+    | '/app/research/research_arena'
+    | '/app/research/research_copilot'
+    | '/app/research/research_projects'
+    | '/app/research/research_roadmap'
+    | '/app/research/research_tasks'
+    | '/app/startup/achievements'
+    | '/app/startup/ai'
+    | '/app/startup/analytics'
+    | '/app/startup/arena'
+    | '/app/startup/assessment'
+    | '/app/startup/community'
+    | '/app/startup/customers'
+    | '/app/startup/docs'
+    | '/app/startup/funding'
+    | '/app/startup/investors'
+    | '/app/startup/mentors'
+    | '/app/startup/pitch_decks'
+    | '/app/startup/rewards'
+    | '/app/startup/roadmap'
+    | '/app/startup/tasks'
+    | '/app/startup/team'
+    | '/app/student/achievements'
+    | '/app/student/arena'
+    | '/app/student/assessment'
+    | '/app/student/challenges'
+    | '/app/student/community'
+    | '/app/student/copilot'
+    | '/app/student/internships'
+    | '/app/student/jobs'
+    | '/app/student/mentors'
+    | '/app/student/projects'
+    | '/app/student/rewards'
+    | '/app/student/roadmap'
+    | '/app/student/skills'
+    | '/app/university/analytics'
+    | '/app/university/community'
+    | '/app/university/events'
+    | '/app/university/faculty'
+    | '/app/university/grants'
+    | '/app/university/innovation_hub'
+    | '/app/university/partners'
+    | '/app/university/placements'
+    | '/app/university/reports'
+    | '/app/university/research_center'
+    | '/app/university/researchers_list'
+    | '/app/university/settings'
+    | '/app/university/startup_incubator'
+    | '/app/university/students_list'
+    | '/app/university/uni_copilot'
+    | '/app/admin/'
+    | '/app/experts/'
+    | '/app/investor/'
+    | '/app/research/'
+    | '/app/startup/'
+    | '/app/student/'
+    | '/app/university/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -413,25 +1512,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/workspace': {
-      id: '/app/workspace'
-      path: '/workspace'
-      fullPath: '/app/workspace'
-      preLoaderRoute: typeof AppWorkspaceRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/university': {
       id: '/app/university'
       path: '/university'
       fullPath: '/app/university'
       preLoaderRoute: typeof AppUniversityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/tracker': {
-      id: '/app/tracker'
-      path: '/tracker'
-      fullPath: '/app/tracker'
-      preLoaderRoute: typeof AppTrackerRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/startup': {
@@ -441,20 +1526,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStartupRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/settings': {
-      id: '/app/settings'
-      path: '/settings'
-      fullPath: '/app/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/roadmap': {
-      id: '/app/roadmap'
-      path: '/roadmap'
-      fullPath: '/app/roadmap'
-      preLoaderRoute: typeof AppRoadmapRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/research': {
       id: '/app/research'
       path: '/research'
@@ -462,25 +1533,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResearchRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/reports': {
-      id: '/app/reports'
-      path: '/reports'
-      fullPath: '/app/reports'
-      preLoaderRoute: typeof AppReportsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/outcomes': {
-      id: '/app/outcomes'
-      path: '/outcomes'
-      fullPath: '/app/outcomes'
-      preLoaderRoute: typeof AppOutcomesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/opportunities': {
-      id: '/app/opportunities'
-      path: '/opportunities'
-      fullPath: '/app/opportunities'
-      preLoaderRoute: typeof AppOpportunitiesRouteImport
+    '/app/profile': {
+      id: '/app/profile'
+      path: '/profile'
+      fullPath: '/app/profile'
+      preLoaderRoute: typeof AppProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/investor': {
@@ -497,60 +1554,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppExpertsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/execution': {
-      id: '/app/execution'
-      path: '/execution'
-      fullPath: '/app/execution'
-      preLoaderRoute: typeof AppExecutionRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/documents': {
-      id: '/app/documents'
-      path: '/documents'
-      fullPath: '/app/documents'
-      preLoaderRoute: typeof AppDocumentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/discovery': {
-      id: '/app/discovery'
-      path: '/discovery'
-      fullPath: '/app/discovery'
-      preLoaderRoute: typeof AppDiscoveryRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/copilot': {
-      id: '/app/copilot'
-      path: '/copilot'
-      fullPath: '/app/copilot'
-      preLoaderRoute: typeof AppCopilotRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/consultant': {
-      id: '/app/consultant'
-      path: '/consultant'
-      fullPath: '/app/consultant'
-      preLoaderRoute: typeof AppConsultantRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/community': {
-      id: '/app/community'
-      path: '/community'
-      fullPath: '/app/community'
-      preLoaderRoute: typeof AppCommunityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/career': {
-      id: '/app/career'
-      path: '/career'
-      fullPath: '/app/career'
-      preLoaderRoute: typeof AppCareerRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/assessment': {
-      id: '/app/assessment'
-      path: '/assessment'
-      fullPath: '/app/assessment'
-      preLoaderRoute: typeof AppAssessmentRouteImport
+    '/app/business': {
+      id: '/app/business'
+      path: '/business'
+      fullPath: '/app/business'
+      preLoaderRoute: typeof AppBusinessRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin': {
@@ -560,66 +1568,1036 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/achievements': {
-      id: '/app/achievements'
-      path: '/achievements'
-      fullPath: '/app/achievements'
-      preLoaderRoute: typeof AppAchievementsRouteImport
+    '/app/university/': {
+      id: '/app/university/'
+      path: '/'
+      fullPath: '/app/university/'
+      preLoaderRoute: typeof AppUniversityIndexRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/student/': {
+      id: '/app/student/'
+      path: '/student'
+      fullPath: '/app/student/'
+      preLoaderRoute: typeof AppStudentIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/app/startup/': {
+      id: '/app/startup/'
+      path: '/'
+      fullPath: '/app/startup/'
+      preLoaderRoute: typeof AppStartupIndexRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/research/': {
+      id: '/app/research/'
+      path: '/'
+      fullPath: '/app/research/'
+      preLoaderRoute: typeof AppResearchIndexRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/investor/': {
+      id: '/app/investor/'
+      path: '/'
+      fullPath: '/app/investor/'
+      preLoaderRoute: typeof AppInvestorIndexRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/experts/': {
+      id: '/app/experts/'
+      path: '/'
+      fullPath: '/app/experts/'
+      preLoaderRoute: typeof AppExpertsIndexRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/admin/': {
+      id: '/app/admin/'
+      path: '/'
+      fullPath: '/app/admin/'
+      preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/university/uni_copilot': {
+      id: '/app/university/uni_copilot'
+      path: '/uni_copilot'
+      fullPath: '/app/university/uni_copilot'
+      preLoaderRoute: typeof AppUniversityUni_copilotRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/students_list': {
+      id: '/app/university/students_list'
+      path: '/students_list'
+      fullPath: '/app/university/students_list'
+      preLoaderRoute: typeof AppUniversityStudents_listRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/startup_incubator': {
+      id: '/app/university/startup_incubator'
+      path: '/startup_incubator'
+      fullPath: '/app/university/startup_incubator'
+      preLoaderRoute: typeof AppUniversityStartup_incubatorRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/settings': {
+      id: '/app/university/settings'
+      path: '/settings'
+      fullPath: '/app/university/settings'
+      preLoaderRoute: typeof AppUniversitySettingsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/researchers_list': {
+      id: '/app/university/researchers_list'
+      path: '/researchers_list'
+      fullPath: '/app/university/researchers_list'
+      preLoaderRoute: typeof AppUniversityResearchers_listRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/research_center': {
+      id: '/app/university/research_center'
+      path: '/research_center'
+      fullPath: '/app/university/research_center'
+      preLoaderRoute: typeof AppUniversityResearch_centerRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/reports': {
+      id: '/app/university/reports'
+      path: '/reports'
+      fullPath: '/app/university/reports'
+      preLoaderRoute: typeof AppUniversityReportsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/placements': {
+      id: '/app/university/placements'
+      path: '/placements'
+      fullPath: '/app/university/placements'
+      preLoaderRoute: typeof AppUniversityPlacementsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/partners': {
+      id: '/app/university/partners'
+      path: '/partners'
+      fullPath: '/app/university/partners'
+      preLoaderRoute: typeof AppUniversityPartnersRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/innovation_hub': {
+      id: '/app/university/innovation_hub'
+      path: '/innovation_hub'
+      fullPath: '/app/university/innovation_hub'
+      preLoaderRoute: typeof AppUniversityInnovation_hubRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/grants': {
+      id: '/app/university/grants'
+      path: '/grants'
+      fullPath: '/app/university/grants'
+      preLoaderRoute: typeof AppUniversityGrantsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/faculty': {
+      id: '/app/university/faculty'
+      path: '/faculty'
+      fullPath: '/app/university/faculty'
+      preLoaderRoute: typeof AppUniversityFacultyRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/events': {
+      id: '/app/university/events'
+      path: '/events'
+      fullPath: '/app/university/events'
+      preLoaderRoute: typeof AppUniversityEventsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/community': {
+      id: '/app/university/community'
+      path: '/community'
+      fullPath: '/app/university/community'
+      preLoaderRoute: typeof AppUniversityCommunityRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/university/analytics': {
+      id: '/app/university/analytics'
+      path: '/analytics'
+      fullPath: '/app/university/analytics'
+      preLoaderRoute: typeof AppUniversityAnalyticsRouteImport
+      parentRoute: typeof AppUniversityRoute
+    }
+    '/app/student/skills': {
+      id: '/app/student/skills'
+      path: '/student/skills'
+      fullPath: '/app/student/skills'
+      preLoaderRoute: typeof AppStudentSkillsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/roadmap': {
+      id: '/app/student/roadmap'
+      path: '/student/roadmap'
+      fullPath: '/app/student/roadmap'
+      preLoaderRoute: typeof AppStudentRoadmapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/rewards': {
+      id: '/app/student/rewards'
+      path: '/student/rewards'
+      fullPath: '/app/student/rewards'
+      preLoaderRoute: typeof AppStudentRewardsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/projects': {
+      id: '/app/student/projects'
+      path: '/student/projects'
+      fullPath: '/app/student/projects'
+      preLoaderRoute: typeof AppStudentProjectsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/mentors': {
+      id: '/app/student/mentors'
+      path: '/student/mentors'
+      fullPath: '/app/student/mentors'
+      preLoaderRoute: typeof AppStudentMentorsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/jobs': {
+      id: '/app/student/jobs'
+      path: '/student/jobs'
+      fullPath: '/app/student/jobs'
+      preLoaderRoute: typeof AppStudentJobsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/internships': {
+      id: '/app/student/internships'
+      path: '/student/internships'
+      fullPath: '/app/student/internships'
+      preLoaderRoute: typeof AppStudentInternshipsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/copilot': {
+      id: '/app/student/copilot'
+      path: '/student/copilot'
+      fullPath: '/app/student/copilot'
+      preLoaderRoute: typeof AppStudentCopilotRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/community': {
+      id: '/app/student/community'
+      path: '/student/community'
+      fullPath: '/app/student/community'
+      preLoaderRoute: typeof AppStudentCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/challenges': {
+      id: '/app/student/challenges'
+      path: '/student/challenges'
+      fullPath: '/app/student/challenges'
+      preLoaderRoute: typeof AppStudentChallengesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/assessment': {
+      id: '/app/student/assessment'
+      path: '/student/assessment'
+      fullPath: '/app/student/assessment'
+      preLoaderRoute: typeof AppStudentAssessmentRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/arena': {
+      id: '/app/student/arena'
+      path: '/student/arena'
+      fullPath: '/app/student/arena'
+      preLoaderRoute: typeof AppStudentArenaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/student/achievements': {
+      id: '/app/student/achievements'
+      path: '/student/achievements'
+      fullPath: '/app/student/achievements'
+      preLoaderRoute: typeof AppStudentAchievementsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/startup/team': {
+      id: '/app/startup/team'
+      path: '/team'
+      fullPath: '/app/startup/team'
+      preLoaderRoute: typeof AppStartupTeamRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/tasks': {
+      id: '/app/startup/tasks'
+      path: '/tasks'
+      fullPath: '/app/startup/tasks'
+      preLoaderRoute: typeof AppStartupTasksRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/roadmap': {
+      id: '/app/startup/roadmap'
+      path: '/roadmap'
+      fullPath: '/app/startup/roadmap'
+      preLoaderRoute: typeof AppStartupRoadmapRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/rewards': {
+      id: '/app/startup/rewards'
+      path: '/rewards'
+      fullPath: '/app/startup/rewards'
+      preLoaderRoute: typeof AppStartupRewardsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/pitch_decks': {
+      id: '/app/startup/pitch_decks'
+      path: '/pitch_decks'
+      fullPath: '/app/startup/pitch_decks'
+      preLoaderRoute: typeof AppStartupPitch_decksRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/mentors': {
+      id: '/app/startup/mentors'
+      path: '/mentors'
+      fullPath: '/app/startup/mentors'
+      preLoaderRoute: typeof AppStartupMentorsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/investors': {
+      id: '/app/startup/investors'
+      path: '/investors'
+      fullPath: '/app/startup/investors'
+      preLoaderRoute: typeof AppStartupInvestorsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/funding': {
+      id: '/app/startup/funding'
+      path: '/funding'
+      fullPath: '/app/startup/funding'
+      preLoaderRoute: typeof AppStartupFundingRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/docs': {
+      id: '/app/startup/docs'
+      path: '/docs'
+      fullPath: '/app/startup/docs'
+      preLoaderRoute: typeof AppStartupDocsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/customers': {
+      id: '/app/startup/customers'
+      path: '/customers'
+      fullPath: '/app/startup/customers'
+      preLoaderRoute: typeof AppStartupCustomersRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/community': {
+      id: '/app/startup/community'
+      path: '/community'
+      fullPath: '/app/startup/community'
+      preLoaderRoute: typeof AppStartupCommunityRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/assessment': {
+      id: '/app/startup/assessment'
+      path: '/assessment'
+      fullPath: '/app/startup/assessment'
+      preLoaderRoute: typeof AppStartupAssessmentRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/arena': {
+      id: '/app/startup/arena'
+      path: '/arena'
+      fullPath: '/app/startup/arena'
+      preLoaderRoute: typeof AppStartupArenaRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/analytics': {
+      id: '/app/startup/analytics'
+      path: '/analytics'
+      fullPath: '/app/startup/analytics'
+      preLoaderRoute: typeof AppStartupAnalyticsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/ai': {
+      id: '/app/startup/ai'
+      path: '/ai'
+      fullPath: '/app/startup/ai'
+      preLoaderRoute: typeof AppStartupAiRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/startup/achievements': {
+      id: '/app/startup/achievements'
+      path: '/achievements'
+      fullPath: '/app/startup/achievements'
+      preLoaderRoute: typeof AppStartupAchievementsRouteImport
+      parentRoute: typeof AppStartupRoute
+    }
+    '/app/research/research_tasks': {
+      id: '/app/research/research_tasks'
+      path: '/research_tasks'
+      fullPath: '/app/research/research_tasks'
+      preLoaderRoute: typeof AppResearchResearch_tasksRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/research_roadmap': {
+      id: '/app/research/research_roadmap'
+      path: '/research_roadmap'
+      fullPath: '/app/research/research_roadmap'
+      preLoaderRoute: typeof AppResearchResearch_roadmapRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/research_projects': {
+      id: '/app/research/research_projects'
+      path: '/research_projects'
+      fullPath: '/app/research/research_projects'
+      preLoaderRoute: typeof AppResearchResearch_projectsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/research_copilot': {
+      id: '/app/research/research_copilot'
+      path: '/research_copilot'
+      fullPath: '/app/research/research_copilot'
+      preLoaderRoute: typeof AppResearchResearch_copilotRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/research_arena': {
+      id: '/app/research/research_arena'
+      path: '/research_arena'
+      fullPath: '/app/research/research_arena'
+      preLoaderRoute: typeof AppResearchResearch_arenaRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/publications': {
+      id: '/app/research/publications'
+      path: '/publications'
+      fullPath: '/app/research/publications'
+      preLoaderRoute: typeof AppResearchPublicationsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/patents': {
+      id: '/app/research/patents'
+      path: '/patents'
+      fullPath: '/app/research/patents'
+      preLoaderRoute: typeof AppResearchPatentsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/grants': {
+      id: '/app/research/grants'
+      path: '/grants'
+      fullPath: '/app/research/grants'
+      preLoaderRoute: typeof AppResearchGrantsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/events': {
+      id: '/app/research/events'
+      path: '/events'
+      fullPath: '/app/research/events'
+      preLoaderRoute: typeof AppResearchEventsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/docs': {
+      id: '/app/research/docs'
+      path: '/docs'
+      fullPath: '/app/research/docs'
+      preLoaderRoute: typeof AppResearchDocsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/community': {
+      id: '/app/research/community'
+      path: '/community'
+      fullPath: '/app/research/community'
+      preLoaderRoute: typeof AppResearchCommunityRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/collaborators': {
+      id: '/app/research/collaborators'
+      path: '/collaborators'
+      fullPath: '/app/research/collaborators'
+      preLoaderRoute: typeof AppResearchCollaboratorsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/achievements': {
+      id: '/app/research/achievements'
+      path: '/achievements'
+      fullPath: '/app/research/achievements'
+      preLoaderRoute: typeof AppResearchAchievementsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/investor/startup_discovery': {
+      id: '/app/investor/startup_discovery'
+      path: '/startup_discovery'
+      fullPath: '/app/investor/startup_discovery'
+      preLoaderRoute: typeof AppInvestorStartup_discoveryRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/settings': {
+      id: '/app/investor/settings'
+      path: '/settings'
+      fullPath: '/app/investor/settings'
+      preLoaderRoute: typeof AppInvestorSettingsRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/rewards': {
+      id: '/app/investor/rewards'
+      path: '/rewards'
+      fullPath: '/app/investor/rewards'
+      preLoaderRoute: typeof AppInvestorRewardsRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/portfolio': {
+      id: '/app/investor/portfolio'
+      path: '/portfolio'
+      fullPath: '/app/investor/portfolio'
+      preLoaderRoute: typeof AppInvestorPortfolioRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/market_intel': {
+      id: '/app/investor/market_intel'
+      path: '/market_intel'
+      fullPath: '/app/investor/market_intel'
+      preLoaderRoute: typeof AppInvestorMarket_intelRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/investor_copilot': {
+      id: '/app/investor/investor_copilot'
+      path: '/investor_copilot'
+      fullPath: '/app/investor/investor_copilot'
+      preLoaderRoute: typeof AppInvestorInvestor_copilotRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/investments': {
+      id: '/app/investor/investments'
+      path: '/investments'
+      fullPath: '/app/investor/investments'
+      preLoaderRoute: typeof AppInvestorInvestmentsRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/investment_pipeline': {
+      id: '/app/investor/investment_pipeline'
+      path: '/investment_pipeline'
+      fullPath: '/app/investor/investment_pipeline'
+      preLoaderRoute: typeof AppInvestorInvestment_pipelineRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/founder_meetings': {
+      id: '/app/investor/founder_meetings'
+      path: '/founder_meetings'
+      fullPath: '/app/investor/founder_meetings'
+      preLoaderRoute: typeof AppInvestorFounder_meetingsRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/due_diligence': {
+      id: '/app/investor/due_diligence'
+      path: '/due_diligence'
+      fullPath: '/app/investor/due_diligence'
+      preLoaderRoute: typeof AppInvestorDue_diligenceRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/deal_flow': {
+      id: '/app/investor/deal_flow'
+      path: '/deal_flow'
+      fullPath: '/app/investor/deal_flow'
+      preLoaderRoute: typeof AppInvestorDeal_flowRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/investor/community': {
+      id: '/app/investor/community'
+      path: '/community'
+      fullPath: '/app/investor/community'
+      preLoaderRoute: typeof AppInvestorCommunityRouteImport
+      parentRoute: typeof AppInvestorRoute
+    }
+    '/app/experts/workspace': {
+      id: '/app/experts/workspace'
+      path: '/workspace'
+      fullPath: '/app/experts/workspace'
+      preLoaderRoute: typeof AppExpertsWorkspaceRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/tasks': {
+      id: '/app/experts/tasks'
+      path: '/tasks'
+      fullPath: '/app/experts/tasks'
+      preLoaderRoute: typeof AppExpertsTasksRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/settings': {
+      id: '/app/experts/settings'
+      path: '/settings'
+      fullPath: '/app/experts/settings'
+      preLoaderRoute: typeof AppExpertsSettingsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/roadmaps': {
+      id: '/app/experts/roadmaps'
+      path: '/roadmaps'
+      fullPath: '/app/experts/roadmaps'
+      preLoaderRoute: typeof AppExpertsRoadmapsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/rewards': {
+      id: '/app/experts/rewards'
+      path: '/rewards'
+      fullPath: '/app/experts/rewards'
+      preLoaderRoute: typeof AppExpertsRewardsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/reviews': {
+      id: '/app/experts/reviews'
+      path: '/reviews'
+      fullPath: '/app/experts/reviews'
+      preLoaderRoute: typeof AppExpertsReviewsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/revenue': {
+      id: '/app/experts/revenue'
+      path: '/revenue'
+      fullPath: '/app/experts/revenue'
+      preLoaderRoute: typeof AppExpertsRevenueRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/meetings': {
+      id: '/app/experts/meetings'
+      path: '/meetings'
+      fullPath: '/app/experts/meetings'
+      preLoaderRoute: typeof AppExpertsMeetingsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/expert_copilot': {
+      id: '/app/experts/expert_copilot'
+      path: '/expert_copilot'
+      fullPath: '/app/experts/expert_copilot'
+      preLoaderRoute: typeof AppExpertsExpert_copilotRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/documents': {
+      id: '/app/experts/documents'
+      path: '/documents'
+      fullPath: '/app/experts/documents'
+      preLoaderRoute: typeof AppExpertsDocumentsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/discovery_sessions': {
+      id: '/app/experts/discovery_sessions'
+      path: '/discovery_sessions'
+      fullPath: '/app/experts/discovery_sessions'
+      preLoaderRoute: typeof AppExpertsDiscovery_sessionsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/consultations': {
+      id: '/app/experts/consultations'
+      path: '/consultations'
+      fullPath: '/app/experts/consultations'
+      preLoaderRoute: typeof AppExpertsConsultationsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/community': {
+      id: '/app/experts/community'
+      path: '/community'
+      fullPath: '/app/experts/community'
+      preLoaderRoute: typeof AppExpertsCommunityRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/clients': {
+      id: '/app/experts/clients'
+      path: '/clients'
+      fullPath: '/app/experts/clients'
+      preLoaderRoute: typeof AppExpertsClientsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/experts/analytics': {
+      id: '/app/experts/analytics'
+      path: '/analytics'
+      fullPath: '/app/experts/analytics'
+      preLoaderRoute: typeof AppExpertsAnalyticsRouteImport
+      parentRoute: typeof AppExpertsRoute
+    }
+    '/app/admin/users': {
+      id: '/app/admin/users'
+      path: '/users'
+      fullPath: '/app/admin/users'
+      preLoaderRoute: typeof AppAdminUsersRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/universities': {
+      id: '/app/admin/universities'
+      path: '/universities'
+      fullPath: '/app/admin/universities'
+      preLoaderRoute: typeof AppAdminUniversitiesRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/tickets': {
+      id: '/app/admin/tickets'
+      path: '/tickets'
+      fullPath: '/app/admin/tickets'
+      preLoaderRoute: typeof AppAdminTicketsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/support': {
+      id: '/app/admin/support'
+      path: '/support'
+      fullPath: '/app/admin/support'
+      preLoaderRoute: typeof AppAdminSupportRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/students': {
+      id: '/app/admin/students'
+      path: '/students'
+      fullPath: '/app/admin/students'
+      preLoaderRoute: typeof AppAdminStudentsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/startups': {
+      id: '/app/admin/startups'
+      path: '/startups'
+      fullPath: '/app/admin/startups'
+      preLoaderRoute: typeof AppAdminStartupsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/rewards': {
+      id: '/app/admin/rewards'
+      path: '/rewards'
+      fullPath: '/app/admin/rewards'
+      preLoaderRoute: typeof AppAdminRewardsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/researchers': {
+      id: '/app/admin/researchers'
+      path: '/researchers'
+      fullPath: '/app/admin/researchers'
+      preLoaderRoute: typeof AppAdminResearchersRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/payments': {
+      id: '/app/admin/payments'
+      path: '/payments'
+      fullPath: '/app/admin/payments'
+      preLoaderRoute: typeof AppAdminPaymentsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/moderation': {
+      id: '/app/admin/moderation'
+      path: '/moderation'
+      fullPath: '/app/admin/moderation'
+      preLoaderRoute: typeof AppAdminModerationRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/investors': {
+      id: '/app/admin/investors'
+      path: '/investors'
+      fullPath: '/app/admin/investors'
+      preLoaderRoute: typeof AppAdminInvestorsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/experts': {
+      id: '/app/admin/experts'
+      path: '/experts'
+      fullPath: '/app/admin/experts'
+      preLoaderRoute: typeof AppAdminExpertsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/arena_mgmt': {
+      id: '/app/admin/arena_mgmt'
+      path: '/arena_mgmt'
+      fullPath: '/app/admin/arena_mgmt'
+      preLoaderRoute: typeof AppAdminArena_mgmtRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
+    '/app/admin/analytics': {
+      id: '/app/admin/analytics'
+      path: '/analytics'
+      fullPath: '/app/admin/analytics'
+      preLoaderRoute: typeof AppAdminAnalyticsRouteImport
+      parentRoute: typeof AppAdminRoute
     }
   }
 }
 
+interface AppAdminRouteChildren {
+  AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+  AppAdminArena_mgmtRoute: typeof AppAdminArena_mgmtRoute
+  AppAdminExpertsRoute: typeof AppAdminExpertsRoute
+  AppAdminInvestorsRoute: typeof AppAdminInvestorsRoute
+  AppAdminModerationRoute: typeof AppAdminModerationRoute
+  AppAdminPaymentsRoute: typeof AppAdminPaymentsRoute
+  AppAdminResearchersRoute: typeof AppAdminResearchersRoute
+  AppAdminRewardsRoute: typeof AppAdminRewardsRoute
+  AppAdminStartupsRoute: typeof AppAdminStartupsRoute
+  AppAdminStudentsRoute: typeof AppAdminStudentsRoute
+  AppAdminSupportRoute: typeof AppAdminSupportRoute
+  AppAdminTicketsRoute: typeof AppAdminTicketsRoute
+  AppAdminUniversitiesRoute: typeof AppAdminUniversitiesRoute
+  AppAdminUsersRoute: typeof AppAdminUsersRoute
+  AppAdminIndexRoute: typeof AppAdminIndexRoute
+}
+
+const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+  AppAdminArena_mgmtRoute: AppAdminArena_mgmtRoute,
+  AppAdminExpertsRoute: AppAdminExpertsRoute,
+  AppAdminInvestorsRoute: AppAdminInvestorsRoute,
+  AppAdminModerationRoute: AppAdminModerationRoute,
+  AppAdminPaymentsRoute: AppAdminPaymentsRoute,
+  AppAdminResearchersRoute: AppAdminResearchersRoute,
+  AppAdminRewardsRoute: AppAdminRewardsRoute,
+  AppAdminStartupsRoute: AppAdminStartupsRoute,
+  AppAdminStudentsRoute: AppAdminStudentsRoute,
+  AppAdminSupportRoute: AppAdminSupportRoute,
+  AppAdminTicketsRoute: AppAdminTicketsRoute,
+  AppAdminUniversitiesRoute: AppAdminUniversitiesRoute,
+  AppAdminUsersRoute: AppAdminUsersRoute,
+  AppAdminIndexRoute: AppAdminIndexRoute,
+}
+
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
+  AppAdminRouteChildren,
+)
+
+interface AppExpertsRouteChildren {
+  AppExpertsAnalyticsRoute: typeof AppExpertsAnalyticsRoute
+  AppExpertsClientsRoute: typeof AppExpertsClientsRoute
+  AppExpertsCommunityRoute: typeof AppExpertsCommunityRoute
+  AppExpertsConsultationsRoute: typeof AppExpertsConsultationsRoute
+  AppExpertsDiscovery_sessionsRoute: typeof AppExpertsDiscovery_sessionsRoute
+  AppExpertsDocumentsRoute: typeof AppExpertsDocumentsRoute
+  AppExpertsExpert_copilotRoute: typeof AppExpertsExpert_copilotRoute
+  AppExpertsMeetingsRoute: typeof AppExpertsMeetingsRoute
+  AppExpertsRevenueRoute: typeof AppExpertsRevenueRoute
+  AppExpertsReviewsRoute: typeof AppExpertsReviewsRoute
+  AppExpertsRewardsRoute: typeof AppExpertsRewardsRoute
+  AppExpertsRoadmapsRoute: typeof AppExpertsRoadmapsRoute
+  AppExpertsSettingsRoute: typeof AppExpertsSettingsRoute
+  AppExpertsTasksRoute: typeof AppExpertsTasksRoute
+  AppExpertsWorkspaceRoute: typeof AppExpertsWorkspaceRoute
+  AppExpertsIndexRoute: typeof AppExpertsIndexRoute
+}
+
+const AppExpertsRouteChildren: AppExpertsRouteChildren = {
+  AppExpertsAnalyticsRoute: AppExpertsAnalyticsRoute,
+  AppExpertsClientsRoute: AppExpertsClientsRoute,
+  AppExpertsCommunityRoute: AppExpertsCommunityRoute,
+  AppExpertsConsultationsRoute: AppExpertsConsultationsRoute,
+  AppExpertsDiscovery_sessionsRoute: AppExpertsDiscovery_sessionsRoute,
+  AppExpertsDocumentsRoute: AppExpertsDocumentsRoute,
+  AppExpertsExpert_copilotRoute: AppExpertsExpert_copilotRoute,
+  AppExpertsMeetingsRoute: AppExpertsMeetingsRoute,
+  AppExpertsRevenueRoute: AppExpertsRevenueRoute,
+  AppExpertsReviewsRoute: AppExpertsReviewsRoute,
+  AppExpertsRewardsRoute: AppExpertsRewardsRoute,
+  AppExpertsRoadmapsRoute: AppExpertsRoadmapsRoute,
+  AppExpertsSettingsRoute: AppExpertsSettingsRoute,
+  AppExpertsTasksRoute: AppExpertsTasksRoute,
+  AppExpertsWorkspaceRoute: AppExpertsWorkspaceRoute,
+  AppExpertsIndexRoute: AppExpertsIndexRoute,
+}
+
+const AppExpertsRouteWithChildren = AppExpertsRoute._addFileChildren(
+  AppExpertsRouteChildren,
+)
+
+interface AppInvestorRouteChildren {
+  AppInvestorCommunityRoute: typeof AppInvestorCommunityRoute
+  AppInvestorDeal_flowRoute: typeof AppInvestorDeal_flowRoute
+  AppInvestorDue_diligenceRoute: typeof AppInvestorDue_diligenceRoute
+  AppInvestorFounder_meetingsRoute: typeof AppInvestorFounder_meetingsRoute
+  AppInvestorInvestment_pipelineRoute: typeof AppInvestorInvestment_pipelineRoute
+  AppInvestorInvestmentsRoute: typeof AppInvestorInvestmentsRoute
+  AppInvestorInvestor_copilotRoute: typeof AppInvestorInvestor_copilotRoute
+  AppInvestorMarket_intelRoute: typeof AppInvestorMarket_intelRoute
+  AppInvestorPortfolioRoute: typeof AppInvestorPortfolioRoute
+  AppInvestorRewardsRoute: typeof AppInvestorRewardsRoute
+  AppInvestorSettingsRoute: typeof AppInvestorSettingsRoute
+  AppInvestorStartup_discoveryRoute: typeof AppInvestorStartup_discoveryRoute
+  AppInvestorIndexRoute: typeof AppInvestorIndexRoute
+}
+
+const AppInvestorRouteChildren: AppInvestorRouteChildren = {
+  AppInvestorCommunityRoute: AppInvestorCommunityRoute,
+  AppInvestorDeal_flowRoute: AppInvestorDeal_flowRoute,
+  AppInvestorDue_diligenceRoute: AppInvestorDue_diligenceRoute,
+  AppInvestorFounder_meetingsRoute: AppInvestorFounder_meetingsRoute,
+  AppInvestorInvestment_pipelineRoute: AppInvestorInvestment_pipelineRoute,
+  AppInvestorInvestmentsRoute: AppInvestorInvestmentsRoute,
+  AppInvestorInvestor_copilotRoute: AppInvestorInvestor_copilotRoute,
+  AppInvestorMarket_intelRoute: AppInvestorMarket_intelRoute,
+  AppInvestorPortfolioRoute: AppInvestorPortfolioRoute,
+  AppInvestorRewardsRoute: AppInvestorRewardsRoute,
+  AppInvestorSettingsRoute: AppInvestorSettingsRoute,
+  AppInvestorStartup_discoveryRoute: AppInvestorStartup_discoveryRoute,
+  AppInvestorIndexRoute: AppInvestorIndexRoute,
+}
+
+const AppInvestorRouteWithChildren = AppInvestorRoute._addFileChildren(
+  AppInvestorRouteChildren,
+)
+
+interface AppResearchRouteChildren {
+  AppResearchAchievementsRoute: typeof AppResearchAchievementsRoute
+  AppResearchCollaboratorsRoute: typeof AppResearchCollaboratorsRoute
+  AppResearchCommunityRoute: typeof AppResearchCommunityRoute
+  AppResearchDocsRoute: typeof AppResearchDocsRoute
+  AppResearchEventsRoute: typeof AppResearchEventsRoute
+  AppResearchGrantsRoute: typeof AppResearchGrantsRoute
+  AppResearchPatentsRoute: typeof AppResearchPatentsRoute
+  AppResearchPublicationsRoute: typeof AppResearchPublicationsRoute
+  AppResearchResearch_arenaRoute: typeof AppResearchResearch_arenaRoute
+  AppResearchResearch_copilotRoute: typeof AppResearchResearch_copilotRoute
+  AppResearchResearch_projectsRoute: typeof AppResearchResearch_projectsRoute
+  AppResearchResearch_roadmapRoute: typeof AppResearchResearch_roadmapRoute
+  AppResearchResearch_tasksRoute: typeof AppResearchResearch_tasksRoute
+  AppResearchIndexRoute: typeof AppResearchIndexRoute
+}
+
+const AppResearchRouteChildren: AppResearchRouteChildren = {
+  AppResearchAchievementsRoute: AppResearchAchievementsRoute,
+  AppResearchCollaboratorsRoute: AppResearchCollaboratorsRoute,
+  AppResearchCommunityRoute: AppResearchCommunityRoute,
+  AppResearchDocsRoute: AppResearchDocsRoute,
+  AppResearchEventsRoute: AppResearchEventsRoute,
+  AppResearchGrantsRoute: AppResearchGrantsRoute,
+  AppResearchPatentsRoute: AppResearchPatentsRoute,
+  AppResearchPublicationsRoute: AppResearchPublicationsRoute,
+  AppResearchResearch_arenaRoute: AppResearchResearch_arenaRoute,
+  AppResearchResearch_copilotRoute: AppResearchResearch_copilotRoute,
+  AppResearchResearch_projectsRoute: AppResearchResearch_projectsRoute,
+  AppResearchResearch_roadmapRoute: AppResearchResearch_roadmapRoute,
+  AppResearchResearch_tasksRoute: AppResearchResearch_tasksRoute,
+  AppResearchIndexRoute: AppResearchIndexRoute,
+}
+
+const AppResearchRouteWithChildren = AppResearchRoute._addFileChildren(
+  AppResearchRouteChildren,
+)
+
+interface AppStartupRouteChildren {
+  AppStartupAchievementsRoute: typeof AppStartupAchievementsRoute
+  AppStartupAiRoute: typeof AppStartupAiRoute
+  AppStartupAnalyticsRoute: typeof AppStartupAnalyticsRoute
+  AppStartupArenaRoute: typeof AppStartupArenaRoute
+  AppStartupAssessmentRoute: typeof AppStartupAssessmentRoute
+  AppStartupCommunityRoute: typeof AppStartupCommunityRoute
+  AppStartupCustomersRoute: typeof AppStartupCustomersRoute
+  AppStartupDocsRoute: typeof AppStartupDocsRoute
+  AppStartupFundingRoute: typeof AppStartupFundingRoute
+  AppStartupInvestorsRoute: typeof AppStartupInvestorsRoute
+  AppStartupMentorsRoute: typeof AppStartupMentorsRoute
+  AppStartupPitch_decksRoute: typeof AppStartupPitch_decksRoute
+  AppStartupRewardsRoute: typeof AppStartupRewardsRoute
+  AppStartupRoadmapRoute: typeof AppStartupRoadmapRoute
+  AppStartupTasksRoute: typeof AppStartupTasksRoute
+  AppStartupTeamRoute: typeof AppStartupTeamRoute
+  AppStartupIndexRoute: typeof AppStartupIndexRoute
+}
+
+const AppStartupRouteChildren: AppStartupRouteChildren = {
+  AppStartupAchievementsRoute: AppStartupAchievementsRoute,
+  AppStartupAiRoute: AppStartupAiRoute,
+  AppStartupAnalyticsRoute: AppStartupAnalyticsRoute,
+  AppStartupArenaRoute: AppStartupArenaRoute,
+  AppStartupAssessmentRoute: AppStartupAssessmentRoute,
+  AppStartupCommunityRoute: AppStartupCommunityRoute,
+  AppStartupCustomersRoute: AppStartupCustomersRoute,
+  AppStartupDocsRoute: AppStartupDocsRoute,
+  AppStartupFundingRoute: AppStartupFundingRoute,
+  AppStartupInvestorsRoute: AppStartupInvestorsRoute,
+  AppStartupMentorsRoute: AppStartupMentorsRoute,
+  AppStartupPitch_decksRoute: AppStartupPitch_decksRoute,
+  AppStartupRewardsRoute: AppStartupRewardsRoute,
+  AppStartupRoadmapRoute: AppStartupRoadmapRoute,
+  AppStartupTasksRoute: AppStartupTasksRoute,
+  AppStartupTeamRoute: AppStartupTeamRoute,
+  AppStartupIndexRoute: AppStartupIndexRoute,
+}
+
+const AppStartupRouteWithChildren = AppStartupRoute._addFileChildren(
+  AppStartupRouteChildren,
+)
+
+interface AppUniversityRouteChildren {
+  AppUniversityAnalyticsRoute: typeof AppUniversityAnalyticsRoute
+  AppUniversityCommunityRoute: typeof AppUniversityCommunityRoute
+  AppUniversityEventsRoute: typeof AppUniversityEventsRoute
+  AppUniversityFacultyRoute: typeof AppUniversityFacultyRoute
+  AppUniversityGrantsRoute: typeof AppUniversityGrantsRoute
+  AppUniversityInnovation_hubRoute: typeof AppUniversityInnovation_hubRoute
+  AppUniversityPartnersRoute: typeof AppUniversityPartnersRoute
+  AppUniversityPlacementsRoute: typeof AppUniversityPlacementsRoute
+  AppUniversityReportsRoute: typeof AppUniversityReportsRoute
+  AppUniversityResearch_centerRoute: typeof AppUniversityResearch_centerRoute
+  AppUniversityResearchers_listRoute: typeof AppUniversityResearchers_listRoute
+  AppUniversitySettingsRoute: typeof AppUniversitySettingsRoute
+  AppUniversityStartup_incubatorRoute: typeof AppUniversityStartup_incubatorRoute
+  AppUniversityStudents_listRoute: typeof AppUniversityStudents_listRoute
+  AppUniversityUni_copilotRoute: typeof AppUniversityUni_copilotRoute
+  AppUniversityIndexRoute: typeof AppUniversityIndexRoute
+}
+
+const AppUniversityRouteChildren: AppUniversityRouteChildren = {
+  AppUniversityAnalyticsRoute: AppUniversityAnalyticsRoute,
+  AppUniversityCommunityRoute: AppUniversityCommunityRoute,
+  AppUniversityEventsRoute: AppUniversityEventsRoute,
+  AppUniversityFacultyRoute: AppUniversityFacultyRoute,
+  AppUniversityGrantsRoute: AppUniversityGrantsRoute,
+  AppUniversityInnovation_hubRoute: AppUniversityInnovation_hubRoute,
+  AppUniversityPartnersRoute: AppUniversityPartnersRoute,
+  AppUniversityPlacementsRoute: AppUniversityPlacementsRoute,
+  AppUniversityReportsRoute: AppUniversityReportsRoute,
+  AppUniversityResearch_centerRoute: AppUniversityResearch_centerRoute,
+  AppUniversityResearchers_listRoute: AppUniversityResearchers_listRoute,
+  AppUniversitySettingsRoute: AppUniversitySettingsRoute,
+  AppUniversityStartup_incubatorRoute: AppUniversityStartup_incubatorRoute,
+  AppUniversityStudents_listRoute: AppUniversityStudents_listRoute,
+  AppUniversityUni_copilotRoute: AppUniversityUni_copilotRoute,
+  AppUniversityIndexRoute: AppUniversityIndexRoute,
+}
+
+const AppUniversityRouteWithChildren = AppUniversityRoute._addFileChildren(
+  AppUniversityRouteChildren,
+)
+
 interface AppRouteChildren {
-  AppAchievementsRoute: typeof AppAchievementsRoute
-  AppAdminRoute: typeof AppAdminRoute
-  AppAssessmentRoute: typeof AppAssessmentRoute
-  AppCareerRoute: typeof AppCareerRoute
-  AppCommunityRoute: typeof AppCommunityRoute
-  AppConsultantRoute: typeof AppConsultantRoute
-  AppCopilotRoute: typeof AppCopilotRoute
-  AppDiscoveryRoute: typeof AppDiscoveryRoute
-  AppDocumentsRoute: typeof AppDocumentsRoute
-  AppExecutionRoute: typeof AppExecutionRoute
-  AppExpertsRoute: typeof AppExpertsRoute
-  AppInvestorRoute: typeof AppInvestorRoute
-  AppOpportunitiesRoute: typeof AppOpportunitiesRoute
-  AppOutcomesRoute: typeof AppOutcomesRoute
-  AppReportsRoute: typeof AppReportsRoute
-  AppResearchRoute: typeof AppResearchRoute
-  AppRoadmapRoute: typeof AppRoadmapRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppStartupRoute: typeof AppStartupRoute
-  AppTrackerRoute: typeof AppTrackerRoute
-  AppUniversityRoute: typeof AppUniversityRoute
-  AppWorkspaceRoute: typeof AppWorkspaceRoute
+  AppAdminRoute: typeof AppAdminRouteWithChildren
+  AppBusinessRoute: typeof AppBusinessRoute
+  AppExpertsRoute: typeof AppExpertsRouteWithChildren
+  AppInvestorRoute: typeof AppInvestorRouteWithChildren
+  AppProfileRoute: typeof AppProfileRoute
+  AppResearchRoute: typeof AppResearchRouteWithChildren
+  AppStartupRoute: typeof AppStartupRouteWithChildren
+  AppUniversityRoute: typeof AppUniversityRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
+  AppStudentAchievementsRoute: typeof AppStudentAchievementsRoute
+  AppStudentArenaRoute: typeof AppStudentArenaRoute
+  AppStudentAssessmentRoute: typeof AppStudentAssessmentRoute
+  AppStudentChallengesRoute: typeof AppStudentChallengesRoute
+  AppStudentCommunityRoute: typeof AppStudentCommunityRoute
+  AppStudentCopilotRoute: typeof AppStudentCopilotRoute
+  AppStudentInternshipsRoute: typeof AppStudentInternshipsRoute
+  AppStudentJobsRoute: typeof AppStudentJobsRoute
+  AppStudentMentorsRoute: typeof AppStudentMentorsRoute
+  AppStudentProjectsRoute: typeof AppStudentProjectsRoute
+  AppStudentRewardsRoute: typeof AppStudentRewardsRoute
+  AppStudentRoadmapRoute: typeof AppStudentRoadmapRoute
+  AppStudentSkillsRoute: typeof AppStudentSkillsRoute
+  AppStudentIndexRoute: typeof AppStudentIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAchievementsRoute: AppAchievementsRoute,
-  AppAdminRoute: AppAdminRoute,
-  AppAssessmentRoute: AppAssessmentRoute,
-  AppCareerRoute: AppCareerRoute,
-  AppCommunityRoute: AppCommunityRoute,
-  AppConsultantRoute: AppConsultantRoute,
-  AppCopilotRoute: AppCopilotRoute,
-  AppDiscoveryRoute: AppDiscoveryRoute,
-  AppDocumentsRoute: AppDocumentsRoute,
-  AppExecutionRoute: AppExecutionRoute,
-  AppExpertsRoute: AppExpertsRoute,
-  AppInvestorRoute: AppInvestorRoute,
-  AppOpportunitiesRoute: AppOpportunitiesRoute,
-  AppOutcomesRoute: AppOutcomesRoute,
-  AppReportsRoute: AppReportsRoute,
-  AppResearchRoute: AppResearchRoute,
-  AppRoadmapRoute: AppRoadmapRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppStartupRoute: AppStartupRoute,
-  AppTrackerRoute: AppTrackerRoute,
-  AppUniversityRoute: AppUniversityRoute,
-  AppWorkspaceRoute: AppWorkspaceRoute,
+  AppAdminRoute: AppAdminRouteWithChildren,
+  AppBusinessRoute: AppBusinessRoute,
+  AppExpertsRoute: AppExpertsRouteWithChildren,
+  AppInvestorRoute: AppInvestorRouteWithChildren,
+  AppProfileRoute: AppProfileRoute,
+  AppResearchRoute: AppResearchRouteWithChildren,
+  AppStartupRoute: AppStartupRouteWithChildren,
+  AppUniversityRoute: AppUniversityRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
+  AppStudentAchievementsRoute: AppStudentAchievementsRoute,
+  AppStudentArenaRoute: AppStudentArenaRoute,
+  AppStudentAssessmentRoute: AppStudentAssessmentRoute,
+  AppStudentChallengesRoute: AppStudentChallengesRoute,
+  AppStudentCommunityRoute: AppStudentCommunityRoute,
+  AppStudentCopilotRoute: AppStudentCopilotRoute,
+  AppStudentInternshipsRoute: AppStudentInternshipsRoute,
+  AppStudentJobsRoute: AppStudentJobsRoute,
+  AppStudentMentorsRoute: AppStudentMentorsRoute,
+  AppStudentProjectsRoute: AppStudentProjectsRoute,
+  AppStudentRewardsRoute: AppStudentRewardsRoute,
+  AppStudentRoadmapRoute: AppStudentRoadmapRoute,
+  AppStudentSkillsRoute: AppStudentSkillsRoute,
+  AppStudentIndexRoute: AppStudentIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
