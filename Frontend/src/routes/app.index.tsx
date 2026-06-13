@@ -1068,12 +1068,12 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       isPublished: isPublished,
     };
 
-    const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
-
     onSubmit(newProject);
     setSubmitting(false);
     onClose();
   };
+
+  const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
 
   if (!isOpen) return null;
 

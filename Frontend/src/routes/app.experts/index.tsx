@@ -135,7 +135,7 @@ function Experts() {
 
               {/* Bottom Button Action */}
               <Button size="sm" asChild className="bg-gradient-to-r from-sky-400 to-indigo-500 text-slate-950 font-bold hover:opacity-90 rounded-full cursor-pointer py-1.5 transition-all w-full mt-2">
-                <Link to="/app/discovery">Book Discovery</Link>
+                <Link to="/app/experts/discovery_sessions">Book Discovery</Link>
               </Button>
             </div>
           </div>
