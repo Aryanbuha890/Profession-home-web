@@ -941,6 +941,26 @@ interface ProjectFormModalProps {
   defaultAuthor?: string;
 }
 
+const sanitizeImageUrl = (url: string) => {
+  const value = url.trim();
+  if (!value) return "";
+  if (value.startsWith("data:image/")) return value;
+
+  try {
+    const parsed = new URL(
+      value,
+      typeof window !== "undefined" ? window.location.origin : "http://localhost"
+    );
+    if (["http:", "https:", "blob:"].includes(parsed.protocol)) {
+      return parsed.href;
+    }
+  } catch {
+    return "";
+  }
+
+  return "";
+};
+
 const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
   isOpen,
   onClose,
@@ -1021,7 +1041,8 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       .filter(Boolean);
 
     const validFeatures = features.filter((f) => f.trim());
-    const validGallery = galleryUrls.filter((u) => u.trim());
+    const safeImageUrl = sanitizeImageUrl(imageUrl);
+    const validGallery = galleryUrls.map(sanitizeImageUrl).filter(Boolean);
 
     const newProject = {
       id: `proj-${Date.now()}`,
@@ -1037,7 +1058,7 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       activity: [0, 0, 0, 0, 1, 2, 4, 3],
       techStack: techArray,
       category: category,
-      image: imageUrl.trim() || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop',
+      image: safeImageUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&auto=format&fit=crop',
       desc: shortDesc.trim(),
       shortDescription: shortDesc.trim(),
       fullDescription: fullDesc.trim(),
@@ -1046,6 +1067,8 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       images: [imageUrl.trim(), ...validGallery].filter(Boolean),
       isPublished: isPublished,
     };
+
+    const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
 
     onSubmit(newProject);
     setSubmitting(false);
@@ -1230,9 +1253,9 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
                 onChange={handleImageUpload}
                 className="hidden"
               />
-              {imageUrl && (
+              {safePreviewImageUrl && (
                 <div className="relative rounded-xl border border-white/10 overflow-hidden h-24 w-full bg-slate-900">
-                  <img src={imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                  <img src={safePreviewImageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
                   <button
                     type="button"
                     onClick={() => setImageUrl('')}
