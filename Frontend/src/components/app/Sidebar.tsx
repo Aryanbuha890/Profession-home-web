@@ -180,13 +180,10 @@ export function AppSidebar() {
           { icon: Map, label: "Career Roadmap", to: "/app/student/roadmap" },
           { icon: ListChecks, label: "Skill Builder", to: "/app/student/skills" },
           { icon: Folder, label: "Projects", to: "/app/student/projects" },
-          { icon: Briefcase, label: "Internships", to: "/app/student/internships" },
-          { icon: Briefcase, label: "Jobs", to: "/app/student/jobs" },
           { icon: Users, label: "Mentors", to: "/app/student/mentors" },
           { icon: Bot, label: "AI Copilot", to: "/app/student/copilot" },
           { icon: Award, label: "Achievement Vault", to: "/app/student/achievements" },
           { icon: Ticket, label: "Reward Center", to: "/app/student/rewards" },
-          { icon: Users, label: "Community", to: "/app/student/community" },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
       case "researcher":
@@ -252,16 +249,12 @@ export function AppSidebar() {
           { icon: Brain, label: "Researchers", to: "/app/university/researchers_list" },
           { icon: Users, label: "Faculty Profiles", to: "/app/university/faculty" },
           { icon: Briefcase, label: "Placement Drive", to: "/app/university/placements" },
-          { icon: Compass, label: "Startup Incubator", to: "/app/university/startup_incubator" },
           { icon: Sparkles, label: "Innovation Hub", to: "/app/university/innovation_hub" },
-          { icon: Building, label: "Industry Partners", to: "/app/university/partners" },
-          { icon: FileText, label: "Research Center", to: "/app/university/research_center" },
           { icon: Coins, label: "Grants & Funding", to: "/app/university/grants" },
           { icon: Calendar, label: "Events Center", to: "/app/university/events" },
           { icon: TrendingUp, label: "Analytics Center", to: "/app/university/analytics" },
           { icon: ScrollText, label: "Report Center", to: "/app/university/reports" },
           { icon: Bot, label: "AI University Copilot", to: "/app/university/uni_copilot" },
-          { icon: Users, label: "Community", to: "/app/university/community" },
           { icon: Settings, label: "Settings", to: "/app/university/settings" },
         ];
       case "expert":

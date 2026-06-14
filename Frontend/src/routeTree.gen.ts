@@ -34,28 +34,21 @@ import { Route as AppExpertsIndexRouteImport } from './routes/app.experts/index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin/index'
 import { Route as AppUniversityUni_copilotRouteImport } from './routes/app.university/uni_copilot'
 import { Route as AppUniversityStudents_listRouteImport } from './routes/app.university/students_list'
-import { Route as AppUniversityStartup_incubatorRouteImport } from './routes/app.university/startup_incubator'
 import { Route as AppUniversitySettingsRouteImport } from './routes/app.university/settings'
 import { Route as AppUniversityResearchers_listRouteImport } from './routes/app.university/researchers_list'
-import { Route as AppUniversityResearch_centerRouteImport } from './routes/app.university/research_center'
 import { Route as AppUniversityReportsRouteImport } from './routes/app.university/reports'
 import { Route as AppUniversityPlacementsRouteImport } from './routes/app.university/placements'
-import { Route as AppUniversityPartnersRouteImport } from './routes/app.university/partners'
 import { Route as AppUniversityInnovation_hubRouteImport } from './routes/app.university/innovation_hub'
 import { Route as AppUniversityGrantsRouteImport } from './routes/app.university/grants'
 import { Route as AppUniversityFacultyRouteImport } from './routes/app.university/faculty'
 import { Route as AppUniversityEventsRouteImport } from './routes/app.university/events'
-import { Route as AppUniversityCommunityRouteImport } from './routes/app.university/community'
 import { Route as AppUniversityAnalyticsRouteImport } from './routes/app.university/analytics'
 import { Route as AppStudentSkillsRouteImport } from './routes/app.student/skills'
 import { Route as AppStudentRoadmapRouteImport } from './routes/app.student/roadmap'
 import { Route as AppStudentRewardsRouteImport } from './routes/app.student/rewards'
 import { Route as AppStudentProjectsRouteImport } from './routes/app.student/projects'
 import { Route as AppStudentMentorsRouteImport } from './routes/app.student/mentors'
-import { Route as AppStudentJobsRouteImport } from './routes/app.student/jobs'
-import { Route as AppStudentInternshipsRouteImport } from './routes/app.student/internships'
 import { Route as AppStudentCopilotRouteImport } from './routes/app.student/copilot'
-import { Route as AppStudentCommunityRouteImport } from './routes/app.student/community'
 import { Route as AppStudentChallengesRouteImport } from './routes/app.student/challenges'
 import { Route as AppStudentAssessmentRouteImport } from './routes/app.student/assessment'
 import { Route as AppStudentArenaRouteImport } from './routes/app.student/arena'
@@ -258,12 +251,6 @@ const AppUniversityStudents_listRoute =
     path: '/students_list',
     getParentRoute: () => AppUniversityRoute,
   } as any)
-const AppUniversityStartup_incubatorRoute =
-  AppUniversityStartup_incubatorRouteImport.update({
-    id: '/startup_incubator',
-    path: '/startup_incubator',
-    getParentRoute: () => AppUniversityRoute,
-  } as any)
 const AppUniversitySettingsRoute = AppUniversitySettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -275,12 +262,6 @@ const AppUniversityResearchers_listRoute =
     path: '/researchers_list',
     getParentRoute: () => AppUniversityRoute,
   } as any)
-const AppUniversityResearch_centerRoute =
-  AppUniversityResearch_centerRouteImport.update({
-    id: '/research_center',
-    path: '/research_center',
-    getParentRoute: () => AppUniversityRoute,
-  } as any)
 const AppUniversityReportsRoute = AppUniversityReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -289,11 +270,6 @@ const AppUniversityReportsRoute = AppUniversityReportsRouteImport.update({
 const AppUniversityPlacementsRoute = AppUniversityPlacementsRouteImport.update({
   id: '/placements',
   path: '/placements',
-  getParentRoute: () => AppUniversityRoute,
-} as any)
-const AppUniversityPartnersRoute = AppUniversityPartnersRouteImport.update({
-  id: '/partners',
-  path: '/partners',
   getParentRoute: () => AppUniversityRoute,
 } as any)
 const AppUniversityInnovation_hubRoute =
@@ -315,11 +291,6 @@ const AppUniversityFacultyRoute = AppUniversityFacultyRouteImport.update({
 const AppUniversityEventsRoute = AppUniversityEventsRouteImport.update({
   id: '/events',
   path: '/events',
-  getParentRoute: () => AppUniversityRoute,
-} as any)
-const AppUniversityCommunityRoute = AppUniversityCommunityRouteImport.update({
-  id: '/community',
-  path: '/community',
   getParentRoute: () => AppUniversityRoute,
 } as any)
 const AppUniversityAnalyticsRoute = AppUniversityAnalyticsRouteImport.update({
@@ -352,24 +323,9 @@ const AppStudentMentorsRoute = AppStudentMentorsRouteImport.update({
   path: '/student/mentors',
   getParentRoute: () => AppRoute,
 } as any)
-const AppStudentJobsRoute = AppStudentJobsRouteImport.update({
-  id: '/student/jobs',
-  path: '/student/jobs',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppStudentInternshipsRoute = AppStudentInternshipsRouteImport.update({
-  id: '/student/internships',
-  path: '/student/internships',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppStudentCopilotRoute = AppStudentCopilotRouteImport.update({
   id: '/student/copilot',
   path: '/student/copilot',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppStudentCommunityRoute = AppStudentCommunityRouteImport.update({
-  id: '/student/community',
-  path: '/student/community',
   getParentRoute: () => AppRoute,
 } as any)
 const AppStudentChallengesRoute = AppStudentChallengesRouteImport.update({
@@ -847,28 +803,21 @@ export interface FileRoutesByFullPath {
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
   '/app/student/challenges': typeof AppStudentChallengesRoute
-  '/app/student/community': typeof AppStudentCommunityRoute
   '/app/student/copilot': typeof AppStudentCopilotRoute
-  '/app/student/internships': typeof AppStudentInternshipsRoute
-  '/app/student/jobs': typeof AppStudentJobsRoute
   '/app/student/mentors': typeof AppStudentMentorsRoute
   '/app/student/projects': typeof AppStudentProjectsRoute
   '/app/student/rewards': typeof AppStudentRewardsRoute
   '/app/student/roadmap': typeof AppStudentRoadmapRoute
   '/app/student/skills': typeof AppStudentSkillsRoute
   '/app/university/analytics': typeof AppUniversityAnalyticsRoute
-  '/app/university/community': typeof AppUniversityCommunityRoute
   '/app/university/events': typeof AppUniversityEventsRoute
   '/app/university/faculty': typeof AppUniversityFacultyRoute
   '/app/university/grants': typeof AppUniversityGrantsRoute
   '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
-  '/app/university/partners': typeof AppUniversityPartnersRoute
   '/app/university/placements': typeof AppUniversityPlacementsRoute
   '/app/university/reports': typeof AppUniversityReportsRoute
-  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
   '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
   '/app/university/settings': typeof AppUniversitySettingsRoute
-  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
   '/app/university/students_list': typeof AppUniversityStudents_listRoute
   '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -963,28 +912,21 @@ export interface FileRoutesByTo {
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
   '/app/student/challenges': typeof AppStudentChallengesRoute
-  '/app/student/community': typeof AppStudentCommunityRoute
   '/app/student/copilot': typeof AppStudentCopilotRoute
-  '/app/student/internships': typeof AppStudentInternshipsRoute
-  '/app/student/jobs': typeof AppStudentJobsRoute
   '/app/student/mentors': typeof AppStudentMentorsRoute
   '/app/student/projects': typeof AppStudentProjectsRoute
   '/app/student/rewards': typeof AppStudentRewardsRoute
   '/app/student/roadmap': typeof AppStudentRoadmapRoute
   '/app/student/skills': typeof AppStudentSkillsRoute
   '/app/university/analytics': typeof AppUniversityAnalyticsRoute
-  '/app/university/community': typeof AppUniversityCommunityRoute
   '/app/university/events': typeof AppUniversityEventsRoute
   '/app/university/faculty': typeof AppUniversityFacultyRoute
   '/app/university/grants': typeof AppUniversityGrantsRoute
   '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
-  '/app/university/partners': typeof AppUniversityPartnersRoute
   '/app/university/placements': typeof AppUniversityPlacementsRoute
   '/app/university/reports': typeof AppUniversityReportsRoute
-  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
   '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
   '/app/university/settings': typeof AppUniversitySettingsRoute
-  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
   '/app/university/students_list': typeof AppUniversityStudents_listRoute
   '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -1087,28 +1029,21 @@ export interface FileRoutesById {
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
   '/app/student/challenges': typeof AppStudentChallengesRoute
-  '/app/student/community': typeof AppStudentCommunityRoute
   '/app/student/copilot': typeof AppStudentCopilotRoute
-  '/app/student/internships': typeof AppStudentInternshipsRoute
-  '/app/student/jobs': typeof AppStudentJobsRoute
   '/app/student/mentors': typeof AppStudentMentorsRoute
   '/app/student/projects': typeof AppStudentProjectsRoute
   '/app/student/rewards': typeof AppStudentRewardsRoute
   '/app/student/roadmap': typeof AppStudentRoadmapRoute
   '/app/student/skills': typeof AppStudentSkillsRoute
   '/app/university/analytics': typeof AppUniversityAnalyticsRoute
-  '/app/university/community': typeof AppUniversityCommunityRoute
   '/app/university/events': typeof AppUniversityEventsRoute
   '/app/university/faculty': typeof AppUniversityFacultyRoute
   '/app/university/grants': typeof AppUniversityGrantsRoute
   '/app/university/innovation_hub': typeof AppUniversityInnovation_hubRoute
-  '/app/university/partners': typeof AppUniversityPartnersRoute
   '/app/university/placements': typeof AppUniversityPlacementsRoute
   '/app/university/reports': typeof AppUniversityReportsRoute
-  '/app/university/research_center': typeof AppUniversityResearch_centerRoute
   '/app/university/researchers_list': typeof AppUniversityResearchers_listRoute
   '/app/university/settings': typeof AppUniversitySettingsRoute
-  '/app/university/startup_incubator': typeof AppUniversityStartup_incubatorRoute
   '/app/university/students_list': typeof AppUniversityStudents_listRoute
   '/app/university/uni_copilot': typeof AppUniversityUni_copilotRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -1212,28 +1147,21 @@ export interface FileRouteTypes {
     | '/app/student/arena'
     | '/app/student/assessment'
     | '/app/student/challenges'
-    | '/app/student/community'
     | '/app/student/copilot'
-    | '/app/student/internships'
-    | '/app/student/jobs'
     | '/app/student/mentors'
     | '/app/student/projects'
     | '/app/student/rewards'
     | '/app/student/roadmap'
     | '/app/student/skills'
     | '/app/university/analytics'
-    | '/app/university/community'
     | '/app/university/events'
     | '/app/university/faculty'
     | '/app/university/grants'
     | '/app/university/innovation_hub'
-    | '/app/university/partners'
     | '/app/university/placements'
     | '/app/university/reports'
-    | '/app/university/research_center'
     | '/app/university/researchers_list'
     | '/app/university/settings'
-    | '/app/university/startup_incubator'
     | '/app/university/students_list'
     | '/app/university/uni_copilot'
     | '/app/admin/'
@@ -1328,28 +1256,21 @@ export interface FileRouteTypes {
     | '/app/student/arena'
     | '/app/student/assessment'
     | '/app/student/challenges'
-    | '/app/student/community'
     | '/app/student/copilot'
-    | '/app/student/internships'
-    | '/app/student/jobs'
     | '/app/student/mentors'
     | '/app/student/projects'
     | '/app/student/rewards'
     | '/app/student/roadmap'
     | '/app/student/skills'
     | '/app/university/analytics'
-    | '/app/university/community'
     | '/app/university/events'
     | '/app/university/faculty'
     | '/app/university/grants'
     | '/app/university/innovation_hub'
-    | '/app/university/partners'
     | '/app/university/placements'
     | '/app/university/reports'
-    | '/app/university/research_center'
     | '/app/university/researchers_list'
     | '/app/university/settings'
-    | '/app/university/startup_incubator'
     | '/app/university/students_list'
     | '/app/university/uni_copilot'
     | '/app/admin'
@@ -1451,28 +1372,21 @@ export interface FileRouteTypes {
     | '/app/student/arena'
     | '/app/student/assessment'
     | '/app/student/challenges'
-    | '/app/student/community'
     | '/app/student/copilot'
-    | '/app/student/internships'
-    | '/app/student/jobs'
     | '/app/student/mentors'
     | '/app/student/projects'
     | '/app/student/rewards'
     | '/app/student/roadmap'
     | '/app/student/skills'
     | '/app/university/analytics'
-    | '/app/university/community'
     | '/app/university/events'
     | '/app/university/faculty'
     | '/app/university/grants'
     | '/app/university/innovation_hub'
-    | '/app/university/partners'
     | '/app/university/placements'
     | '/app/university/reports'
-    | '/app/university/research_center'
     | '/app/university/researchers_list'
     | '/app/university/settings'
-    | '/app/university/startup_incubator'
     | '/app/university/students_list'
     | '/app/university/uni_copilot'
     | '/app/admin/'
@@ -1671,13 +1585,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUniversityStudents_listRouteImport
       parentRoute: typeof AppUniversityRoute
     }
-    '/app/university/startup_incubator': {
-      id: '/app/university/startup_incubator'
-      path: '/startup_incubator'
-      fullPath: '/app/university/startup_incubator'
-      preLoaderRoute: typeof AppUniversityStartup_incubatorRouteImport
-      parentRoute: typeof AppUniversityRoute
-    }
     '/app/university/settings': {
       id: '/app/university/settings'
       path: '/settings'
@@ -1692,13 +1599,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppUniversityResearchers_listRouteImport
       parentRoute: typeof AppUniversityRoute
     }
-    '/app/university/research_center': {
-      id: '/app/university/research_center'
-      path: '/research_center'
-      fullPath: '/app/university/research_center'
-      preLoaderRoute: typeof AppUniversityResearch_centerRouteImport
-      parentRoute: typeof AppUniversityRoute
-    }
     '/app/university/reports': {
       id: '/app/university/reports'
       path: '/reports'
@@ -1711,13 +1611,6 @@ declare module '@tanstack/react-router' {
       path: '/placements'
       fullPath: '/app/university/placements'
       preLoaderRoute: typeof AppUniversityPlacementsRouteImport
-      parentRoute: typeof AppUniversityRoute
-    }
-    '/app/university/partners': {
-      id: '/app/university/partners'
-      path: '/partners'
-      fullPath: '/app/university/partners'
-      preLoaderRoute: typeof AppUniversityPartnersRouteImport
       parentRoute: typeof AppUniversityRoute
     }
     '/app/university/innovation_hub': {
@@ -1746,13 +1639,6 @@ declare module '@tanstack/react-router' {
       path: '/events'
       fullPath: '/app/university/events'
       preLoaderRoute: typeof AppUniversityEventsRouteImport
-      parentRoute: typeof AppUniversityRoute
-    }
-    '/app/university/community': {
-      id: '/app/university/community'
-      path: '/community'
-      fullPath: '/app/university/community'
-      preLoaderRoute: typeof AppUniversityCommunityRouteImport
       parentRoute: typeof AppUniversityRoute
     }
     '/app/university/analytics': {
@@ -1797,32 +1683,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudentMentorsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/student/jobs': {
-      id: '/app/student/jobs'
-      path: '/student/jobs'
-      fullPath: '/app/student/jobs'
-      preLoaderRoute: typeof AppStudentJobsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/student/internships': {
-      id: '/app/student/internships'
-      path: '/student/internships'
-      fullPath: '/app/student/internships'
-      preLoaderRoute: typeof AppStudentInternshipsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/student/copilot': {
       id: '/app/student/copilot'
       path: '/student/copilot'
       fullPath: '/app/student/copilot'
       preLoaderRoute: typeof AppStudentCopilotRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/student/community': {
-      id: '/app/student/community'
-      path: '/student/community'
-      fullPath: '/app/student/community'
-      preLoaderRoute: typeof AppStudentCommunityRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/student/challenges': {
@@ -2548,18 +2413,14 @@ const AppStartupRouteWithChildren = AppStartupRoute._addFileChildren(
 
 interface AppUniversityRouteChildren {
   AppUniversityAnalyticsRoute: typeof AppUniversityAnalyticsRoute
-  AppUniversityCommunityRoute: typeof AppUniversityCommunityRoute
   AppUniversityEventsRoute: typeof AppUniversityEventsRoute
   AppUniversityFacultyRoute: typeof AppUniversityFacultyRoute
   AppUniversityGrantsRoute: typeof AppUniversityGrantsRoute
   AppUniversityInnovation_hubRoute: typeof AppUniversityInnovation_hubRoute
-  AppUniversityPartnersRoute: typeof AppUniversityPartnersRoute
   AppUniversityPlacementsRoute: typeof AppUniversityPlacementsRoute
   AppUniversityReportsRoute: typeof AppUniversityReportsRoute
-  AppUniversityResearch_centerRoute: typeof AppUniversityResearch_centerRoute
   AppUniversityResearchers_listRoute: typeof AppUniversityResearchers_listRoute
   AppUniversitySettingsRoute: typeof AppUniversitySettingsRoute
-  AppUniversityStartup_incubatorRoute: typeof AppUniversityStartup_incubatorRoute
   AppUniversityStudents_listRoute: typeof AppUniversityStudents_listRoute
   AppUniversityUni_copilotRoute: typeof AppUniversityUni_copilotRoute
   AppUniversityIndexRoute: typeof AppUniversityIndexRoute
@@ -2567,18 +2428,14 @@ interface AppUniversityRouteChildren {
 
 const AppUniversityRouteChildren: AppUniversityRouteChildren = {
   AppUniversityAnalyticsRoute: AppUniversityAnalyticsRoute,
-  AppUniversityCommunityRoute: AppUniversityCommunityRoute,
   AppUniversityEventsRoute: AppUniversityEventsRoute,
   AppUniversityFacultyRoute: AppUniversityFacultyRoute,
   AppUniversityGrantsRoute: AppUniversityGrantsRoute,
   AppUniversityInnovation_hubRoute: AppUniversityInnovation_hubRoute,
-  AppUniversityPartnersRoute: AppUniversityPartnersRoute,
   AppUniversityPlacementsRoute: AppUniversityPlacementsRoute,
   AppUniversityReportsRoute: AppUniversityReportsRoute,
-  AppUniversityResearch_centerRoute: AppUniversityResearch_centerRoute,
   AppUniversityResearchers_listRoute: AppUniversityResearchers_listRoute,
   AppUniversitySettingsRoute: AppUniversitySettingsRoute,
-  AppUniversityStartup_incubatorRoute: AppUniversityStartup_incubatorRoute,
   AppUniversityStudents_listRoute: AppUniversityStudents_listRoute,
   AppUniversityUni_copilotRoute: AppUniversityUni_copilotRoute,
   AppUniversityIndexRoute: AppUniversityIndexRoute,
@@ -2602,10 +2459,7 @@ interface AppRouteChildren {
   AppStudentArenaRoute: typeof AppStudentArenaRoute
   AppStudentAssessmentRoute: typeof AppStudentAssessmentRoute
   AppStudentChallengesRoute: typeof AppStudentChallengesRoute
-  AppStudentCommunityRoute: typeof AppStudentCommunityRoute
   AppStudentCopilotRoute: typeof AppStudentCopilotRoute
-  AppStudentInternshipsRoute: typeof AppStudentInternshipsRoute
-  AppStudentJobsRoute: typeof AppStudentJobsRoute
   AppStudentMentorsRoute: typeof AppStudentMentorsRoute
   AppStudentProjectsRoute: typeof AppStudentProjectsRoute
   AppStudentRewardsRoute: typeof AppStudentRewardsRoute
@@ -2628,10 +2482,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppStudentArenaRoute: AppStudentArenaRoute,
   AppStudentAssessmentRoute: AppStudentAssessmentRoute,
   AppStudentChallengesRoute: AppStudentChallengesRoute,
-  AppStudentCommunityRoute: AppStudentCommunityRoute,
   AppStudentCopilotRoute: AppStudentCopilotRoute,
-  AppStudentInternshipsRoute: AppStudentInternshipsRoute,
-  AppStudentJobsRoute: AppStudentJobsRoute,
   AppStudentMentorsRoute: AppStudentMentorsRoute,
   AppStudentProjectsRoute: AppStudentProjectsRoute,
   AppStudentRewardsRoute: AppStudentRewardsRoute,
