@@ -1068,12 +1068,12 @@ const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       isPublished: isPublished,
     };
 
-    const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
-
     onSubmit(newProject);
     setSubmitting(false);
     onClose();
   };
+
+  const safePreviewImageUrl = sanitizeImageUrl(imageUrl);
 
   if (!isOpen) return null;
 
@@ -4134,36 +4134,68 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
   const [scholar1, setScholar1] = useState("Dr. Helena Chen");
   const [scholar2, setScholar2] = useState("Dr. Aryan Buha");
   const [matchingScore, setMatchingScore] = useState<number | null>(null);
+  const [isScanningCoauthor, setIsScanningCoauthor] = useState(false);
 
   const calculateMatching = () => {
-    if (scholar1 === scholar2) {
-      setMatchingScore(100);
-      return;
-    }
-    const score = Math.round(70 + Math.random() * 28);
-    setMatchingScore(score);
+    setIsScanningCoauthor(true);
+    setTimeout(() => {
+      if (scholar1 === scholar2) {
+        setMatchingScore(100);
+      } else {
+        const score = Math.round(70 + Math.random() * 28);
+        setMatchingScore(score);
+      }
+      setIsScanningCoauthor(false);
+    }, 1500);
   };
 
-  // Patent draft sequences uploader
+  // Patent list
   const [patents, setPatents] = useState([
-    { title: "Sparse Graph Node Compression Method", stage: "Patent Filing", progress: 80 },
-    { title: "Distributed Vector Parsing Architecture", stage: "Research Validation", progress: 40 },
+    { title: "Sparse Graph Node Compression Method", stage: "Patent Filing", progress: 80, id: "pat-1" },
+    { title: "Distributed Vector Parsing Architecture", stage: "Research Validation", progress: 40, id: "pat-2" },
   ]);
   const [newPatentTitle, setNewPatentTitle] = useState("");
   const handleAddPatent = () => {
     if (!newPatentTitle.trim()) return;
     setPatents((prev) => [
       ...prev,
-      { title: newPatentTitle, stage: "Idea Submission", progress: 10 },
+      { title: newPatentTitle, stage: "Idea Submission", progress: 10, id: `pat-\${Date.now()}` },
     ]);
     setNewPatentTitle("");
   };
 
+  // Research projects grid
+  const [researchProjects, setResearchProjects] = useState([
+    { id: 1, title: "Deep Optimization with Sparse Graph Nets", field: "ML & Logic Graphs", progress: 84, citations: 24, coauthors: ["Dr. Helena Chen", "Prof. K. Sen"], sotaLevel: "Tier 1" },
+    { id: 2, title: "Multi-Agent Matrix for Solar Grids", field: "Decentralized Systems", progress: 52, citations: 8, coauthors: ["Dr. Marcus Vance"], sotaLevel: "Tier 2" },
+    { id: 3, title: "Distributed Vector Parsing Architecture", field: "LLM Compiler Kernels", progress: 30, citations: 12, coauthors: ["Dr. Aryan Buha", "Priya Patel"], sotaLevel: "Tier 1" }
+  ]);
+  const [newProjectTitle, setNewProjectTitle] = useState("");
+  const [newProjectField, setNewProjectField] = useState("");
+  const handleAddProject = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProjectTitle.trim()) return;
+    setResearchProjects(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        title: newProjectTitle.trim(),
+        field: newProjectField.trim() || "General Research",
+        progress: 10,
+        citations: 0,
+        coauthors: ["Dr. Aryan Buha"],
+        sotaLevel: "Draft"
+      }
+    ]);
+    setNewProjectTitle("");
+    setNewProjectField("");
+  };
+
   // Research sprint task board
   const [tasks, setTasks] = useState([
-    { id: 1, title: "Review literature matrix on graph embeddings", column: "todo" },
-    { id: 2, title: "Draft experiment models using PyTorch API", column: "progress" },
-    { id: 3, title: "Submit Horizon grant report draft", column: "done" },
+    { id: 1, title: "Review literature matrix on graph embeddings", column: "todo", priority: "High" },
+    { id: 2, title: "Draft experiment models using PyTorch API", column: "progress", priority: "Medium" },
+    { id: 3, title: "Submit Horizon grant report draft", column: "done", priority: "Low" },
   ]);
 
   const moveTask = (id: number, nextCol: string) => {
@@ -4276,7 +4308,6 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     return Math.round((completed / phaseTasks.length) * 100);
   };
 
-  // Compute dynamic status and percentage for each phase
   const updatedPhases = phases.map((p, idx) => {
     const pct = calculateProgress(p.tasks);
 
@@ -4332,7 +4363,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
             ...p,
             tasks: [
               ...p.tasks,
-              { id: `custom-res-${Date.now()}`, title: title.trim(), done: false },
+              { id: `custom-res-\${Date.now()}`, title: title.trim(), done: false },
             ],
           };
         }
@@ -4372,7 +4403,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     setLoadingCit(true);
     setTimeout(() => {
       setCitOutput(
-        `@article{buha2026sparse,\n  title={Sparse Graph Embeddings for ${citInput.trim()}},\n  author={Buha, Aryan and Chen, Helena},\n  journal={arXiv preprint arXiv:2606.14209},\n  year={2026}\n}`
+        `@article{buha2026sparse,\n  title={Sparse Graph Embeddings for \${citInput.trim()}},\n  author={Buha, Aryan and Chen, Helena},\n  journal={arXiv preprint arXiv:2606.14209},\n  year={2026}\n}`
       );
       setLoadingCit(false);
     }, 1000);
@@ -4389,13 +4420,13 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     setTimeout(() => {
       setArxivResults([
         {
-          title: `Sparsification and Model Compression for ${arxivQuery.trim()}`,
+          title: `Sparsification and Model Compression for \${arxivQuery.trim()}`,
           authors: "Helena Chen, Priya Patel, Marcus Vance",
           summary: "We propose a novel sparse graph network architecture that prunes 40% of parameter matrices without losing classification accuracy.",
           year: "2026"
         },
         {
-          title: `A Comprehensive Survey on SOTA ${arxivQuery.trim()} baselines`,
+          title: `A Comprehensive Survey on SOTA \${arxivQuery.trim()} baselines`,
           authors: "Aryan Buha, John Doe",
           summary: "We compare standard convolutional neural configurations under sparse constraints and present speed indexes.",
           year: "2025"
@@ -4403,19 +4434,6 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       ]);
       setLoadingArxiv(false);
     }, 1200);
-  };
-
-  // Co-author Matcher from Collaborators tab embedded as tool
-  const [matchingScoreRes, setMatchingScoreRes] = useState<number | null>(null);
-  const [loadingMatch, setLoadingMatch] = useState(false);
-
-  const checkCoauthorMatch = () => {
-    setLoadingMatch(true);
-    setTimeout(() => {
-      const score = Math.round(75 + Math.random() * 23);
-      setMatchingScoreRes(score);
-      setLoadingMatch(false);
-    }, 1000);
   };
 
   // Experiment Script Writer state
@@ -4427,7 +4445,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     setLoadingScript(true);
     setTimeout(() => {
       setScriptOutput(
-        `import torch\nimport torch.nn as nn\n\nclass Sparse${selectedModelType}(nn.Module):\n    def __init__(self, vocab_size=10000, embed_dim=256):\n        super().__init__()\n        self.embedding = nn.Embedding(vocab_size, embed_dim)\n        # Sparsified layout initialized\n        self.backbone = nn.Linear(embed_dim, 2)\n        \n    def forward(self, x):\n        embeds = self.embedding(x)\n        return self.backbone(embeds.mean(dim=1))\n\n# GPU routing verifier\ndevice = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nmodel = Sparse${selectedModelType}().to(device)\nprint(f"Model initialized on: {device}")`
+        `import torch\nimport torch.nn as nn\n\nclass Sparse\${selectedModelType}(nn.Module):\n    def __init__(self, vocab_size=10000, embed_dim=256):\n        super().__init__()\n        self.embedding = nn.Embedding(vocab_size, embed_dim)\n        # Sparsified layout initialized\n        self.backbone = nn.Linear(embed_dim, 2)\n        \n    def forward(self, x):\n        embeds = self.embedding(x)\n        return self.backbone(embeds.mean(dim=1))\n\n# GPU routing verifier\ndevice = torch.device('cuda' if torch.cuda.is_available() else 'cpu')\nmodel = Sparse\${selectedModelType}().to(device)\nprint(f"Model initialized on: {device}")`
       );
       setLoadingScript(false);
     }, 1100);
@@ -4455,7 +4473,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     if (!e.target.files) return;
     const fileList = Array.from(e.target.files).map(f => ({
       name: f.name,
-      size: `${(f.size / (1024 * 1024)).toFixed(2)} MB`,
+      size: `\${(f.size / (1024 * 1024)).toFixed(2)} MB`,
       status: "Analyzing"
     }));
     setUploadedFiles(prev => [...prev, ...fileList]);
@@ -4484,13 +4502,19 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
     }
   };
 
+  // Scholar Certificate
+  const [scholarCertRequested, setScholarCertRequested] = useState<string | null>(null);
+
+  // Custom Galaxy filter state
+  const [galaxyFilter, setGalaxyFilter] = useState("");
+
   return (
     <>
       {/* TAB: HOME */}
       {currentTab === "home" && (
         <Page title="Research Command Center" subtitle="Manage publications, collaboration metrics, and patents.">
           {/* Welcome Card */}
-          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-white/[0.03] to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden text-left">
+          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-violet-500/10 via-indigo-500/5 to-transparent p-6 rounded-2xl border border-white/10 glow relative overflow-hidden text-left">
             <div className="md:col-span-2">
               <span className="text-[9px] font-bold font-mono uppercase tracking-widest text-violet-400 bg-violet-400/10 px-2.5 py-0.5 rounded-full">
                 PI Command Suite
@@ -4531,6 +4555,85 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
             </div>
           </div>
 
+          {/* Dynamic SVG Citations Growth Graph */}
+          <div className="grid gap-6 md:grid-cols-3 mb-6">
+            <Card className="md:col-span-2 p-5 text-left">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5">
+                <Activity className="h-4 w-4 text-violet-400" /> Citation Growth & Timeline Metric
+              </h3>
+              <div className="h-48 w-full relative">
+                {/* SVG Area Chart */}
+                <svg viewBox="0 0 500 150" className="w-full h-full overflow-visible">
+                  <defs>
+                    <linearGradient id="citGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  {/* Grid Lines */}
+                  <line x1="40" y1="20" x2="480" y2="20" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                  <line x1="40" y1="60" x2="480" y2="60" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                  <line x1="40" y1="100" x2="480" y2="100" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+                  <line x1="40" y1="130" x2="480" y2="130" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                  
+                  {/* Axes */}
+                  <text x="35" y="24" fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end" fontFamily="monospace">450</text>
+                  <text x="35" y="65" fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end" fontFamily="monospace">300</text>
+                  <text x="35" y="105" fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end" fontFamily="monospace">150</text>
+                  <text x="35" y="135" fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end" fontFamily="monospace">0</text>
+
+                  {/* Area */}
+                  <path
+                    d="M 40 130 Q 120 110, 180 85 T 320 60 T 400 45 T 480 35 L 480 130 Z"
+                    fill="url(#citGrad)"
+                  />
+
+                  {/* Line */}
+                  <path
+                    d="M 40 130 Q 120 110, 180 85 T 320 60 T 400 45 T 480 35"
+                    fill="none"
+                    stroke="#a78bfa"
+                    strokeWidth="2"
+                  />
+
+                  {/* Dots */}
+                  <circle cx="180" cy="85" r="4" fill="#a78bfa" stroke="#0f172a" strokeWidth="1.5" />
+                  <circle cx="320" cy="60" r="4" fill="#c084fc" stroke="#0f172a" strokeWidth="1.5" />
+                  <circle cx="480" cy="35" r="4" fill="#f472b6" stroke="#0f172a" strokeWidth="1.5" />
+
+                  {/* Labels */}
+                  <text x="40" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">Dec</text>
+                  <text x="120" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">Jan</text>
+                  <text x="180" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">Feb</text>
+                  <text x="320" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">Mar</text>
+                  <text x="400" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">Apr</text>
+                  <text x="480" y="146" fill="rgba(255,255,255,0.4)" fontSize="8" textAnchor="middle" fontFamily="monospace">May</text>
+                </svg>
+              </div>
+            </Card>
+
+            <Card className="md:col-span-1 p-5 text-left flex flex-col justify-between">
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5">
+                  <Map className="h-4 w-4 text-violet-400" /> Active Roadmap Phase
+                </h3>
+                <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl">
+                  <div className="flex justify-between items-center text-[10px] font-mono text-violet-400 font-bold">
+                    <span>PHASE 3 ACTIVE</span>
+                    <span>{overallPercentage}% OVERALL</span>
+                  </div>
+                  <h4 className="text-xs font-bold text-white mt-2">Experiment & Benchmark Runs</h4>
+                  <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+                    Write PyTorch scripts, run models on GPUs, and plot parameters density matrices.
+                  </p>
+                </div>
+              </div>
+              <a href="?tab=research_roadmap" className="mt-4 block text-center py-2 bg-violet-500 text-slate-950 font-bold text-xs rounded-xl cursor-pointer hover:bg-violet-400 transition">
+                Launch Roadmap Matrix
+              </a>
+            </Card>
+          </div>
+
           {/* Dials grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-left">
             <Card>
@@ -4560,34 +4663,111 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: RESEARCH ARENA */}
       {currentTab === "research_arena" && (
         <Page title="Research Arena (Galaxy)" subtitle="Explore academic targets inside the visual research galaxy.">
-          <ResearchGalaxyCanvas />
+          <div className="grid gap-6 md:grid-cols-4 text-left">
+            <Card className="md:col-span-1 p-4 flex flex-col justify-between h-[400px]">
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 font-mono">Galaxy HUD Controls</h3>
+                <p className="text-[10px] text-muted-foreground leading-relaxed mb-4">
+                  Zoom and filter specific node clusters. Verified planet orbits allow direct commercialization pipeline links.
+                </p>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[9px] font-mono text-muted-foreground block mb-1">Highlight Orbit</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Patent, Literature"
+                      value={galaxyFilter}
+                      onChange={(e) => setGalaxyFilter(e.target.value)}
+                      className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-violet-400 font-mono"
+                    />
+                  </div>
+                  <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-[10px] text-muted-foreground leading-relaxed">
+                    <strong className="text-white block mb-0.5">Active Node:</strong>
+                    Solar Experiment Orbit: compilation rate at 52% baseline validations.
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => { setGalaxyFilter(""); alert("Galaxy view reset successfully."); }} className="w-full py-1.5 bg-white/5 hover:bg-white/10 text-white font-mono text-[10px] rounded border border-white/10 cursor-pointer transition">
+                Reset Galaxy View
+              </button>
+            </Card>
+            <div className="md:col-span-3">
+              <ResearchGalaxyCanvas />
+            </div>
+          </div>
         </Page>
       )}
 
       {/* TAB: RESEARCH PROJECTS */}
       {currentTab === "research_projects" && (
         <Page title="Research Projects" subtitle="Track and configure your active research papers.">
-          <Card>
-            <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display text-left">
-              Literature Workspace Projects
-            </h3>
-            <div className="space-y-4">
-              {[
-                { title: "Deep Optimization with Sparse Graph Nets", rate: "ML & Logic", progress: 84 },
-                { title: "Multi-Agent Matrix for Solar Grids", rate: "Methodology Stack", progress: 52 },
-              ].map((p, idx) => (
-                <div key={idx} className="p-4 rounded-xl border border-white/5 bg-white/[0.01] text-left">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-sm font-bold text-white font-display">{p.title}</h4>
-                    <span className="text-[10px] text-violet-400 font-semibold font-mono">{p.rate}</span>
+          <div className="grid gap-6 md:grid-cols-3 text-left">
+            <Card className="md:col-span-2 p-5">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex justify-between items-center">
+                <span>Active Literature Workspace Papers</span>
+                <span className="text-[9px] bg-violet-400/10 text-violet-400 px-2 py-0.5 rounded-full">{researchProjects.length} Projects</span>
+              </h3>
+              
+              <div className="grid gap-4 sm:grid-cols-2">
+                {researchProjects.map((p) => (
+                  <div key={p.id} className="p-4 rounded-xl border border-white/5 bg-slate-900/40 hover:border-violet-500/20 transition flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span className="text-[9px] font-mono text-violet-400 bg-violet-400/10 px-2 py-0.5 rounded font-bold uppercase">
+                          {p.sotaLevel}
+                        </span>
+                        <span className="text-[9px] font-mono text-muted-foreground">{p.citations} citations</span>
+                      </div>
+                      <h4 className="text-xs font-bold text-white mt-2.5 font-sans leading-snug">{p.title}</h4>
+                      <p className="text-[10px] text-muted-foreground mt-1 font-mono">{p.field}</p>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-white/5">
+                      <div className="flex justify-between items-center text-[10px] font-mono text-muted-foreground mb-1">
+                        <span>Compilation</span>
+                        <span>{p.progress}%</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-violet-400 to-indigo-500 rounded-full" style={{ width: `${p.progress}%` }} />
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-violet-400 to-indigo-500 rounded-full" style={{ width: `${p.progress}%` }} />
-                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="md:col-span-1 p-5">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Initialize Paper Project</h3>
+              <form onSubmit={handleAddProject} className="space-y-4 text-xs">
+                <div>
+                  <label className="text-[9px] text-muted-foreground font-mono block mb-1">Paper Title</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Zero-Shot Sparse Graph Optimization"
+                    value={newProjectTitle}
+                    onChange={(e) => setNewProjectTitle(e.target.value)}
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-violet-400"
+                  />
                 </div>
-              ))}
-            </div>
-          </Card>
+                <div>
+                  <label className="text-[9px] text-muted-foreground font-mono block mb-1">Research Field Category</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Graph Neural Networks, LLMs"
+                    value={newProjectField}
+                    onChange={(e) => setNewProjectField(e.target.value)}
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-violet-400"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-2 rounded-xl bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs transition border-none cursor-pointer"
+                >
+                  Create Project Node
+                </button>
+              </form>
+            </Card>
+          </div>
         </Page>
       )}
 
@@ -4595,17 +4775,17 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {currentTab === "collaborators" && (
         <Page title="Collaboration Hub" subtitle="Find academic co-authors and configure compatibility ratios.">
           <div className="grid gap-6 md:grid-cols-3 text-left">
-            <Card className="md:col-span-1">
-              <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-4 font-display">
-                Co-Author Compatibility
+            <Card className="md:col-span-1 p-5">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">
+                Co-Author Verification
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-4 text-xs">
                 <div>
                   <label className="text-[10px] text-muted-foreground font-mono block mb-1">Scholar Profile 1</label>
                   <select
                     value={scholar1}
                     onChange={(e) => setScholar1(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none"
                   >
                     <option>Dr. Aryan Buha</option>
                     <option>Dr. Helena Chen</option>
@@ -4617,7 +4797,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                   <select
                     value={scholar2}
                     onChange={(e) => setScholar2(e.target.value)}
-                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
+                    className="w-full bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none"
                   >
                     <option>Dr. Helena Chen</option>
                     <option>Dr. Aryan Buha</option>
@@ -4626,22 +4806,33 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                 </div>
                 <button
                   onClick={calculateMatching}
-                  className="w-full py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
+                  disabled={isScanningCoauthor}
+                  className="w-full py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none flex justify-center items-center gap-1.5"
                 >
-                  Verify Matching Ratio
+                  {isScanningCoauthor ? (
+                    <span>Verifying Crossovers...</span>
+                  ) : "Verify Matching Ratio"}
                 </button>
               </div>
             </Card>
 
-            <Card className="md:col-span-2 flex flex-col justify-center items-center text-center bg-slate-950/60 border border-white/5">
+            <Card className="md:col-span-2 flex flex-col justify-center items-center text-center p-6 relative overflow-hidden bg-slate-950/60 border border-white/5">
+              {isScanningCoauthor && (
+                <div className="absolute inset-0 bg-violet-500/[0.02] flex items-center justify-center pointer-events-none">
+                  {/* Holographic Laser Scanner bar */}
+                  <div className="h-0.5 w-full bg-violet-400/80 blur-[2px] shadow-[0_0_8px_#a78bfa] absolute animate-scan" style={{ top: "0%" }} />
+                </div>
+              )}
               {matchingScore === null ? (
-                <div className="text-xs text-muted-foreground">Select scholar profiles and run the compatibility verifier.</div>
+                <div className="text-xs text-muted-foreground max-w-xs leading-relaxed">
+                  Select co-authors and trigger the matching comparison matrix checks.
+                </div>
               ) : (
-                <div className="space-y-2">
-                  <div className="text-4xl font-black text-violet-400 font-display">{matchingScore}%</div>
-                  <div className="text-sm text-white font-bold">Domain Similarity Compatibility</div>
-                  <p className="text-xs text-muted-foreground max-w-xs leading-relaxed">
-                    AI matched co-author score based on citation references, publications, and target NSF research area overlaps.
+                <div className="space-y-3">
+                  <div className="text-5xl font-black text-violet-400 font-display tracking-tight">{matchingScore}%</div>
+                  <div className="text-sm text-white font-bold">Domain Overlap Similarity</div>
+                  <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
+                    AI analysis detects high co-author alignment based on citation intersections, shared ArXiv bibliography maps, and joint NSF grant project scopes.
                   </p>
                 </div>
               )}
@@ -4653,33 +4844,51 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PUBLICATIONS */}
       {currentTab === "publications" && (
         <Page title="Publication Center" subtitle="Draft manuscripts and use LaTeX abstract text optimizers.">
-          <div className="grid gap-6 md:grid-cols-2 text-left">
-            <Card>
-              <h3 className="text-sm font-bold text-white tracking-tight uppercase mb-2 font-display">
-                LaTeX Abstract Editor
+          <div className="grid gap-6 md:grid-cols-5 text-left">
+            <Card className="md:col-span-3 p-5 flex flex-col">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 font-mono flex items-center gap-1.5">
+                <Terminal className="h-4 w-4 text-violet-400" /> LaTeX Abstract Draft Editor
               </h3>
-              <textarea
-                rows={6}
-                value={latexInput}
-                onChange={(e) => setLatexInput(e.target.value)}
-                className="w-full bg-slate-950 font-mono text-xs text-violet-400 p-4 rounded-xl border border-white/10 outline-none focus:border-violet-400"
-              />
-              <button
-                onClick={runLatexOptimizer}
-                disabled={optimizingLatex}
-                className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
-              >
-                {optimizingLatex ? "Optimizing..." : "Optimize Abstract"}
-              </button>
+              <div className="flex-1 flex gap-3 bg-slate-950 p-4 rounded-xl border border-white/10 font-mono text-xs">
+                {/* Line numbers gutter */}
+                <div className="text-muted-foreground/30 text-right select-none text-[10px] space-y-1">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={i}>{i + 1}</div>
+                  ))}
+                </div>
+                <textarea
+                  value={latexInput}
+                  onChange={(e) => setLatexInput(e.target.value)}
+                  className="flex-1 bg-transparent text-violet-400 outline-none resize-none leading-normal font-mono text-xs h-36"
+                />
+              </div>
+              <div className="mt-3 flex justify-between items-center">
+                <span className="text-[10px] text-muted-foreground font-mono">LaTeX Compiler: Ready</span>
+                <button
+                  onClick={runLatexOptimizer}
+                  disabled={optimizingLatex}
+                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none flex items-center gap-1.5"
+                >
+                  {optimizingLatex ? "Optimizing..." : "Optimize Abstract"}
+                </button>
+              </div>
             </Card>
 
-            <Card className="flex flex-col justify-center bg-slate-950/60 p-4 rounded-xl border border-white/5">
-              <div className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider mb-2">
-                Optimized LaTeX Output
+            <Card className="md:col-span-2 p-5 flex flex-col justify-between bg-slate-950/60 border border-white/5">
+              <div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 font-mono">Optimized LaTeX Output</h3>
+                <div className="bg-slate-950 p-4 rounded-lg font-mono text-[11px] text-emerald-400 border border-white/5 min-h-[140px] leading-relaxed select-all">
+                  {latexOutput || "% Click optimize to execute AI abstract modifications..."}
+                </div>
               </div>
-              <div className="bg-slate-950 p-4 rounded-lg font-mono text-[11px] text-emerald-400 border border-white/5 min-h-[120px] select-text leading-relaxed">
-                {latexOutput || "% Click optimize to output clean LaTeX abstract..."}
-              </div>
+              {latexOutput && (
+                <button
+                  onClick={() => { navigator.clipboard.writeText(latexOutput); alert("Copied abstract code to clipboard!"); }}
+                  className="mt-3 w-full py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-mono text-[10px] rounded cursor-pointer transition"
+                >
+                  Copy to Clipboard
+                </button>
+              )}
             </Card>
           </div>
         </Page>
@@ -4847,479 +5056,311 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
             
             <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex items-center gap-5">
-                <div className="relative shrink-0">
+                <div className="relative h-20 w-20 shrink-0 animate-pulse">
                   <GlowingOrb />
                 </div>
                 <div>
-                  <span className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold uppercase tracking-widest text-violet-400 bg-violet-400/10 border border-violet-400/20 px-2.5 py-1 rounded-full mb-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-                    Research AI Copilot · Active
-                  </span>
-                  <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Research OS Copilot</h1>
-                  <p className="text-xs text-muted-foreground mt-1.5 max-w-lg leading-relaxed">
-                    AI-powered academic workspace helper. Drag datasets to extract citations, run abstracts checks, or write training scripts.
+                  <h3 className="text-lg font-black text-white font-display tracking-tight">AI Research Intelligence Orb</h3>
+                  <p className="text-xs text-muted-foreground mt-1 max-w-md leading-relaxed">
+                    Optimize LaTeX, auto-generate BibTeX citation formats, run PyTorch code models templates, or query global publication matrices.
                   </p>
                 </div>
               </div>
-
-              {/* Stats blocks */}
-              <div className="flex gap-4 shrink-0 font-mono">
+              <div className="flex border border-white/10 rounded-xl overflow-hidden p-0.5 bg-white/[0.02]">
+                <button
+                  onClick={() => setCopilotView("chat")}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all \${copilotView === "chat" ? "bg-violet-500 text-slate-950" : "text-muted-foreground hover:text-white"}`}
+                >
+                  Chat Workspace
+                </button>
+                <button
+                  onClick={() => setCopilotView("tools")}
+                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all \${copilotView === "tools" ? "bg-violet-500 text-slate-950" : "text-muted-foreground hover:text-white"}`}
+                >
+                  AI Tools Vault
+                </button>
+              </div>
+            </div>
+            
+            {/* Presets Grid */}
+            <div className="mt-6 border-t border-white/5 pt-4">
+              <span className="text-[9px] uppercase font-mono tracking-widest text-violet-400 font-bold block mb-3">Quick Presets Tool Launchers:</span>
+              <div className="flex flex-wrap gap-2">
                 {[
-                  { label: "Sessions", value: "32", icon: MessageSquare },
-                  { label: "LaTeX Audits", value: "8", icon: FileText },
-                  { label: "References", value: "128", icon: BookOpen },
-                ].map(({ label, value, icon: Icon }) => (
-                  <div key={label} className="text-center">
-                    <Icon className="h-4 w-4 text-violet-400 mx-auto mb-1" />
-                    <div className="text-lg font-black text-white">{value}</div>
-                    <div className="text-[9px] text-muted-foreground uppercase">{label}</div>
-                  </div>
+                  "Search ArXiv baseline papers",
+                  "Verify BibTeX reference formats",
+                  "Draft LaTeX claims parameters",
+                  "Write PyTorch model code templates"
+                ].map((preset, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePresetSelect(preset)}
+                    className="px-3.5 py-2 rounded-xl bg-white/[0.02] border border-white/10 hover:border-violet-400/30 hover:bg-violet-500/[0.02] text-xs font-medium text-white transition duration-200"
+                  >
+                    💡 {preset}
+                  </button>
                 ))}
               </div>
             </div>
-
-            {/* Suggested prompts bubbles */}
-            <div className="relative mt-6 flex flex-wrap gap-2">
-              {[
-                { text: "Generate Research Roadmap", icon: "🗺️" },
-                { text: "Optimize LaTeX Abstract", icon: "📄" },
-                { text: "Search ArXiv Papers", icon: "🔍" },
-                { text: "Verify BibTeX Citations", icon: "📚" },
-                { text: "Review PyTorch Experiment", icon: "🧠" },
-              ].map(({ text, icon }) => (
-                <button
-                  key={text}
-                  onClick={() => handlePresetSelect(text)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white/[0.07] hover:border-violet-500/30 text-xs text-white/80 hover:text-white transition-all duration-200 cursor-pointer border-none"
-                >
-                  <span>{icon}</span> {text}
-                </button>
-              ))}
-            </div>
           </div>
 
-          {/* VIEW TOGGLES */}
-          <div className="flex items-center gap-2 mt-6">
-            <button
-              onClick={() => { setCopilotView("chat"); setActiveToolId(null); }}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border-none ${copilotView === "chat" ? "bg-violet-500/15 border border-violet-500/30 text-violet-400" : "border border-white/5 bg-white/[0.02] text-muted-foreground hover:text-white"}`}
-            >
-              <Bot className="h-3.5 w-3.5" /> Chat Workspace
-            </button>
-            <button
-              onClick={() => setCopilotView("tools")}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border-none ${copilotView === "tools" ? "bg-indigo-500/15 border border-indigo-500/30 text-indigo-400" : "border border-white/5 bg-white/[0.02] text-muted-foreground hover:text-white"}`}
-            >
-              <Layers className="h-3.5 w-3.5" /> AI Tools
-            </button>
-          </div>
-
-          {/* MAIN LAYOUT */}
-          <div className="grid gap-6 lg:grid-cols-[1fr_300px] mt-6 text-left font-sans">
-            {/* LEFT AREA: Chat or Interactive Tools */}
-            <div className="flex flex-col gap-4">
+          {/* DUAL WORKSPACE */}
+          <div className="grid gap-6 md:grid-cols-3 mt-6 text-left">
+            <Card className="md:col-span-2 p-5 min-h-[480px] flex flex-col justify-between">
               {copilotView === "chat" ? (
-                <motion.div
-                  key={`chat-${chatKey}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <CopilotChat />
-                </motion.div>
+                <div className="flex-1 flex flex-col justify-between h-full">
+                  <div className="border-b border-white/5 pb-3 mb-4 flex items-center justify-between">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">Expert Research Conversation Console</span>
+                    <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse" />
+                  </div>
+                  <div className="flex-1">
+                    <CopilotChat key={chatKey} />
+                  </div>
+                </div>
               ) : (
-                <motion.div
-                  key="tools"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="space-y-4"
-                >
-                  {/* Tool Active Detail Workspace */}
-                  {activeToolId ? (
-                    <div className="p-6 rounded-3xl border border-white/10 bg-slate-900/40 backdrop-blur-md relative overflow-hidden animate-fadeIn">
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />
-                      
-                      <button
-                        onClick={() => setActiveToolId(null)}
-                        className="mb-4 text-xs text-violet-400 font-mono flex items-center gap-1 hover:text-white transition bg-transparent border-none cursor-pointer"
-                      >
-                        ← Return to AI Tools
-                      </button>
+                <div className="flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="border-b border-white/5 pb-3 mb-5 flex items-center justify-between">
+                      <span className="text-xs font-bold text-white uppercase tracking-wider font-mono">Interactive AI Micro-Tools</span>
+                    </div>
 
-                      {/* Tool 1: BibTeX Citation Generator */}
+                    {/* Horizontal tools selector */}
+                    <div className="flex gap-1.5 overflow-x-auto pb-4 mb-4 border-b border-white/5">
+                      {[
+                        { id: "citation", label: "BibTeX Citations", desc: "Generate citation nodes" },
+                        { id: "arxiv", label: "ArXiv Searcher", desc: "Scan target models" },
+                        { id: "writer", label: "Script Writer", desc: "Draft PyTorch scripts" },
+                        { id: "claims", label: "Patent Drafts", desc: "Assistant claims drafting" },
+                        { id: "latex", label: "LaTeX Editor", desc: "Polish abstract copy" }
+                      ].map((t) => (
+                        <button
+                          key={t.id}
+                          onClick={() => setActiveToolId(t.id)}
+                          className={`px-3.5 py-2 rounded-xl border shrink-0 text-left transition \${activeToolId === t.id
+                              ? "bg-violet-400/10 border-violet-400/40 text-white"
+                              : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.02]"
+                            }`}
+                        >
+                          <div className="text-xs font-bold">{t.label}</div>
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Interactive Sandbox Panel */}
+                    <div className="p-4 rounded-2xl bg-slate-950/40 border border-white/5 min-h-[260px] text-xs">
                       {activeToolId === "citation" && (
                         <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">BibTeX Citation Parser Generator</h3>
-                          <p className="text-xs text-muted-foreground">Input a research paper topic or DOI below to generate standard compliant BibTeX citations codes.</p>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">BibTeX Citation Code Creator</h4>
                           <div>
+                            <label className="text-[10px] text-muted-foreground block mb-1">Target Citation Reference Title</label>
                             <input
                               type="text"
                               value={citInput}
                               onChange={(e) => setCitInput(e.target.value)}
-                              placeholder="e.g. Attention Is All You Need"
-                              className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-violet-500/50"
+                              className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-xs text-white outline-none focus:border-violet-400"
                             />
                           </div>
                           <button
                             onClick={generateBibTeX}
                             disabled={loadingCit}
-                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                            className="px-4 py-2 bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs rounded-xl transition cursor-pointer border-none"
                           >
-                            {loadingCit ? "Generating..." : "Generate BibTeX Code"}
+                            {loadingCit ? "Compiling reference..." : "Compile Citation"}
                           </button>
-                          
                           {citOutput && (
-                            <div className="space-y-2 mt-4 animate-fadeIn">
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">BibTeX Code block</span>
-                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed select-all">
-                                {citOutput}
-                              </pre>
-                            </div>
+                            <pre className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all leading-normal">
+                              {citOutput}
+                            </pre>
                           )}
                         </div>
                       )}
 
-                      {/* Tool 2: LaTeX Abstract Optimizer */}
-                      {activeToolId === "latex" && (
-                        <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">LaTeX Abstract Terminology Optimizer</h3>
-                          <p className="text-xs text-muted-foreground">Polishes vocabulary, removes repetitions, and standardizes math equations for NeurIPS/ICML standards.</p>
-                          <textarea
-                            rows={5}
-                            value={latexInput}
-                            onChange={(e) => setLatexInput(e.target.value)}
-                            className="w-full bg-slate-950 border border-white/10 rounded-xl p-4 font-mono text-xs text-violet-400 outline-none focus:border-violet-500/50"
-                          />
-                          <button
-                            onClick={runLatexOptimizer}
-                            disabled={optimizingLatex}
-                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
-                          >
-                            {optimizingLatex ? "Optimizing LaTeX Abstract..." : "Optimize Abstract"}
-                          </button>
-
-                          {latexOutput && (
-                            <div className="space-y-2 mt-4 animate-fadeIn">
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Polished LaTeX abstract</span>
-                              <div className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-xs text-emerald-400 overflow-x-auto leading-relaxed select-all">
-                                {latexOutput}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Tool 3: ArXiv Paper Search */}
                       {activeToolId === "arxiv" && (
                         <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">SOTA ArXiv Paper Search</h3>
-                          <p className="text-xs text-muted-foreground">Search and index published papers on ArXiv to check literature gaps.</p>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">ArXiv Database Scanner</h4>
                           <div className="flex gap-2">
                             <input
                               type="text"
                               value={arxivQuery}
                               onChange={(e) => setArxivQuery(e.target.value)}
-                              placeholder="Search query..."
-                              className="flex-1 bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-violet-500/50"
+                              className="flex-1 bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white focus:outline-none"
                             />
                             <button
                               onClick={searchArxiv}
                               disabled={loadingArxiv}
-                              className="px-4 py-2 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                              className="px-4 py-2 bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs rounded-xl transition cursor-pointer border-none flex items-center gap-1"
                             >
-                              {loadingArxiv ? "Searching..." : "Search"}
+                              Search
                             </button>
                           </div>
-
-                          {arxivResults.length > 0 && (
-                            <div className="space-y-3 mt-4 animate-fadeIn">
-                              {arxivResults.map((r, idx) => (
-                                <div key={idx} className="p-3.5 bg-slate-950/80 border border-white/5 rounded-xl text-xs flex flex-col gap-1.5">
-                                  <div className="flex justify-between items-start">
-                                    <h4 className="font-bold text-white max-w-[280px]">{r.title}</h4>
-                                    <span className="text-[9px] font-mono text-violet-400 bg-violet-400/5 border border-violet-500/20 px-1.5 py-0.5 rounded">{r.year}</span>
-                                  </div>
-                                  <p className="text-[10px] text-muted-foreground italic font-mono">By: {r.authors}</p>
-                                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{r.summary}</p>
-                                  <button
-                                    onClick={() => {
-                                      setCitInput(r.title);
-                                      setActiveToolId("citation");
-                                    }}
-                                    className="mt-2 text-[9px] font-mono text-violet-400 hover:text-white flex items-center gap-1 bg-transparent border-none cursor-pointer self-start"
-                                  >
-                                    Get BibTeX Citation →
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      {/* Tool 4: Experiment Script Writer */}
-                      {activeToolId === "writer" && (
-                        <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">PyTorch Experiment Script Writer</h3>
-                          <p className="text-xs text-muted-foreground">Select a framework backbone to write a clean GPU training routine.</p>
-                          <div className="flex gap-4 items-center">
-                            <span className="text-xs text-muted-foreground">Model Type:</span>
-                            {["Transformer", "CNN", "GNN"].map(m => (
-                              <button
-                                key={m}
-                                onClick={() => setSelectedModelType(m)}
-                                className={`px-3 py-1 rounded-lg text-xs font-mono font-bold border cursor-pointer ${selectedModelType === m ? "bg-violet-400/10 border-violet-400 text-violet-400" : "bg-transparent border-white/10 text-muted-foreground"}`}
-                              >
-                                {m}
-                              </button>
+                          <div className="space-y-3 mt-3">
+                            {arxivResults.map((res, idx) => (
+                              <div key={idx} className="p-3 border border-white/5 rounded-xl bg-slate-900/60 leading-relaxed text-left">
+                                <h5 className="font-bold text-white text-xs">{res.title}</h5>
+                                <div className="text-[10px] text-violet-400 mt-1 font-mono">{res.authors} ({res.year})</div>
+                                <p className="text-[10px] text-muted-foreground mt-1.5">{res.summary}</p>
+                              </div>
                             ))}
                           </div>
-                          <button
-                            onClick={writeExperimentScript}
-                            disabled={loadingScript}
-                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
-                          >
-                            {loadingScript ? "Writing Script..." : "Generate PyTorch Script"}
-                          </button>
+                        </div>
+                      )}
 
-                          {scriptOutput && (
-                            <div className="space-y-2 mt-4 animate-fadeIn">
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Generated PyTorch script</span>
-                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed select-all">
-                                {scriptOutput}
-                              </pre>
+                      {activeToolId === "writer" && (
+                        <div className="space-y-4">
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">PyTorch Sandbox Script Writer</h4>
+                          <div className="flex gap-4 items-center">
+                            <div>
+                              <label className="text-[10px] text-muted-foreground block mb-1">Target Model Module</label>
+                              <select
+                                value={selectedModelType}
+                                onChange={(e) => setSelectedModelType(e.target.value)}
+                                className="bg-slate-950 border border-white/10 rounded-lg p-2 text-xs text-white"
+                              >
+                                <option>Transformer</option>
+                                <option>GNN</option>
+                                <option>CNN</option>
+                              </select>
                             </div>
+                            <button
+                              onClick={writeExperimentScript}
+                              disabled={loadingScript}
+                              className="px-4 py-2 bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs rounded-xl transition cursor-pointer border-none"
+                            >
+                              {loadingScript ? "Writing PyTorch script..." : "Generate Template Script"}
+                            </button>
+                          </div>
+                          {scriptOutput && (
+                            <pre className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all leading-normal">
+                              {scriptOutput}
+                            </pre>
                           )}
                         </div>
                       )}
 
-                      {/* Tool 5: Patent Drafting Assistant */}
-                      {activeToolId === "patent" && (
+                      {activeToolId === "claims" && (
                         <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">AI Patent Drafting Assistant</h3>
-                          <p className="text-xs text-muted-foreground">Write a core concept summary to output structured patent claims.</p>
-                          <input
-                            type="text"
-                            value={patentSubject}
-                            onChange={(e) => setPatentSubject(e.target.value)}
-                            className="w-full bg-slate-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white outline-none focus:border-violet-500/50"
-                          />
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Patent Claims Draft Assistant</h4>
+                          <div>
+                            <label className="text-[10px] text-muted-foreground block mb-1">Subject Matter Focus</label>
+                            <input
+                              type="text"
+                              value={patentSubject}
+                              onChange={(e) => setPatentSubject(e.target.value)}
+                              className="w-full bg-slate-950 border border-white/10 rounded-lg p-2.5 text-xs text-white outline-none focus:border-violet-400"
+                            />
+                          </div>
                           <button
                             onClick={draftPatentClaims}
                             disabled={loadingPatent}
-                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                            className="px-4 py-2 bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs rounded-xl transition cursor-pointer border-none"
                           >
-                            {loadingPatent ? "Drafting Claims..." : "Draft Claims"}
+                            {loadingPatent ? "Drafting claims..." : "Draft Claims"}
                           </button>
-
                           {patentOutput && (
-                            <div className="space-y-2 mt-4 animate-fadeIn">
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono tracking-wider">Patent claims outline</span>
-                              <pre className="bg-slate-950 border border-white/5 rounded-xl p-4 font-mono text-[10px] text-emerald-400 overflow-x-auto leading-relaxed whitespace-pre-wrap select-all">
-                                {patentOutput}
-                              </pre>
-                            </div>
+                            <pre className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all leading-relaxed whitespace-pre-wrap font-sans">
+                              {patentOutput}
+                            </pre>
                           )}
                         </div>
                       )}
 
-                      {/* Tool 6: Co-author Matcher */}
-                      {activeToolId === "matcher" && (
+                      {activeToolId === "latex" && (
                         <div className="space-y-4">
-                          <h3 className="text-base font-black text-white font-display">SOTA Co-Author Matcher</h3>
-                          <p className="text-xs text-muted-foreground">Verify matching compatibility based on overlap of citations, SOTA benchmarks, and research domains.</p>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono block mb-1">Scholar Profile 1</span>
-                              <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-white font-bold">Dr. Aryan Buha</div>
-                            </div>
-                            <div>
-                              <span className="text-[10px] text-muted-foreground uppercase font-mono block mb-1">Scholar Profile 2</span>
-                              <div className="bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-white font-bold">Dr. Helena Chen</div>
-                            </div>
-                          </div>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">LaTeX Text Optimizer</h4>
+                          <textarea
+                            rows={4}
+                            value={latexInput}
+                            onChange={(e) => setLatexInput(e.target.value)}
+                            className="w-full bg-slate-950 font-mono text-xs text-violet-400 p-3 rounded-xl border border-white/10 outline-none"
+                          />
                           <button
-                            onClick={checkCoauthorMatch}
-                            disabled={loadingMatch}
-                            className="px-5 py-2.5 rounded-xl bg-violet-400 text-slate-950 font-bold text-xs hover:bg-violet-300 transition cursor-pointer border-none"
+                            onClick={runLatexOptimizer}
+                            disabled={optimizingLatex}
+                            className="px-4 py-2 rounded-xl bg-violet-400 text-slate-950 hover:bg-violet-300 font-bold text-xs transition border-none cursor-pointer"
                           >
-                            {loadingMatch ? "Matching..." : "Match Profiles"}
+                            {optimizingLatex ? "Optimizing..." : "Optimize Abstract"}
                           </button>
-
-                          {matchingScoreRes && (
-                            <div className="flex flex-col items-center justify-center p-4 bg-slate-950 rounded-2xl border border-white/5 animate-fadeIn">
-                              <span className="text-3xl font-black text-violet-400 font-display">{matchingScoreRes}%</span>
-                              <span className="text-xs font-bold text-white mt-1">Similarity compatibility score</span>
-                            </div>
+                          {latexOutput && (
+                            <pre className="bg-slate-950 p-4 rounded-xl border border-white/5 font-mono text-[11px] text-emerald-400 overflow-x-auto select-all leading-normal whitespace-pre-wrap">
+                              {latexOutput}
+                            </pre>
                           )}
                         </div>
                       )}
+
+                      {!activeToolId && (
+                        <div className="h-36 flex items-center justify-center text-muted-foreground italic">
+                          Select one of the AI Micro-Tools from the bar above to launch its sandbox.
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <>
-                      {/* Drag and drop upload zone */}
-                      <div className="relative p-6 rounded-3xl border-2 border-dashed border-white/10 bg-slate-900/30 backdrop-blur-md text-center hover:border-violet-500/30 hover:bg-violet-500/[0.01] transition duration-300 cursor-pointer group">
-                        <input
-                          type="file"
-                          multiple
-                          onChange={handleFileUpload}
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                        />
-                        <Upload className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2 group-hover:text-violet-400 transition" />
-                        <h4 className="text-sm font-bold text-white">AI Workspace Upload Zone</h4>
-                        <p className="text-[11px] text-muted-foreground mt-1">Drop research papers, PDF logs, or BibTeX codes for citation mapping</p>
-                        <div className="flex items-center justify-center gap-2 mt-3.5">
-                          {["PDF", "BibTeX", "CSV", "LaTeX"].map((t) => (
-                            <span key={t} className="text-[9px] font-mono px-2.5 py-0.5 rounded border border-white/10 bg-white/[0.03] text-muted-foreground/60">{t}</span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* AI Tools Grid */}
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {[
-                          { id: "citation", label: "BibTeX Generator", desc: "Extract citations and compile references code", icon: BookOpen, color: "sky" },
-                          { id: "latex", label: "LaTeX Optimizer", desc: "Polish academic abstract vocabulary SOTA", icon: FileText, color: "violet" },
-                          { id: "arxiv", label: "ArXiv Search", desc: "Audit publications database and references", icon: Search, color: "emerald" },
-                          { id: "writer", label: "Script Writer", desc: "Generate training benchmark PyTorch script", icon: Terminal, color: "amber" },
-                          { id: "patent", label: "Patent Assistant", desc: "Draft provisional patents sequence claims", icon: Award, color: "rose" },
-                          { id: "matcher", label: "Co-author Matcher", desc: "Verify matching compatibility on papers", icon: Users, color: "indigo" },
-                        ].map((t) => {
-                          const IconComponent = t.icon;
-                          const colorClasses: Record<string, string> = {
-                            sky: "text-sky-400 border-sky-500/20 bg-sky-500/5",
-                            violet: "text-violet-400 border-violet-500/20 bg-violet-500/5",
-                            emerald: "text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
-                            amber: "text-amber-400 border-amber-500/20 bg-amber-500/5",
-                            rose: "text-rose-400 border-rose-500/20 bg-rose-500/5",
-                            indigo: "text-indigo-400 border-indigo-500/20 bg-indigo-500/5",
-                          };
-                          return (
-                            <button
-                              key={t.id}
-                              onClick={() => setActiveToolId(t.id)}
-                              className="group relative p-4 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md hover:border-white/20 hover:-translate-y-1 transition duration-300 text-left overflow-hidden cursor-pointer"
-                            >
-                              <div className={`inline-flex p-2.5 rounded-xl border mb-3 ${colorClasses[t.color]}`}>
-                                <IconComponent className="h-4 w-4" />
-                              </div>
-                              <h4 className="text-xs font-black text-white mb-1 uppercase tracking-wider">{t.label}</h4>
-                              <p className="text-[9px] text-muted-foreground/60 leading-relaxed min-h-[28px]">{t.desc}</p>
-                              <div className="mt-3 flex items-center gap-1 text-[9px] font-mono text-muted-foreground/40 group-hover:text-violet-400 transition">
-                                Launch Utility <ChevronRight className="h-2.5 w-2.5" />
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Voice input Beta */}
-                      <div className="flex items-center gap-3 p-4 rounded-2xl border border-white/10 bg-slate-900/30 backdrop-blur-md">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center shrink-0">
-                          <Mic className="h-4 w-4 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="text-xs font-black text-white uppercase tracking-wider">Voice Abstract Transcription</h4>
-                          <p className="text-[9px] text-muted-foreground/60 mt-0.5">Speak formulas or ideas — AI transcribes to LaTeX codes</p>
-                        </div>
-                        <span className="text-[8px] font-mono px-2 py-0.5 rounded border border-violet-500/20 bg-violet-500/5 text-violet-400">BETA</span>
-                      </div>
-                    </>
-                  )}
-                </motion.div>
+                  </div>
+                </div>
               )}
-            </div>
+            </Card>
 
-            {/* RIGHT AREA: AI MEMORY & STATS HUD */}
-            <div className="space-y-4">
-              {/* Memory panel */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md">
-                <div className="flex items-center gap-2 mb-4">
-                  <Brain className="h-4 w-4 text-violet-400" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-wider">AI Memory Vault</h3>
-                  <span className="ml-auto text-[8px] font-mono text-violet-400 bg-violet-400/10 border border-violet-400/20 px-2 py-0.5 rounded-full">Active</span>
+            {/* SIDEBAR PANEL */}
+            <div className="space-y-4 md:col-span-1">
+              {/* Memory values */}
+              <Card className="p-4 text-xs">
+                <h4 className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground mb-3">Copilot Memory Context</h4>
+                <div className="space-y-3 font-mono">
+                  <div>
+                    <span className="text-muted-foreground block text-[9px]">THESIS TOPIC:</span>
+                    <span className="text-white font-medium">Sparse Graph Node Compression</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[9px]">LITERATURE METADATA:</span>
+                    <span className="text-white font-medium">428 Citations Catalogued</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[9px]">AFFILIATION RANK:</span>
+                    <span className="text-white font-medium">Top 5% Department ML</span>
+                  </div>
                 </div>
-                <div className="space-y-3">
-                  {[
-                    { icon: "🎯", label: "Thesis Focus", value: "Sparse Graph Embedding Optimizations" },
-                    { icon: "⚡", label: "Target Domain", value: "Model Compression, GNNs, SOTA" },
-                    { icon: "🏆", label: "Academic Level", value: "Verified Post-Doc Scholar · 4.8k XP" },
-                    { icon: "📅", label: "Current Period", value: "Hypothesis review · Phase 1 active" },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 text-left">
-                      <span className="text-base leading-none mt-0.5">{item.icon}</span>
-                      <div>
-                        <div className="text-[8px] font-mono text-muted-foreground/50 uppercase tracking-widest leading-none">{item.label}</div>
-                        <div className="text-[10px] font-bold text-white mt-1 leading-snug">{item.value}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </Card>
 
-              {/* Recent sessions */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-slate-900/40 backdrop-blur-md">
-                <div className="flex items-center gap-2 mb-4">
-                  <Clock className="h-4 w-4 text-sky-400" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Recent Sessions</h3>
+              {/* Stats dashboard */}
+              <Card className="p-4 text-xs">
+                <h4 className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground mb-3">Copilot efficiency metrics</h4>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-2.5 border border-white/5 bg-white/[0.01] rounded-xl text-center">
+                    <div className="font-bold text-white text-sm">48h</div>
+                    <div className="text-[8px] text-muted-foreground uppercase mt-0.5">Time Saved</div>
+                  </div>
+                  <div className="p-2.5 border border-white/5 bg-white/[0.01] rounded-xl text-center">
+                    <div className="font-bold text-white text-sm">12</div>
+                    <div className="text-[8px] text-muted-foreground uppercase mt-0.5">Abstracts Polished</div>
+                  </div>
+                  <div className="p-2.5 border border-white/5 bg-white/[0.01] rounded-xl text-center">
+                    <div className="font-bold text-white text-sm">96%</div>
+                    <div className="text-[8px] text-muted-foreground uppercase mt-0.5">Parse Accuracy</div>
+                  </div>
+                  <div className="p-2.5 border border-white/5 bg-white/[0.01] rounded-xl text-center">
+                    <div className="font-bold text-white text-sm">24</div>
+                    <div className="text-[8px] text-muted-foreground uppercase mt-0.5">Scripts Written</div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {[
-                    { title: "LaTeX abstract optimization check", time: "2 days ago", tag: "LaTeX" },
-                    { title: "BibTeX code formatting review", time: "1 week ago", tag: "BibTeX" },
-                    { title: "GNN training baseline metrics", time: "2 weeks ago", tag: "Code" },
-                  ].map((s) => (
-                    <button key={s.title} className="w-full flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition text-left cursor-pointer bg-transparent">
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[10px] font-bold text-white truncate">{s.title}</div>
-                        <div className="text-[8px] font-mono text-muted-foreground/40 mt-0.5">{s.time}</div>
-                      </div>
-                      <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border border-violet-500/20 bg-violet-500/5 text-violet-400 shrink-0">{s.tag}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Copilot Impact HUD */}
-              <div className="p-5 rounded-2xl border border-white/10 bg-gradient-to-br from-violet-500/5 to-indigo-500/5 backdrop-blur-md">
-                <div className="flex items-center gap-2 mb-3">
-                  <Trophy className="h-4 w-4 text-amber-400" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-wider">Copilot Impact</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { value: "24", label: "Ideas Generated", color: "text-sky-400" },
-                    { value: "6", label: "Plans Created", color: "text-violet-400" },
-                    { value: "12", label: "Drafts Polished", color: "text-emerald-400" },
-                    { value: "18h", label: "Time Saved", color: "text-amber-400" },
-                  ].map(({ value, label, color }) => (
-                    <div key={label} className="text-center p-2 rounded-xl bg-white/[0.02] border border-white/5">
-                      <div className={`text-lg font-black ${color}`}>{value}</div>
-                      <div className="text-[8px] font-mono text-muted-foreground/50 mt-0.5 leading-tight">{label}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </Card>
             </div>
           </div>
         </Page>
       )}
 
-      {/* TAB: ACHIEVEMENTS */}
+      {/* TAB: ACHIEVEMENT VAULT */}
       {currentTab === "achievements" && (
         <Page title="Achievement Vault" subtitle="Your milestone badges, XP records, and earned credentials.">
           {/* Summary HUD */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-left">
             {[
               { label: "Badges Earned", value: "14", icon: "🏆", color: "amber" },
-              { label: "Total XP", value: xp > 999 ? `${(xp / 1000).toFixed(1)}k` : xp.toString(), icon: "⚡", color: "sky" },
+              { label: "Total XP", value: xp > 999 ? `\${(xp / 1000).toFixed(1)}k` : xp.toString(), icon: "⚡", color: "sky" },
               { label: "Current Level", value: level.toString(), icon: "🎖️", color: "violet" },
               { label: "Streak Record", value: "12 days", icon: "🔥", color: "rose" },
             ].map((s) => (
               <div key={s.label} className="relative overflow-hidden p-4 rounded-2xl border border-white/5 bg-slate-900/40">
                 <div className="text-xl mb-1">{s.icon}</div>
-                <div className={`text-xl font-black ${s.color === "amber" ? "text-amber-400" : s.color === "sky" ? "text-sky-400" : s.color === "violet" ? "text-violet-400" : "text-rose-400"}`}>{s.value}</div>
+                <div className={`text-xl font-black \${s.color === "amber" ? "text-amber-400" : s.color === "sky" ? "text-sky-400" : s.color === "violet" ? "text-violet-400" : "text-rose-400"}`}>{s.value}</div>
                 <div className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider mt-0.5">{s.label}</div>
               </div>
             ))}
@@ -5337,7 +5378,7 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
               { title: "Published", desc: "Submit a research paper draft", icon: "📄", earned: false, color: "teal" },
               { title: "Grand Finale", desc: "Finalize paper print cameras", icon: "🎓", earned: false, color: "gold" },
             ].map((badge) => (
-              <div key={badge.title} className={`relative p-4 rounded-2xl border text-center transition-all duration-300 overflow-hidden ${badge.earned
+              <div key={badge.title} className={`relative p-4 rounded-2xl border text-center transition-all duration-300 overflow-hidden \${badge.earned
                   ? "border-white/10 bg-slate-900/40 hover:border-white/20 hover:-translate-y-1"
                   : "border-white/5 bg-slate-950/20 opacity-40"
                 }`}>
@@ -5347,8 +5388,8 @@ function ResearcherDashboard({ currentTab }: { currentTab: string }) {
                   </div>
                 )}
                 <div className="text-3xl mb-2">{badge.icon}</div>
-                <h4 className={`text-xs font-black ${badge.earned ? "text-white" : "text-white/30"}`}>{badge.title}</h4>
-                <p className={`text-[9px] font-mono mt-1 leading-relaxed ${badge.earned ? "text-muted-foreground/60" : "text-muted-foreground/30"}`}>{badge.desc}</p>
+                <h4 className={`text-xs font-black \${badge.earned ? "text-white" : "text-white/30"}`}>{badge.title}</h4>
+                <p className={`text-[9px] font-mono mt-1 leading-relaxed \${badge.earned ? "text-muted-foreground/60" : "text-muted-foreground/30"}`}>{badge.desc}</p>
                 {badge.earned && (
                   <div className="mt-2 text-[8px] font-mono text-emerald-400 flex items-center justify-center gap-1">
                     <CheckCircle2 className="h-2.5 w-2.5" /> Verified
@@ -9008,7 +9049,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
     const req = discoveryRequests.find(r => r.id === id);
     if (!req) return;
 
-    // Add to clients list
     const nextClientId = Math.max(...clients.map(c => c.id), 0) + 1;
     setClients(prev => [
       ...prev,
@@ -9027,7 +9067,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       }
     ]);
 
-    // Update roadmaps state
     setRoadmaps(prev => ({
       ...prev,
       [nextClientId]: {
@@ -9038,7 +9077,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       }
     }));
 
-    // Update discovery list
     setDiscoveryRequests(prev => prev.filter(r => r.id !== id));
     alert(`Success: Approved ${req.name}'s request. User has been added to client list.`);
   };
@@ -9109,8 +9147,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
     setRoadmaps(prev => {
       const list = prev[clientId]?.milestones || [];
       const updated = list.map(m => (m.id === milestoneId ? { ...m, done: !m.done } : m));
-
-      // Update overall progress in clients state
       const doneCount = updated.filter(m => m.done).length;
       const progressPct = list.length > 0 ? Math.round((doneCount / list.length) * 100) : 0;
 
@@ -9147,7 +9183,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
         }
       ];
 
-      // Update client overall progress ratio
       const doneCount = updated.filter(m => m.done).length;
       const progressPct = Math.round((doneCount / updated.length) * 100);
       setClients(prevClients =>
@@ -9266,24 +9301,11 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
     setTimeout(() => {
       let res = "";
       if (text.toLowerCase().includes("report")) {
-        res = `**Advisory Report draft — Vanguard Catalyst**
-        
-*   **Target Client:** Aarav Sharma (CortexML Labs)
-*   **Venture Thesis:** Quantization models show LATENCY: 12ms. Competitors hover at 30ms.
-*   **Dilution Index:** Cap Table dilution stands at 11% pre-money SAFE check. Option Pool buffer: 8% approved.
-*   *Consultant Verdict:* Pre-seed funding index is positive. Auto-approve SAFE note signatures.`;
+        res = `**Advisory Report draft — Vanguard Catalyst**\n\n*   **Target Client:** Aarav Sharma (CortexML Labs)\n*   **Venture Thesis:** Quantization models show LATENCY: 12ms. Competitors hover at 30ms.\n*   **Dilution Index:** Cap Table dilution stands at 11% pre-money SAFE check. Option Pool buffer: 8% approved.\n*   *Consultant Verdict:* Pre-seed funding index is positive. Auto-approve SAFE note signatures.`;
       } else if (text.toLowerCase().includes("roadmap")) {
-        res = `**AI Generated Research Roadmap Proposal**
-        
-1.  **Phase 1 (W1-W3):** Benchmark parameter density curves across local Mistral models.
-2.  **Phase 2 (W4-W6):** Format LaTeX equations, optimize mathematical notations, peer abstract check.
-3.  **Phase 3 (W7-W9):** Validate results with Nature submission Guidelines, issue PDF files.`;
+        res = `**AI Generated Research Roadmap Proposal**\n\n1.  **Phase 1 (W1-W3):** Benchmark parameter density curves across local Mistral models.\n2.  **Phase 2 (W4-W6):** Format LaTeX equations, optimize mathematical notations, peer abstract check.\n3.  **Phase 3 (W7-W9):** Validate results with Nature submission Guidelines, issue PDF files.`;
       } else {
-        res = `**Advisor Recommendations Checklist:**
-        
-*   Instruct Rohan to deploy AI portfolio project directly to Vercel/GitHub to build credentials.
-*   Review Prof. K. Sen's incubator budget spreadsheets to balance corporate sponsorships.
-*   Auto-NDA protocols are checked and active across all clients.`;
+        res = `**Advisor Recommendations Checklist:**\n\n*   Instruct Rohan to deploy AI portfolio project directly to Vercel/GitHub to build credentials.\n*   Review Prof. K. Sen's incubator budget spreadsheets to balance corporate sponsorships.\n*   Auto-NDA protocols are checked and active across all clients.`;
       }
       setOrbMessages(prev => [...prev, { sender: "ai", text: res }]);
       setOrbLoading(false);
@@ -9315,7 +9337,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
         }
         return prev + 25;
       });
-    }, 4000);
+    }, 1000);
   };
 
   // 12. Reviews & Star Ratings State
@@ -9334,7 +9356,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {currentTab === "home" && (
         <Page title="Advisor Command Center" subtitle="Flagship Expert Terminal · Private advisory metrics and consulting workflows.">
           {/* Welcome Banner */}
-          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-amber-400/5 via-blue-500/5 to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden">
+          <div className="mb-6 grid gap-6 md:grid-cols-3 bg-gradient-to-r from-amber-400/5 via-blue-500/5 to-transparent p-6 rounded-2xl border border-white/5 glow relative overflow-hidden text-left">
             <div className="md:col-span-2">
               <span className="text-[9px] font-bold font-mono uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full">
                 Professional Advisor License
@@ -9354,7 +9376,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
               <div className="mt-3 flex items-center gap-3">
                 <div className="relative flex items-center justify-center w-12 h-12 rounded-full border-2 border-amber-400/20">
-                  <div className="absolute inset-0 rounded-full border-2 border-t-amber-400 border-r-amber-400 rotate-45" />
+                  <div className="absolute inset-0 rounded-full border-2 border-t-amber-400 border-r-amber-400 rotate-45 animate-spin-slow" />
                   <span className="text-[10px] font-bold text-white font-mono">
                     {expertRatingScore}%
                   </span>
@@ -9368,7 +9390,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
           </div>
 
           {/* Dials / Cards Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6 text-left">
             <Card>
               <div className="text-xs text-muted-foreground uppercase font-mono flex justify-between items-center">
                 <span>Monthly revenue</span>
@@ -9410,7 +9432,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
           </div>
 
           {/* Expert Command Center dashboard grids */}
-          <div className="grid gap-6 md:grid-cols-3 mb-8">
+          <div className="grid gap-6 md:grid-cols-3 mb-8 text-left">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5">
                 <Calendar className="h-4 w-4 text-amber-400" /> Today's Sessions & Pending Tasks
@@ -9455,7 +9477,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
           </div>
 
           {/* Success Wall outcome gallery */}
-          <Card className="border border-amber-400/20 relative overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900">
+          <Card className="border border-amber-400/20 relative overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900 text-left">
             <div className="absolute top-0 right-0 h-40 w-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono flex items-center gap-1.5 border-b border-white/5 pb-3">
               <Trophy className="h-4.5 w-4.5 text-amber-400" /> Success Wall Outcomes (Social Proof credentials)
@@ -9489,14 +9511,13 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: CLIENTS */}
       {currentTab === "clients" && (
         <Page title="Client CRM Directory" subtitle="Consulting CRM hub tracking client status, current goals, and advisor milestones.">
-
-          <div className="mb-4 flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
+          <div className="mb-4 flex flex-col md:flex-row gap-3 justify-between items-start md:items-center text-left">
             <div className="flex gap-2">
               {["all", "Student", "Researcher", "Founder", "University"].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setClientFilter(cat)}
-                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition ${clientFilter === cat
+                  className={`px-3 py-1 text-[10px] font-bold rounded-lg cursor-pointer transition \${clientFilter === cat
                       ? "bg-amber-400 text-slate-950"
                       : "bg-white/5 border border-white/10 text-muted-foreground hover:text-white"
                     }`}
@@ -9515,8 +9536,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
             />
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* List */}
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-2 overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
@@ -9536,8 +9556,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       <tr
                         key={c.id}
                         onClick={() => setSelectedClientDetailId(c.id)}
-                        className={`hover:bg-white/[0.01] cursor-pointer transition ${selectedClientDetailId === c.id ? "bg-amber-400/5" : ""
-                          }`}
+                        className={`hover:bg-white/[0.01] cursor-pointer transition \${selectedClientDetailId === c.id ? "bg-amber-400/5" : ""}`}
                       >
                         <td className="py-3.5 font-sans font-bold text-white text-xs">{c.name}</td>
                         <td className="py-3.5 text-[10px] text-muted-foreground">{c.category}</td>
@@ -9545,7 +9564,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                         <td className="py-3.5">
                           <div className="flex items-center gap-1.5">
                             <div className="h-1.5 w-16 bg-white/5 rounded-full overflow-hidden">
-                              <div className="h-full bg-amber-400" style={{ width: `${c.progress}%` }} />
+                              <div className="h-full bg-amber-400" style={{ width: `\${c.progress}%` }} />
                             </div>
                             <span>{c.progress}%</span>
                           </div>
@@ -9557,7 +9576,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </table>
             </Card>
 
-            {/* Sidebar Details Card */}
             <Card className="md:col-span-1">
               {(() => {
                 const target = clients.find(c => c.id === selectedClientDetailId);
@@ -9610,8 +9628,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DISCOVERY SESSIONS */}
       {currentTab === "discovery_sessions" && (
         <Page title="Discovery Sessions Desk" subtitle="Review consultation requests and schedule active advisory clients.">
-
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 text-left">
             {discoveryRequests.length === 0 ? (
               <Card className="col-span-2 text-center p-8 border border-dashed border-white/5">
                 <div className="text-sm text-white font-bold mb-1">Discovery Desk empty</div>
@@ -9650,7 +9667,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <div className="mt-6 pt-3 border-t border-white/5 flex gap-2">
                     <button
                       onClick={() => handleApproveDiscovery(r.id)}
-                      className="w-full py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                      className="w-full py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                     >
                       Approve & Schedule Client
                     </button>
@@ -9671,9 +9688,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: CONSULTATIONS */}
       {currentTab === "consultations" && (
         <Page title="Advisory Session Hub" subtitle="Manage scheduled slot consultations, note-taking templates and past logs.">
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* List */}
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Sessions Schedule</h3>
               <div className="space-y-3">
@@ -9695,7 +9710,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            {/* Note taking workspace */}
             <Card className="md:col-span-2">
               <div className="border-b border-white/5 pb-3 mb-4 flex justify-between items-center">
                 <div>
@@ -9705,7 +9719,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
 
               <div className="space-y-4 text-xs">
-                {/* Notes Input */}
                 <div>
                   <label className="text-[10px] text-muted-foreground font-mono block mb-1">Session notes</label>
                   <textarea
@@ -9716,7 +9729,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   />
                 </div>
 
-                {/* Checklist Action Builder */}
                 <div>
                   <label className="text-[10px] text-muted-foreground font-mono block mb-1">Milestone Action Items</label>
                   <div className="space-y-2 mb-3">
@@ -9738,14 +9750,13 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                     />
                     <button
                       onClick={() => handleAddActionItem(1)}
-                      className="px-3 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                      className="px-3 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                     >
                       Add
                     </button>
                   </div>
                 </div>
 
-                {/* Simulated playback */}
                 <div className="p-3.5 rounded-xl border border-white/5 bg-slate-900/60 flex justify-between items-center">
                   <div className="flex items-center gap-2.5">
                     <Play className="h-4 w-4 text-amber-400 fill-current" />
@@ -9767,26 +9778,39 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ARENA REWARDS */}
       {currentTab === "rewards" && (
         <Page title="Advisor Rewards Arena" subtitle="Review and approve client reward ticket redemptions.">
-
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             {rewardTickets.map(t => (
               <Card key={t.id} className="flex flex-col justify-between border border-white/5 relative">
                 <div>
                   <div className="flex justify-between items-center text-[10px] font-mono mb-2">
                     <span className="text-muted-foreground">{t.id}</span>
-                    <span className={`px-2 py-0.5 rounded-full font-bold ${t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400"
-                      }`}>
+                    <span className={`px-2 py-0.5 rounded-full font-bold \${t.priority === "Critical" ? "bg-rose-500/10 text-rose-400" : "bg-amber-500/10 text-amber-400"}`}>
                       {t.priority}
                     </span>
                   </div>
 
-                  {/* Boarding pass aesthetics */}
-                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/5 mb-4">
+                  <div className="p-3.5 rounded-xl bg-slate-900/80 border border-white/5 mb-4 relative overflow-hidden">
+                    {/* Digital Voucher Stub Aesthetics */}
+                    <div className="absolute top-0 right-12 bottom-0 w-0.5 border-r border-dashed border-white/20" />
                     <div className="text-[10px] text-amber-400 font-mono font-bold uppercase tracking-wider">
                       {t.type}
                     </div>
                     <div className="text-sm font-bold text-white mt-2 font-display">{t.clientName}</div>
                     <div className="text-[9px] text-muted-foreground font-mono mt-1">Expires: {t.expiryDate}</div>
+                    
+                    {/* Barcode representation */}
+                    <div className="mt-4 flex items-center justify-between">
+                      <div className="flex gap-0.5 bg-black/40 p-1 rounded border border-white/5">
+                        <div className="w-[1.5px] h-4 bg-white/60" />
+                        <div className="w-[3px] h-4 bg-white/60" />
+                        <div className="w-[1px] h-4 bg-white/60" />
+                        <div className="w-[2px] h-4 bg-white/60" />
+                        <div className="w-[1px] h-4 bg-white/60" />
+                        <div className="w-[3px] h-4 bg-white/60" />
+                        <div className="w-[2px] h-4 bg-white/60" />
+                      </div>
+                      <span className="text-[7px] font-mono text-muted-foreground">REF: AD-92810</span>
+                    </div>
                   </div>
 
                   <div className="text-xs text-muted-foreground font-mono flex justify-between">
@@ -9801,7 +9825,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <div className="mt-6 pt-3 border-t border-white/5 flex gap-2">
                     <button
                       onClick={() => handleTicketStatus(t.id, "Approved")}
-                      className="w-full py-1.5 bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-[10px] font-bold rounded cursor-pointer transition"
+                      className="w-full py-1.5 bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-[10px] font-bold rounded cursor-pointer transition border-none"
                     >
                       Approve & Redeem
                     </button>
@@ -9822,9 +9846,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: ROADMAPS */}
       {currentTab === "roadmaps" && (
         <Page title="Advisor Roadmap Builder" subtitle="Construct milestones and deadline parameters for advisory clients.">
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Client selector */}
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Select Client</h3>
               <div className="space-y-2">
@@ -9832,7 +9854,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={c.id}
                     onClick={() => setActiveRoadmapClient(c.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${activeRoadmapClient === c.id
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition \${activeRoadmapClient === c.id
                         ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
                       }`}
@@ -9849,7 +9871,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            {/* Builder interface */}
             <Card className="md:col-span-2">
               {(() => {
                 const target = clients.find(c => c.id === activeRoadmapClient);
@@ -9863,17 +9884,20 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                     </h4>
 
                     {/* Milestones list */}
-                    <div className="space-y-3 mb-6">
+                    <div className="space-y-3 mb-6 relative">
+                      {/* Vertical line timeline connector */}
+                      <div className="absolute left-[14px] top-4 bottom-4 w-0.5 bg-white/5" />
+
                       {road.milestones.map(m => (
-                        <div key={m.id} className="flex gap-3 items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                        <div key={m.id} className="flex gap-3 items-center p-3 rounded-xl border border-white/5 bg-white/[0.01] relative">
                           <input
                             type="checkbox"
                             checked={m.done}
                             onChange={() => toggleMilestone(target.id, m.id)}
-                            className="h-4 w-4 rounded accent-amber-400 cursor-pointer"
+                            className="h-4 w-4 rounded accent-amber-400 cursor-pointer z-10"
                           />
                           <div className="flex-1">
-                            <div className={`text-xs font-bold ${m.done ? "line-through text-muted-foreground" : "text-white"}`}>
+                            <div className={`text-xs font-bold \${m.done ? "line-through text-muted-foreground" : "text-white"}`}>
                               {m.title}
                             </div>
                             <div className="text-[10px] text-muted-foreground mt-0.5">
@@ -9887,7 +9911,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       ))}
                     </div>
 
-                    {/* Add Milestone Form */}
                     <form onSubmit={handleAddMilestone} className="pt-4 border-t border-white/5 space-y-4">
                       <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">Insert Milestone Node</h4>
                       <div className="grid gap-4 md:grid-cols-2">
@@ -9921,7 +9944,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       </div>
                       <button
                         type="submit"
-                        className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                        className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                       >
                         Publish Milestone
                       </button>
@@ -9937,8 +9960,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: TASKS */}
       {currentTab === "tasks" && (
         <Page title="Tasks Assignment & Review" subtitle="Assign sprint items to clients and audit submitted deliverables.">
-
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-3 text-left">
             {["todo", "progress", "review"].map((col) => {
               const list = tasks.filter(t => t.column === col);
               return (
@@ -9973,7 +9995,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                             {col === "review" ? (
                               <button
                                 onClick={() => handleApproveSubmission(t.id)}
-                                className="px-2.5 py-1 bg-emerald-500 text-slate-950 text-[9px] font-bold rounded cursor-pointer hover:bg-emerald-400 transition"
+                                className="px-2.5 py-1 bg-emerald-500 text-slate-950 text-[9px] font-bold rounded cursor-pointer hover:bg-emerald-400 transition border-none"
                               >
                                 Approve Deliverable
                               </button>
@@ -9982,7 +10004,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                                 {col !== "todo" && (
                                   <button
                                     onClick={() => moveTask(t.id, col === "progress" ? "todo" : "progress")}
-                                    className="text-[9px] text-muted-foreground hover:text-white cursor-pointer"
+                                    className="text-[9px] text-muted-foreground hover:text-white cursor-pointer border-none bg-transparent"
                                   >
                                     ◀ Back
                                   </button>
@@ -9990,7 +10012,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                                 {col !== "review" && (
                                   <button
                                     onClick={() => moveTask(t.id, col === "todo" ? "progress" : "review")}
-                                    className="text-[9px] text-amber-400 hover:text-white font-semibold cursor-pointer"
+                                    className="text-[9px] text-amber-400 hover:text-white font-semibold cursor-pointer border-none bg-transparent"
                                   >
                                     Move ▶
                                   </button>
@@ -10012,10 +10034,8 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: MEETINGS */}
       {currentTab === "meetings" && (
         <Page title="Advisory Meeting Hub" subtitle="Coordinate Google Meet/Zoom calendar slots and review automated AI session summaries.">
-
-          {/* Active room overlay */}
           {activeAdvisoryRoom && (
-            <Card className="mb-6 border border-amber-400/40 bg-slate-950/90 max-w-xl p-6 relative overflow-hidden">
+            <Card className="mb-6 border border-amber-400/40 bg-slate-950/90 max-w-xl p-6 relative overflow-hidden text-left">
               <div className="absolute top-0 right-0 h-40 w-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
 
               <div className="flex justify-between items-center border-b border-white/5 pb-3 mb-4">
@@ -10027,7 +10047,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 </div>
                 <button
                   onClick={() => setActiveAdvisoryRoom(null)}
-                  className="px-2.5 py-1 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-[10px] font-bold rounded-lg cursor-pointer transition"
+                  className="px-2.5 py-1 bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 text-[10px] font-bold rounded-lg cursor-pointer transition border-none"
                 >
                   End Call Session
                 </button>
@@ -10044,17 +10064,26 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 </div>
               </div>
 
-              {/* Live transcript indicator */}
-              <div className="mt-4 p-3 bg-white/[0.01] border border-white/5 rounded-xl text-xs">
-                <div className="text-[9px] font-mono uppercase text-muted-foreground">Session Clocks:</div>
-                <div className="text-white mt-1">
-                  Time elapsed: {Math.floor(virtualTimer / 60)}m {virtualTimer % 60}s
+              {/* Ticking call clock and soundwave */}
+              <div className="mt-4 p-3.5 bg-white/[0.01] border border-white/5 rounded-xl text-xs flex justify-between items-center">
+                <div>
+                  <div className="text-[9px] font-mono uppercase text-muted-foreground">Session Clocks:</div>
+                  <div className="text-white mt-1 font-mono font-bold">
+                    Time elapsed: {Math.floor(virtualTimer / 60)}m {virtualTimer % 60}s
+                  </div>
+                </div>
+                {/* Mock soundwave animation bar */}
+                <div className="flex gap-1 items-end h-6 z-10 pr-2">
+                  <div className="w-[3px] bg-amber-400 animate-audioWave1 rounded-full" style={{ height: "40%" }} />
+                  <div className="w-[3px] bg-amber-400 animate-audioWave2 rounded-full" style={{ height: "70%" }} />
+                  <div className="w-[3px] bg-amber-400 animate-audioWave3 rounded-full" style={{ height: "30%" }} />
+                  <div className="w-[3px] bg-amber-400 animate-audioWave4 rounded-full" style={{ height: "90%" }} />
                 </div>
               </div>
             </Card>
           )}
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Scheduled Advisory Sessions</h3>
               <div className="space-y-3">
@@ -10062,7 +10091,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <div key={m.id} className="p-4 border border-white/5 rounded-xl bg-white/[0.01] hover:bg-white/[0.02] flex justify-between items-center gap-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] font-mono bg-white/5 border border-white/10 px-2 py-0.5 rounded text-white">
+                        <span className="text-[9px] font-mono bg-white/5 border border-white/10 px-2 py-0.5 rounded text-white font-bold">
                           {m.type}
                         </span>
                         <span className="text-[10px] text-muted-foreground">{m.date} at {m.time}</span>
@@ -10072,7 +10101,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                     </div>
                     <button
                       onClick={() => setActiveAdvisoryRoom(m.client)}
-                      className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition flex items-center gap-1"
+                      className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition flex items-center gap-1 border-none"
                     >
                       <Play className="h-3 w-3 fill-current" /> Join Room
                     </button>
@@ -10085,8 +10114,8 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">AI summaries output</h3>
               <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-xs leading-relaxed text-muted-foreground font-mono">
                 <strong className="text-white block mb-1 uppercase text-[9px]">Last session action items:</strong>
-                *   Cap table Delaware charters review complete.
-                *   Milestone option pools proposed at 8% Cap.
+                *   Cap table Delaware charters review complete.<br />
+                *   Milestone option pools proposed at 8% Cap.<br />
                 *   Follow-up roadmap scheduled for Aarav Sharma next week.
               </div>
             </Card>
@@ -10097,10 +10126,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: WORKSPACE */}
       {currentTab === "workspace" && (
         <Page title="Client Workspace Hub" subtitle="Private collaborative channels, chat grids, and milestone logs.">
-
-          <div className="grid gap-6 md:grid-cols-4">
-
-            {/* Client sidebar */}
+          <div className="grid gap-6 md:grid-cols-4 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Collaborators</h3>
               <div className="space-y-2">
@@ -10108,7 +10134,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={c.id}
                     onClick={() => setActiveWorkspaceClient(c.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${activeWorkspaceClient === c.id
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition \${activeWorkspaceClient === c.id
                         ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
                       }`}
@@ -10122,7 +10148,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            {/* Chat board and files */}
             <Card className="md:col-span-3 flex flex-col h-[450px]">
               {(() => {
                 const target = clients.find(c => c.id === activeWorkspaceClient);
@@ -10130,28 +10155,30 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 if (!target) return <div className="text-xs text-muted-foreground text-center">Select a client to open workspace</div>;
 
                 return (
-                  <>
-                    <div className="flex items-center gap-2 border-b border-white/5 pb-3 mb-3">
-                      <Users className="h-4.5 w-4.5 text-amber-400" />
-                      <span className="text-xs font-bold text-white font-mono uppercase">
-                        Workspace channel: {target.name}
-                      </span>
-                    </div>
+                  <div className="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center gap-2 border-b border-white/5 pb-3 mb-3">
+                        <Users className="h-4.5 w-4.5 text-amber-400" />
+                        <span className="text-xs font-bold text-white font-mono uppercase">
+                          Workspace channel: {target.name}
+                        </span>
+                      </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
-                      {chats.map((ch, idx) => (
-                        <div key={idx} className={`flex ${ch.sender === "expert" ? "justify-end" : "justify-start"}`}>
-                          <div className={`p-3 rounded-xl max-w-md text-xs leading-relaxed ${ch.sender === "expert"
-                              ? "bg-amber-400 text-slate-950 font-medium"
-                              : "bg-white/[0.02] border border-white/5 text-white/95"
-                            }`}>
-                            <div className="font-bold text-[9px] opacity-75 mb-0.5">
-                              {ch.sender === "expert" ? "Dr. John (Advisor)" : target.name} · {ch.time}
+                      <div className="overflow-y-auto space-y-3 pr-2 max-h-[300px] mb-4">
+                        {chats.map((ch, idx) => (
+                          <div key={idx} className={`flex \${ch.sender === "expert" ? "justify-end" : "justify-start"}`}>
+                            <div className={`p-3 rounded-xl max-w-md text-xs leading-relaxed \${ch.sender === "expert"
+                                ? "bg-amber-400 text-slate-950 font-medium"
+                                : "bg-white/[0.02] border border-white/5 text-white/95"
+                              }`}>
+                              <div className="font-bold text-[9px] opacity-75 mb-0.5">
+                                {ch.sender === "expert" ? "Dr. John (Advisor)" : target.name} · {ch.time}
+                              </div>
+                              <div>{ch.text}</div>
                             </div>
-                            <div>{ch.text}</div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
 
                     <form onSubmit={handleSendWorkspaceChat} className="flex gap-2 border-t border-white/5 pt-3">
@@ -10164,12 +10191,12 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       />
                       <button
                         type="submit"
-                        className="p-2 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl cursor-pointer transition"
+                        className="p-2 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl cursor-pointer transition border-none"
                       >
                         <Send className="h-4 w-4" />
                       </button>
                     </form>
-                  </>
+                  </div>
                 );
               })()}
             </Card>
@@ -10180,9 +10207,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: DOCUMENTS */}
       {currentTab === "documents" && (
         <Page title="Document Review vault" subtitle="Review uploaded papers, portfolios, and pitch decks. Audit with annotations.">
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Library list */}
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Review Directory</h3>
               <div className="space-y-2">
@@ -10190,7 +10215,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <button
                     key={doc.id}
                     onClick={() => setSelectedDocId(doc.id)}
-                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition ${selectedDocId === doc.id
+                    className={`w-full text-left p-3 rounded-xl border flex justify-between items-center cursor-pointer transition \${selectedDocId === doc.id
                         ? "bg-amber-400/10 border-amber-400/30 text-white"
                         : "bg-white/[0.01] border-white/5 text-muted-foreground hover:bg-white/[0.03]"
                       }`}
@@ -10204,7 +10229,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            {/* Document reviewer & annotations */}
             <Card className="md:col-span-2">
               {(() => {
                 const doc = documents.find(d => d.id === selectedDocId);
@@ -10221,13 +10245,12 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                       <button
                         onClick={() => handleRunDocumentAudit(doc.id)}
                         disabled={runAuditLoading}
-                        className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition disabled:opacity-50"
+                        className="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition disabled:opacity-50 border-none"
                       >
                         {runAuditLoading ? "Auditing files..." : "Run AI Document Audit"}
                       </button>
                     </div>
 
-                    {/* Annotations audit interface */}
                     <div className="space-y-4">
                       <div className="p-4 rounded-xl bg-slate-950 border border-white/5 font-mono text-[11px] leading-relaxed text-white/90 relative">
                         <span className="text-[8px] bg-white/5 text-muted-foreground px-1.5 py-0.5 rounded absolute top-2 right-2">PDF PREVIEW</span>
@@ -10264,9 +10287,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: AI EXPERT ASSISTANT */}
       {currentTab === "expert_copilot" && (
         <Page title="Advisor AI Assistant" subtitle="Prompt reports creation, milestone roadmaps, and client analytics briefs.">
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Prompts list */}
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-1">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Suggested Prompts</h3>
               <div className="space-y-2">
@@ -10287,35 +10308,34 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            {/* Chat Box */}
-            <Card className="md:col-span-2 flex flex-col h-[480px]">
-              <div className="flex items-center gap-2 border-b border-white/5 pb-3 mb-3">
-                <div className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-pulse" />
-                <span className="text-xs font-bold text-white font-mono uppercase">AI Assistant Terminal</span>
+            <Card className="md:col-span-2 flex flex-col h-[480px] justify-between">
+              <div>
+                <div className="flex items-center gap-2 border-b border-white/5 pb-3 mb-3">
+                  <div className="w-2.5 h-2.5 bg-amber-400 rounded-full animate-pulse" />
+                  <span className="text-xs font-bold text-white font-mono uppercase">AI Advisor Terminal</span>
+                </div>
+
+                <div className="overflow-y-auto space-y-3 pr-2 max-h-[300px] mb-4">
+                  {orbMessages.map((m, idx) => (
+                    <div key={idx} className={`flex \${m.sender === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed \${m.sender === "user"
+                          ? "bg-amber-400 text-slate-950 font-medium"
+                          : "bg-white/[0.02] border border-white/5 text-white/90"
+                        }`}>
+                        <div className="whitespace-pre-line">{m.text}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {orbLoading && (
+                    <div className="flex justify-start">
+                      <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-muted-foreground italic font-mono animate-pulse">
+                        Assistant Orb compiling recommendations...
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Chat Output */}
-              <div className="flex-1 overflow-y-auto space-y-3 pr-2 mb-4">
-                {orbMessages.map((m, idx) => (
-                  <div key={idx} className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}>
-                    <div className={`p-3 rounded-xl max-w-lg text-xs leading-relaxed ${m.sender === "user"
-                        ? "bg-amber-400 text-slate-950 font-medium"
-                        : "bg-white/[0.02] border border-white/5 text-white/90"
-                      }`}>
-                      <div className="whitespace-pre-line">{m.text}</div>
-                    </div>
-                  </div>
-                ))}
-                {orbLoading && (
-                  <div className="flex justify-start">
-                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-muted-foreground italic font-mono">
-                      Assistant Orb compiling recommendations...
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Chat Input form */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -10334,7 +10354,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 />
                 <button
                   type="submit"
-                  className="p-2 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl cursor-pointer transition"
+                  className="p-2 bg-amber-400 hover:bg-amber-300 text-slate-950 rounded-xl cursor-pointer transition border-none"
                 >
                   <Send className="h-4 w-4" />
                 </button>
@@ -10347,8 +10367,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REVENUE CENTER */}
       {currentTab === "revenue" && (
         <Page title="Advisor Revenue Engine" subtitle="Audit recurring consulting retainers, completed session payouts, and payout transfers.">
-
-          <div className="grid gap-6 md:grid-cols-3 mb-6">
+          <div className="grid gap-6 md:grid-cols-3 mb-6 text-left">
             <Stat label="Revenue This Month (YTD)" value="₹2,40,000" tone="electric" />
             <Stat label="Average Consultation value" value="₹8,000 / Session" tone="violet" />
 
@@ -10367,13 +10386,13 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                     <span>{payoutProgress}%</span>
                   </div>
                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-400" style={{ width: `${payoutProgress}%` }} />
+                    <div className="h-full bg-amber-400" style={{ width: `\${payoutProgress}%` }} />
                   </div>
                 </div>
               ) : (
                 <button
                   onClick={handleRequestPayout}
-                  className="mt-4 w-full py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                  className="mt-4 w-full py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                 >
                   Request Payout Transfer
                 </button>
@@ -10381,7 +10400,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
             </Card>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Payout Transfer Ledger</h3>
               <div className="space-y-3 font-mono text-xs">
@@ -10424,88 +10443,6 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: REVIEWS & REPUTATION */}
       {currentTab === "reviews" && (
         <Page title="Advisor Star Reviews & Reputation" subtitle="Audit client comments, reputation metrics and generate share certificates.">
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {/* Reputation stats */}
-            <Card className="md:col-span-1">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Reputation index</h3>
-              <div className="space-y-4 text-xs font-mono">
-                <div>
-                  <div className="text-[10px] text-muted-foreground uppercase">Average Star Rating</div>
-                  <div className="text-2xl font-bold text-white mt-1">4.96 / 5.0</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground uppercase">Response time SLA</div>
-                  <div className="text-2xl font-bold text-emerald-400 mt-1">1.2 Hours</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground uppercase">Milestones Completion Rate</div>
-                  <div className="text-2xl font-bold text-white mt-1">94.8%</div>
-                </div>
-              </div>
-            </Card>
-
-            {/* Reviews list */}
-            <Card className="md:col-span-2">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Client Reviews feed</h3>
-              <div className="space-y-4">
-                {reviews.map((rev, idx) => (
-                  <div key={idx} className="p-4 border border-white/5 rounded-xl bg-white/[0.01]">
-                    <div className="flex justify-between text-xs mb-2">
-                      <span className="text-white font-bold">{rev.author}</span>
-                      <span className="text-amber-400 font-bold">{"★".repeat(rev.rating)}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{rev.text}</p>
-                    <div className="mt-2 text-[9px] text-muted-foreground font-mono">Submitted {rev.date}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </div>
-        </Page>
-      )}
-
-      {/* TAB: ANALYTICS */}
-      {currentTab === "analytics" && (
-        <Page title="Performance Metrics & Analytics" subtitle="Review consultant distributions, metrics served, and growth.">
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Clients Served Distribution</h3>
-              <div className="space-y-3 font-mono text-xs">
-                {[
-                  { segment: "Founder Ventures", count: 8, percentage: 44, color: "bg-amber-400" },
-                  { segment: "Academic Researchers", count: 6, percentage: 33, color: "bg-blue-400" },
-                  { segment: "Student Placements", count: 4, percentage: 22, color: "bg-purple-400" }
-                ].map((item, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between text-muted-foreground text-[10px] mb-1">
-                      <span className="text-white font-semibold">{item.segment}</span>
-                      <span>{item.count} clients ({item.percentage}%)</span>
-                    </div>
-                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div className={`h-full ${item.color}`} style={{ width: `${item.percentage}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            <Card className="flex flex-col justify-center items-center text-center">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Milestone Retention metrics</h3>
-              <div className="text-4xl font-black text-amber-500 font-display">96.4%</div>
-              <p className="text-xs text-muted-foreground mt-2 max-w-xs leading-relaxed">
-                96.4% of clients retain services after the initial discovery consultation session.
-              </p>
-            </Card>
-          </div>
-        </Page>
-      )}
-
-      {/* TAB: ACHIEVEMENT SYSTEM */}
-      {currentTab === "rewards_achievements" || currentTab === "achievements" ? (
-        <Page title="Expert Reputation Achievements" subtitle="Generate advisor credential certificates and LinkedIn posters.">
-
-          {/* Certificate showcase */}
           {certificateRequested && (
             <Card className="mb-6 border-2 border-amber-400 bg-slate-950 p-8 max-w-xl mx-auto text-center relative overflow-hidden">
               <div className="absolute top-0 right-0 h-40 w-40 bg-amber-400/5 rounded-full blur-3xl pointer-events-none" />
@@ -10524,7 +10461,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               <div className="mt-4 flex gap-2 justify-center">
                 <button
                   onClick={() => alert("Certificate printed!")}
-                  className="px-4 py-1.5 bg-amber-400 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                  className="px-4 py-1.5 bg-amber-400 text-slate-950 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                 >
                   Print PDF Certificate
                 </button>
@@ -10538,7 +10475,43 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
             </Card>
           )}
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
+            <Card className="md:col-span-1">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Reputation index</h3>
+              <div className="space-y-4 text-xs font-mono">
+                <div>
+                  <div className="text-[10px] text-muted-foreground uppercase">Average Star Rating</div>
+                  <div className="text-2xl font-bold text-white mt-1">4.96 / 5.0</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-muted-foreground uppercase">Response time SLA</div>
+                  <div className="text-2xl font-bold text-emerald-400 mt-1">1.2 Hours</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-muted-foreground uppercase">Milestones Completion Rate</div>
+                  <div className="text-2xl font-bold text-white mt-1">94.8%</div>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="md:col-span-2">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Client Reviews feed</h3>
+              <div className="space-y-4">
+                {reviews.map((rev, idx) => (
+                  <div key={idx} className="p-4 border border-white/5 rounded-xl bg-white/[0.01]">
+                    <div className="flex justify-between text-xs mb-2">
+                      <span className="text-white font-bold">{rev.author}</span>
+                      <span className="text-amber-400 font-bold">{"★".repeat(rev.rating)}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{rev.text}</p>
+                    <div className="mt-2 text-[9px] text-muted-foreground font-mono">Submitted {rev.date}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3 mt-6 text-left">
             {[
               { title: "Research Champion", desc: "Guide 5 peer researchers to compile and publish LaTeX abstracts.", badge: "RES-CHAMP" },
               { title: "Top Startup Mentor", desc: "Complete Safe parameters diligence structures audits for 10 founders.", badge: "START-MENTOR" },
@@ -10558,19 +10531,54 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   onClick={() => setCertificateRequested(item.title)}
                   className="mt-6 w-full py-1.5 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold text-[10px] rounded cursor-pointer transition"
                 >
-                  Generate Certificate Certificate
+                  Generate Certificate
                 </button>
               </Card>
             ))}
           </div>
         </Page>
-      ) : null}
+      )}
+
+      {/* TAB: ANALYTICS */}
+      {currentTab === "analytics" && (
+        <Page title="Performance Metrics & Analytics" subtitle="Review consultant distributions, metrics served, and growth.">
+          <div className="grid gap-6 md:grid-cols-2 text-left">
+            <Card>
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Clients Served Distribution</h3>
+              <div className="space-y-3 font-mono text-xs">
+                {[
+                  { segment: "Founder Ventures", count: 8, percentage: 44, color: "bg-amber-400" },
+                  { segment: "Academic Researchers", count: 6, percentage: 33, color: "bg-blue-400" },
+                  { segment: "Student Placements", count: 4, percentage: 22, color: "bg-purple-400" }
+                ].map((item, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between text-muted-foreground text-[10px] mb-1">
+                      <span className="text-white font-semibold">{item.segment}</span>
+                      <span>{item.count} clients ({item.percentage}%)</span>
+                    </div>
+                    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div className={`h-full \${item.color}`} style={{ width: `\${item.percentage}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="flex flex-col justify-center items-center text-center">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Milestone Retention metrics</h3>
+              <div className="text-4xl font-black text-amber-500 font-display">96.4%</div>
+              <p className="text-xs text-muted-foreground mt-2 max-w-xs leading-relaxed">
+                96.4% of clients retain services after the initial discovery consultation session.
+              </p>
+            </Card>
+          </div>
+        </Page>
+      )}
 
       {/* TAB: COMMUNITY */}
       {currentTab === "community" && (
         <Page title="Advisor Roundtable Forums" subtitle="Participate in expert roundtables, exchange credentials and register for masterclasses.">
-
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Expert Discussion threads</h3>
               <div className="space-y-3.5">
@@ -10600,7 +10608,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                   <div key={idx} className="p-3 border border-white/5 rounded-xl bg-white/[0.01]">
                     <div className="font-bold text-white">{ev.topic}</div>
                     <div className="text-[10px] text-muted-foreground font-mono mt-1">{ev.date} at {ev.time}</div>
-                    <button onClick={() => alert("Registered for panel roundtable slot.")} className="mt-2.5 px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[9px] rounded transition cursor-pointer">
+                    <button onClick={() => alert("Registered for panel roundtable slot.")} className="mt-2.5 px-3 py-1 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-[9px] rounded transition cursor-pointer border-none">
                       Register Slot
                     </button>
                   </div>
@@ -10614,8 +10622,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: PROFILE */}
       {currentTab === "profile" && (
         <Page title="Advisor Credentials profile" subtitle="Configure check thesis, average session pricing, and consulting availability.">
-
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 text-left">
             <Card className="md:col-span-2">
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Advisor details</h3>
               <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Profile credentials saved successfully."); }}>
@@ -10644,7 +10651,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
                 </div>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                  className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
                 >
                   Save Profile Details
                 </button>
@@ -10656,7 +10663,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Your thesis focus is verified under the platform guidelines. Validated to advise Founders, Researchers, and Students.
               </p>
-              <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-400/20 rounded-xl text-xs text-emerald-400 font-semibold font-mono">
+              <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-400/20 rounded-xl text-xs text-emerald-400 font-semibold font-mono text-center">
                 ✓ Active Advisor License validated
               </div>
             </Card>
@@ -10667,13 +10674,12 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
       {/* TAB: SETTINGS */}
       {currentTab === "settings" && (
         <Page title="Advisor Configurations Settings" subtitle="Review security permissions, NDA templates approvals, and API sync tags.">
-
-          <Card className="max-w-2xl">
+          <Card className="max-w-2xl text-left">
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 font-mono">Operational configurations</h3>
             <div className="space-y-4 text-xs">
               <div className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
                 <div>
-                  <div className="text-xs font-bold text-white">Auto-sign Client NDAs</div>
+                  <div className="text-xs font-bold text-white font-sans">Auto-sign Client NDAs</div>
                   <div className="text-[10px] text-muted-foreground mt-0.5">Automatically approve and sign standard templates before sessions.</div>
                 </div>
                 <input
@@ -10685,7 +10691,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
 
               <div className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
                 <div>
-                  <div className="text-xs font-bold text-white">Enforce Two-Factor verification</div>
+                  <div className="text-xs font-bold text-white font-sans">Enforce Two-Factor verification</div>
                   <div className="text-[10px] text-muted-foreground mt-0.5">Enforce security key requirements for checkout transfers.</div>
                 </div>
                 <input
@@ -10697,7 +10703,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
 
               <div className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
                 <div>
-                  <div className="text-xs font-bold text-white">Client matching notification</div>
+                  <div className="text-xs font-bold text-white font-sans">Client matching notification</div>
                   <div className="text-[10px] text-muted-foreground mt-0.5">Alert if a new user fit score exceeds 80% thresholds.</div>
                 </div>
                 <input
@@ -10711,7 +10717,7 @@ function ExpertDashboard({ currentTab }: { currentTab: string }) {
             <div className="mt-6 pt-4 border-t border-white/5 flex justify-end">
               <button
                 onClick={() => alert("Configurations saved successfully.")}
-                className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition"
+                className="px-4 py-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 font-bold text-[10px] rounded-lg cursor-pointer transition border-none"
               >
                 Save Settings
               </button>

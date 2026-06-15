@@ -116,64 +116,89 @@ export function HowItWorks() {
   const steps = [
     {
       n: "01",
+      cat: "ASSESS",
       t: "AI Assessment",
       d: "Deep multi-domain analysis of skills, goals, gaps, and timing.",
+      img: "/AI Assessment.jpeg",
       i: Brain,
     },
     {
       n: "02",
+      cat: "MATCH",
       t: "Expert Matching",
       d: "Matched to vetted mentors, advisors, and collaborators.",
+      img: "/Expert Matching.jpeg",
       i: Users,
     },
     {
       n: "03",
+      cat: "PLAN",
       t: "Roadmap Creation",
       d: "A measurable plan with milestones, dependencies, and risk.",
+      img: "/Roadmap Creation.jpeg",
       i: Map,
     },
     {
       n: "04",
+      cat: "TRACK",
       t: "Execution Tracking",
       d: "Kanban, calendar, and milestone tracking with AI nudges.",
+      img: "/Execution Tracking.jpeg",
       i: GanttChart,
     },
     {
       n: "05",
+      cat: "ACHIEVE",
       t: "Outcome Achievement",
       d: "Internships, jobs, papers, patents, funding — verified.",
+      img: "/Outcome Achievement.jpeg",
       i: Trophy,
     },
   ];
   return (
     <section id="how" className="py-28">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         <SectionHead eyebrow="How it works" title="Five steps from ambition to outcome." />
-        <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {steps.map(({ n, t, d, i: Icon }) => (
-            <li key={n} className="premium-white-window-card group">
-              {/* macOS-style window tools bar */}
-              <div className="window-tools">
-                <div className="window-dots">
-                  <span className="window-dot red" />
-                  <span className="window-dot yellow" />
-                  <span className="window-dot green" />
-                </div>
-                <span className="window-step">Step {n}</span>
+        <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {steps.map(({ n, cat, t, d, img }) => (
+            <li
+              key={n}
+              className="relative group overflow-hidden rounded-[24px] h-[450px] flex flex-col justify-end p-6 border-2 border-white/20 shadow-2xl transition-all duration-300 hover:border-purple-500/60"
+            >
+              {/* Background Image & Overlay */}
+              <div className="absolute inset-0 z-0">
+                <img
+                  src={img}
+                  alt={t}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020205] via-[#020205]/60 to-transparent opacity-90 transition-opacity duration-300 group-hover:opacity-95" />
               </div>
-              
-              {/* Card content body */}
-              <div className="card-body">
-                <div className="card-icon-wrapper">
-                  <Icon className="h-5.5 w-5.5" />
+
+              {/* Content Container */}
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                {/* Top Row: Center-aligned Stencil Stiled Number */}
+                <div className="flex justify-center w-full mt-2">
+                  <span 
+                    className="text-6xl font-black text-white select-none tracking-widest"
+                    style={{ fontFamily: "'Big Shoulders Stencil Display', sans-serif" }}
+                  >
+                    {parseInt(n)}
+                  </span>
                 </div>
-                
-                <h3 className="card-title-white">
-                  {t}
-                </h3>
-                <p className="card-desc-white">
-                  {d}
-                </p>
+
+                {/* Bottom Row: Text Details with Fixed Height for Perfect Horizontal Alignment */}
+                <div className="text-left mt-auto h-[160px] flex flex-col justify-start">
+                  <div className="text-[10px] font-bold tracking-[0.22em] text-purple-400 uppercase mb-2">
+                    {cat}
+                  </div>
+                  <h3 className="font-display text-xl font-bold text-white tracking-tight leading-snug group-hover:text-purple-300 transition-colors duration-300">
+                    {t}
+                  </h3>
+                  <p className="mt-2 text-xs text-white/60 leading-relaxed font-sans line-clamp-4">
+                    {d}
+                  </p>
+                </div>
               </div>
             </li>
           ))}
