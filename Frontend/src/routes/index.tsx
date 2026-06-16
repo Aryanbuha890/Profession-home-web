@@ -2,27 +2,22 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   PlayCircle,
-  ShieldCheck,
-  CheckCircle2,
   Sparkles,
   Users,
-  LayoutDashboard,
+  Eye,
+  Cpu,
   Brain,
   TrendingUp,
   Compass,
-  Eye,
-  Cpu,
   Bot,
-  Trophy,
-  Coins,
-  Code,
-  Database,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
 import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { ScrollReveal } from "../components/ScrollReveal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -55,6 +50,7 @@ function Landing() {
       <DashboardSection />
       <Trust />
       <JourneySection />
+      <ScrollRevealSection />
       <HowItWorks />
       <Ecosystem />
       <Features />
@@ -65,148 +61,116 @@ function Landing() {
 }
 
 function Hero() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   const ref = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
+  const word1 = "PROFESSIONAL".split("");
+  const word2 = "HOME".split("");
+  const images = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+
   return (
     <section
       ref={ref}
       className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden text-white pt-24 pb-12"
-      style={{
-        background:
-          "radial-gradient(1200px 600px at 50% 10%, rgba(124,58,237,0.32), transparent 60%), radial-gradient(900px 500px at 80% 0%, rgba(37,99,235,0.22), transparent 60%), radial-gradient(700px 400px at 10% 20%, rgba(13,148,136,0.15), transparent 60%), linear-gradient(180deg, #05060F 0%, #07091A 60%, #05060F 100%)",
-      }}
     >
-      {/* Grid + scanline overlays */}
-      <div
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.6) 3px, transparent 4px)",
-        }}
-      />
-      {/* Aurora radial backdrops */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[620px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.45),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute top-40 -left-32 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(37,99,235,0.3),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 right-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(13,148,136,0.25),transparent)] blur-3xl" />
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-[#05060F] pointer-events-none">
+        <video
+          src="/bg%20video%20ph.mp4"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.45]"
+          muted
+          loop
+          playsInline
+          autoPlay
+        />
 
-      <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1">
+        {/* Blending overlay layers for contrast and modern neon look */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#05060F]/20 via-transparent to-[#05060F]" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#05060F]/30 to-[#05060F]/90" />
+      </div>
+
+      <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1 z-10">
         <motion.div style={{ y }} className="mx-auto max-w-5xl text-center w-full flex flex-col items-center justify-center">
-          {/* Tagline Badge - 3D Rotating Wordmark */}
-          <div style={{ perspective: "1500px" }} className="mb-8 flex justify-center select-none">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85, y: 20 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotateY: [0, 360],
-                rotateX: [10, -10, 10],
-              }}
-              transition={{
-                opacity: { duration: 0.8 },
-                scale: { duration: 0.8 },
-                y: { duration: 0.8 },
-                rotateY: { duration: 18, ease: "linear", repeat: Infinity },
-                rotateX: { duration: 9, ease: "easeInOut", repeat: Infinity },
-              }}
-              style={{
-                transformStyle: "preserve-3d",
-              }}
-              className="relative flex items-center justify-center px-12 py-6 cursor-grab active:cursor-grabbing"
-            >
-              {/* Layered 3D Text Extrusion (Creates a solid blocky 3D depth of letters) */}
-              <span 
-                className="relative inline-block font-sans font-black tracking-[0.2em] text-xl sm:text-2xl md:text-4xl lg:text-5xl uppercase text-center" 
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {Array.from({ length: 30 }).map((_, i) => {
-                  const zValue = i * 0.85;
-                  const pct = i / 30;
-                  
-                  // Generates smooth lighting shades from base shadow to highlight
-                  let color = "#0a0518"; // deep shadow backplate
-                  if (pct > 0.95) {
-                    color = "#c084fc"; // violet-400 near front
-                  } else if (pct > 0.8) {
-                    color = "#a855f7"; // purple-500
-                  } else if (pct > 0.6) {
-                    color = "#9333ea"; // purple-600
-                  } else if (pct > 0.4) {
-                    color = "#7e22ce"; // purple-700
-                  } else if (pct > 0.2) {
-                    color = "#581c87"; // purple-900
-                  } else if (pct > 0.08) {
-                    color = "#3b0764"; // dark violet shadow
-                  }
 
-                  return (
-                    <span
-                      key={i}
-                      className="absolute inset-0 flex items-center justify-center whitespace-nowrap pointer-events-none"
-                      style={{
-                        transform: `translate3d(0, 0, ${zValue}px)`,
-                        color: color,
-                        filter: i === 0 ? "blur(4px) opacity(0.7)" : "none",
-                        WebkitTextStroke: i < 28 ? "1.5px rgba(0,0,0,0.3)" : "none",
-                      }}
-                    >
-                      PROFESSIONAL HOME
-                    </span>
-                  );
-                })}
-                
-                {/* Frontmost Layer (Glossy holographic styling) */}
-                <span
-                  className="relative flex items-center justify-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-violet-100 to-fuchsia-300 filter drop-shadow-[0_4px_10px_rgba(167,139,250,0.6)]"
-                  style={{
-                    transform: "translate3d(0, 0, 25.5px)",
-                  }}
-                >
-                  PROFESSIONAL HOME
-                </span>
-              </span>
-            </motion.div>
+          {/* Giant Interactive Serif Display Typography */}
+          <div className="flex flex-col items-center justify-center select-none tracking-tight leading-[0.95] text-center w-full max-w-6xl mb-6 font-serif-display">
+
+            {/* Word 1: PROFESSIONAL - Strict flex-nowrap to avoid breaking onto new lines */}
+            <div className="flex flex-row flex-nowrap justify-center gap-[0.02em] text-[11vw] font-bold whitespace-nowrap">
+              {word1.map((char, idx) => {
+                const globalIdx = idx;
+                const imgUrl = images[globalIdx % images.length];
+                const isHovered = hoveredIdx === globalIdx;
+
+                return (
+                  <span
+                    key={idx}
+                    onMouseEnter={() => {
+                      setHoveredIdx(globalIdx);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIdx(null);
+                    }}
+                    className={`inline-block transition-all duration-300 ease-out transform ${isHovered
+                        ? "scale-[1.08] text-transparent bg-clip-text bg-cover bg-center drop-shadow-[0_0_35px_rgba(167,139,250,0.85)] z-20"
+                        : "text-slate-100 hover:text-transparent bg-clip-text bg-cover bg-center"
+                      }`}
+                    style={{
+                      backgroundImage: isHovered ? `url(${imgUrl})` : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Word 2: HOME */}
+            <div className="flex flex-row flex-nowrap justify-center gap-[0.02em] text-[11vw] font-bold mt-2 whitespace-nowrap">
+              {word2.map((char, idx) => {
+                const globalIdx = word1.length + idx;
+                const imgUrl = images[globalIdx % images.length];
+                const isHovered = hoveredIdx === globalIdx;
+
+                return (
+                  <span
+                    key={idx}
+                    onMouseEnter={() => {
+                      setHoveredIdx(globalIdx);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIdx(null);
+                    }}
+                    className={`inline-block transition-all duration-300 ease-out transform ${isHovered
+                        ? "scale-[1.08] text-transparent bg-clip-text bg-cover bg-center drop-shadow-[0_0_35px_rgba(167,139,250,0.85)] z-20"
+                        : "text-slate-100 hover:text-transparent bg-clip-text bg-cover bg-center"
+                      }`}
+                    style={{
+                      backgroundImage: isHovered ? `url(${imgUrl})` : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
           </div>
-
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="mt-6 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[76px] xl:text-[82px] md:leading-[1.05]"
-          >
-            Autonomous Intelligence
-            <br className="hidden sm:inline" />{" "}
-            <span
-              className="bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-violet-300"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #ffffff 0%, #C7D2FE 35%, #A78BFA 65%, #67E8F9 100%)",
-              }}
-            >
-              for Modern Careers.
-            </span>
-          </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
-            className="mx-auto mt-6 max-w-2xl text-base text-white/65 sm:text-lg"
+            className="mx-auto mt-8 max-w-2xl text-base text-white/60 sm:text-lg"
           >
             Professional Home combines AI Assessment, Expert Mentorship, Research Tools, Startup
             Operations and Outcome Analytics into one unified command center.
@@ -236,122 +200,6 @@ function Hero() {
             </button>
           </motion.div>
 
-          {/* Trust strip indicators - Replaced with 4 premium HUD status widgets */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl px-4"
-          >
-            {/* System Pulse Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                  <span className="absolute flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  </span>
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">TELEMETRY // PH-OS</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">SYSTEM PULSE: ACTIVE</div>
-                </div>
-              </div>
-              
-              {/* Pulse Audio Ticker Waveform */}
-              <div className="flex items-end gap-0.5 h-6">
-                {[4, 10, 6, 14, 8, 4].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-0.5 bg-emerald-400/70 rounded-full animate-pulse"
-                    style={{
-                      height: `${h}px`,
-                      animationDuration: `${0.8 + i * 0.15}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* AI Agents Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(6,182,212,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform duration-300">
-                  <Bot className="h-5 w-5 animate-pulse" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">AGENT CLUSTER</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">6 COPILOTS ONLINE</div>
-                </div>
-              </div>
-
-              {/* Glowing active dots */}
-              <div className="flex gap-1 select-none pr-1">
-                {Array.from({ length: 6 }).map((_, idx) => (
-                  <span
-                    key={idx}
-                    className="h-1.5 w-1.5 rounded-full bg-cyan-400/80 animate-ping"
-                    style={{
-                      animationDuration: "1.5s",
-                      animationDelay: `${idx * 200}ms`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Placement/Success Rate Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-amber-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:rotate-12 transition-transform duration-300">
-                  <Trophy className="h-5 w-5" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">OUTCOME METRIC</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">94.2% PLACEMENT</div>
-                </div>
-              </div>
-
-              {/* Radial Progress Mini-circle */}
-              <div className="relative h-7 w-7 flex items-center justify-center">
-                <svg className="h-7 w-7 -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3.5" />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="14"
-                    fill="none"
-                    stroke="#f59e0b"
-                    strokeWidth="3.5"
-                    strokeDasharray="88"
-                    strokeDashoffset={88 - 88 * 0.942}
-                    strokeLinecap="round"
-                    className="group-hover:stroke-amber-300 transition-colors duration-300"
-                  />
-                </svg>
-                <span className="absolute text-[8px] font-mono font-bold text-amber-400/90 group-hover:scale-105 transition-transform">94%</span>
-              </div>
-            </div>
-
-            {/* Seed Runway Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-violet-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(139,92,246,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:translate-y-[-2px] transition-transform duration-300">
-                  <Coins className="h-5 w-5" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">CAPITAL VALUE</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">₹40M RUNWAY</div>
-                </div>
-              </div>
-
-              {/* Sparkline mini chart */}
-              <svg className="h-5 w-12 text-violet-400/80 group-hover:text-violet-300 transition-colors duration-300" viewBox="0 0 50 20">
-                <path d="M0,16 Q10,12 20,13 T40,6 T50,2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M0,16 Q10,12 20,13 T40,6 T50,2 L50,20 L0,20 Z" fill="currentColor" opacity="0.12" />
-              </svg>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -431,11 +279,10 @@ function FloatingDashboard() {
                 return (
                   <div
                     key={i}
-                    className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-[11px] font-medium transition-colors cursor-pointer ${
-                      it.a
+                    className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-[11px] font-medium transition-colors cursor-pointer ${it.a
                         ? "bg-white/10 text-white"
                         : "text-white/50 hover:text-white/80 hover:bg-white/5"
-                    }`}
+                      }`}
                   >
                     <Ic className="h-3.5 w-3.5" />
                     {it.l}
@@ -805,9 +652,6 @@ function FloatingDashboard() {
   );
 }
 
-// HeroStats removed as requested
-
-// Standalone section for the Dashboard Mockup
 function DashboardSection() {
   return (
     <section className="relative overflow-hidden pt-16 pb-16 bg-[#05060F]">
@@ -818,260 +662,289 @@ function DashboardSection() {
   );
 }
 
-// Premium custom SVGs for the Journey Section cards
-const DiscoverSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(139,92,246,0.15)]">
-    <defs>
-      <radialGradient id="glow-discover" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.3" />
-        <stop offset="100%" stopColor="#A78BFA" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-discover" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#C7D2FE" />
-        <stop offset="50%" stopColor="#8B5CF6" />
-        <stop offset="100%" stopColor="#6366F1" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-discover)" />
-    
-    {/* Orbiting rings */}
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(30 100 100)" strokeDasharray="4 4" className="opacity-60" />
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(-30 100 100)" className="opacity-80" />
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="2" transform="rotate(90 100 100)" />
-    
-    {/* Glowing particles */}
-    <circle cx="135" cy="40" r="5" fill="#C7D2FE" />
-    <circle cx="65" cy="160" r="4" fill="#8B5CF6" />
-    <circle cx="160" cy="135" r="3" fill="#6366F1" />
-    <circle cx="40" cy="65" r="5" fill="#A78BFA" />
-
-    {/* Central bulb shape */}
-    <g transform="translate(70, 60)">
-      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="url(#grad-discover)" opacity="0.15" />
-      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" />
-      {/* Filament */}
-      <path d="M22,35 L26,30 L34,30 L38,35" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M26,30 L26,45 M34,30 L34,45" fill="none" stroke="url(#grad-discover)" strokeWidth="2" />
-      <circle cx="30" cy="20" r="10" fill="#FFF" opacity="0.9" className="animate-pulse" style={{ filter: "blur(3px)" }} />
-    </g>
-  </svg>
-);
-
-const CompareSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(34,211,238,0.15)]">
-    <defs>
-      <radialGradient id="glow-compare" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-compare" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#22D3EE" />
-        <stop offset="50%" stopColor="#0EA5E9" />
-        <stop offset="100%" stopColor="#6366F1" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-compare)" />
-
-    {/* Browser Card Mockup */}
-    <g transform="translate(45, 50)" className="opacity-90">
-      {/* Card Base */}
-      <rect x="0" y="0" width="110" height="80" rx="8" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="2" />
-      {/* Card Header / Browser bar */}
-      <path d="M0,8 A8,8 0 0,1 8,0 L102,0 A8,8 0 0,1 110,8 L110,18 L0,18 Z" fill="#14193F" />
-      <circle cx="8" cy="9" r="3" fill="#FF5F57" />
-      <circle cx="18" cy="9" r="3" fill="#FEBC2E" />
-      <circle cx="28" cy="9" r="3" fill="#28C840" />
-      {/* Card Content lines */}
-      <rect x="10" y="28" width="50" height="8" rx="2" fill="url(#grad-compare)" opacity="0.8" />
-      <rect x="10" y="42" width="90" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-      <rect x="10" y="54" width="75" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-      <rect x="10" y="66" width="45" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-    </g>
-
-    {/* Magnifying Glass */}
-    <g transform="translate(100, 90)">
-      {/* Handle */}
-      <line x1="16" y1="16" x2="48" y2="48" stroke="url(#grad-compare)" strokeWidth="6" strokeLinecap="round" />
-      <line x1="22" y1="22" x2="42" y2="42" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
-      {/* Glass Circle */}
-      <circle cx="0" cy="0" r="28" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="4.5" />
-      <circle cx="0" cy="0" r="23" fill="#38BDF8" opacity="0.15" />
-      {/* Inner search details */}
-      <path d="M-10,-5 L10,-5 M-10,5 L5,5" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round" />
-      {/* Reflection shine */}
-      <path d="M-14,-14 A20,20 0 0,1 14,-14" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-    </g>
-  </svg>
-);
-
-const DecideSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(236,72,153,0.15)]">
-    <defs>
-      <radialGradient id="glow-decide" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#EC4899" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#EC4899" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-decide" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#F472B6" />
-        <stop offset="50%" stopColor="#EC4899" />
-        <stop offset="100%" stopColor="#D946EF" />
-      </linearGradient>
-      <linearGradient id="grad-book" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#312E81" />
-        <stop offset="100%" stopColor="#4F46E5" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-decide)" />
-
-    {/* Stack of books */}
-    <g transform="translate(45, 95)">
-      {/* Bottom Book */}
-      <path d="M0,20 L90,20 C100,20 110,25 110,30 L110,38 C110,43 100,48 90,48 L0,48 Z" fill="url(#grad-book)" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      <rect x="5" y="28" width="90" height="12" fill="#FFF" opacity="0.9" />
-      <line x1="95" y1="28" x2="95" y2="40" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      
-      {/* Middle Book */}
-      <path d="M10,2 L95,2 C103,2 112,6 112,11 L112,19 C112,24 103,28 95,28 L10,28 Z" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      <rect x="15" y="10" width="87" height="10" fill="#FFF" opacity="0.9" />
-      <line x1="98" y1="10" x2="98" y2="20" stroke="url(#grad-decide)" strokeWidth="1.5" />
-    </g>
-
-    {/* Graduation Cap */}
-    <g transform="translate(100, 65)">
-      {/* Cap Stand/Base */}
-      <path d="M-26,10 L-26,24 C-26,29 0,34 0,34 C0,34 26,29 26,24 L26,10 Z" fill="#0B0F2B" stroke="url(#grad-decide)" strokeWidth="2.5" />
-      <path d="M-26,18 C-26,18 0,25 0,25 C0,25 26,18 26,18" fill="none" stroke="url(#grad-decide)" strokeWidth="1.5" opacity="0.5" />
-      
-      {/* Cap Diamond Top */}
-      <polygon points="0,-16 56,0 0,16 -56,0" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="3" />
-      <polygon points="0,-11 44,0 0,11 -44,0" fill="url(#grad-decide)" opacity="0.2" />
-
-      {/* Tassel */}
-      <circle cx="0" cy="0" r="3.5" fill="url(#grad-decide)" />
-      <path d="M0,0 C12,4 28,12 32,22 L34,34" fill="none" stroke="url(#grad-decide)" strokeWidth="2" strokeLinecap="round" />
-      {/* Tassel Fringe */}
-      <polygon points="34,34 31,44 37,44" fill="url(#grad-decide)" />
-    </g>
-  </svg>
-);
-
-// Animated Journey Section
+// Apple-style horizontal scroll shelf Journey section
 function JourneySection() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const journeyCards = [
+    {
+      badge: "STAGE 01",
+      title: "AI Assessment",
+      subtitle: "Map your situation, domain competencies, and target career goals.",
+      price: "AI Diagnostic Analysis",
+      img: "/1.png",
+    },
+    {
+      badge: "STAGE 02",
+      title: "Expert Matching",
+      subtitle: "Personalized matching with verified academic and industry experts.",
+      price: "Expert Consultations",
+      img: "/2.png",
+    },
+    {
+      badge: "STAGE 03",
+      title: "Roadmap Creation",
+      subtitle: "Generate dynamic task checklists, resource plans, and project phases.",
+      price: "Actionable Roadmaps",
+      img: "/3.png",
+    },
+    {
+      badge: "STAGE 04",
+      title: "Execution Tracking",
+      subtitle: "Track weekly deliverables and manage projects with Kanban tools.",
+      price: "Milestone Tracking",
+      img: "/4.png",
+    },
+    {
+      badge: "STAGE 05",
+      title: "Outcome Achievement",
+      subtitle: "Log placements, verify publications, track grants and funding.",
+      price: "Outcome Analytics",
+      img: "/5.png",
+    },
+  ];
+
+  const scroll = (direction: "left" | "right") => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const scrollAmount = 360; // Card width + gap
+    container.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <section className="relative py-24 overflow-hidden bg-[#05060F]">
+    <section className="relative py-24 bg-[#05060F] overflow-hidden">
       {/* subtle glowing background effects */}
       <div className="pointer-events-none absolute top-1/2 left-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.08),transparent)] blur-3xl" />
       <div className="pointer-events-none absolute top-1/2 right-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.06),transparent)] blur-3xl" />
 
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center mb-16">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-            Start your journey with Professional Home
+      <div className="mx-auto max-w-6xl px-6 relative z-10">
+        {/* Section heading with Navigation Arrows */}
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl max-w-3xl">
+            <ScrollReveal>The latest. Explore the stages of professional growth.</ScrollReveal>
           </h2>
-          <p className="mt-4 text-white/60 text-base sm:text-lg">
-            An ecosystem built to guide you from initial curiosity to verified professional achievements.
-          </p>
+          {/* Navigation Arrows */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => scroll("left")}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
+              aria-label="Scroll left"
+            >
+              <ChevronLeft className="h-5 w-5 text-white/80" />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
+              aria-label="Scroll right"
+            >
+              <ChevronRight className="h-5 w-5 text-white/80" />
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: Assess (Slides in from the Left) */}
-          <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Assess.jpg" alt="Assess Background" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Assess
+        {/* Horizontal scroll snap shelf */}
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth"
+        >
+          {journeyCards.map((card, idx) => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: idx * 0.08, type: "spring", stiffness: 80, damping: 15 }}
+              className="flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start rounded-[24px] border border-white/10 bg-[#0c0d16]/90 overflow-hidden transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(124,58,237,0.25)] hover:border-violet-500/30 cursor-default flex flex-col h-[500px] shadow-2xl"
+            >
+              {/* Card text content */}
+              <div className="px-6 pt-6 pb-2">
+                {card.badge && (
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-1.5">
+                    {card.badge}
+                  </span>
+                )}
+                <h3 className="text-xl font-bold tracking-[0.08em] leading-tight text-white font-mango uppercase">
+                  {card.title}
                 </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
+                <p className="text-[12.5px] mt-1.5 leading-snug text-white/60 min-h-[38px]">
+                  {card.subtitle}
                 </p>
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white/90 mt-2 hover:text-violet-300 transition-colors">
+                  {card.price} <ArrowRight className="w-3 h-3 text-white/40 group-hover:text-violet-300" />
+                </span>
               </div>
-            </div>
-          </motion.div>
 
-          {/* Card 2: Achieve (Slides up in the Center) */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Achieve.jpg" alt="Achieve Background" className="w-full h-full object-cover" />
+              {/* Card product image */}
+              <div className="flex-1 flex items-center justify-center px-4 pb-5 mt-2 relative overflow-hidden bg-black/40">
+                <img
+                  src={card.img}
+                  alt={card.title}
+                  className="w-full h-full object-cover object-top rounded-2xl border border-white/5 shadow-sm transition-transform duration-700"
+                />
               </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Achieve
-                </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 3: Execute (Slides in from the Right) */}
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Execute.jpg" alt="Execute Background" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Execute
-                </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
-                </p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
+interface RevealWordProps {
+  word: string;
+  index: number;
+  total: number;
+  progress: any;
+}
+
+function RevealWord({ word, index, total, progress }: RevealWordProps) {
+  const start = index / total;
+  const end = (index + 1.5) / total;
+  const opacity = useTransform(progress, [start, end], [0.15, 1]);
+
+  return (
+    <motion.span
+      style={{ opacity }}
+      className="inline-block mx-2 text-[6vw] sm:text-[5.2vw] md:text-[4.5vw] font-black uppercase text-white font-mango tracking-wide"
+    >
+      {word}
+    </motion.span>
+  );
+}
+
+function SparkleStar({ className }: { className?: string }) {
+  return (
+    <motion.svg
+      className={`w-6 h-6 text-violet-400 fill-current drop-shadow-[0_0_8px_rgba(167,139,250,0.8)] ${className}`}
+      viewBox="0 0 24 24"
+      animate={{
+        scale: [0.9, 1.1, 0.9],
+        opacity: [0.5, 1, 0.5],
+        rotate: [0, 90, 180, 270, 360],
+      }}
+      transition={{
+        duration: 12,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    >
+      <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" />
+    </motion.svg>
+  );
+}
+
+function PurpleCrosshair({ className, pulse = false }: { className?: string; pulse?: boolean }) {
+  return (
+    <div className={`absolute -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none z-0 ${className}`}>
+      {/* Horizontal line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-24 h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+      {/* Vertical line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1px] h-24 bg-gradient-to-b from-transparent via-violet-500/30 to-transparent" />
+      {/* Glowing center dot */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 bg-violet-400 rounded-full shadow-[0_0_10px_#a78bfa,0_0_20px_rgba(139,92,246,0.6)]" />
+      {/* Pulse ring */}
+      {pulse && (
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full border border-violet-500/30 bg-violet-500/5"
+          animate={{
+            scale: [0.8, 1.3, 0.8],
+            opacity: [0.2, 0.6, 0.2],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function FaintIntersection({ className }: { className?: string }) {
+  return (
+    <div className={`absolute -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-25 z-0 ${className}`}>
+      {/* Horizontal faint line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-[1px] bg-white/10" />
+      {/* Vertical faint line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1px] h-12 bg-white/10" />
+      {/* Faint center dot */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-1 bg-white/30 rounded-full" />
+    </div>
+  );
+}
+
+// Scroll Reveal Text Block Component
+function ScrollRevealSection() {
+  const textRef = useRef<HTMLDivElement>(null);
+  const text =
+    "AMBITION WITHOUT SYSTEMATIC DIRECTION IS WASTED POTENTIAL. DYNAMIC ROADMAPS, EXPERT MENTORSHIP, AND OUTCOME ANALYTICS BRIDGE THE GAP BETWEEN AMBITION AND OUTCOME. BUILD YOUR CAREER SYSTEM.";
+  const words = text.split(" ");
+
+  const { scrollYProgress } = useScroll({
+    target: textRef,
+    offset: ["start 0.85", "end 0.45"],
+  });
+
+  return (
+    <section
+      className="relative py-40 bg-[#05060F] flex flex-col items-center justify-center min-h-[90vh] px-6 overflow-hidden border-t border-white/5 select-none"
+    >
+      {/* Background Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
+        {/* Vertical Lines */}
+        <div className="absolute top-0 bottom-0 left-[20%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[40%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[60%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+
+        {/* Horizontal Lines */}
+        <div className="absolute left-0 right-0 top-[20%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[40%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[60%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[80%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+      </div>
+
+      {/* Active Glowing Crosshairs */}
+      <PurpleCrosshair className="top-[20%] left-[40%]" pulse />
+      <PurpleCrosshair className="top-[40%] left-[80%]" pulse />
+      <PurpleCrosshair className="top-[60%] left-[20%]" pulse />
+      <PurpleCrosshair className="top-[80%] left-[60%]" pulse />
+
+      {/* Faint Intersections */}
+      <FaintIntersection className="top-[20%] left-[20%]" />
+      <FaintIntersection className="top-[20%] left-[80%]" />
+      <FaintIntersection className="top-[40%] left-[40%]" />
+      <FaintIntersection className="top-[60%] left-[60%]" />
+      <FaintIntersection className="top-[80%] left-[40%]" />
+      <FaintIntersection className="top-[80%] left-[80%]" />
+
+      {/* Premium Sparkling Star Decorations */}
+      <SparkleStar className="absolute top-12 left-12" />
+      <SparkleStar className="absolute top-12 right-12" />
+      <SparkleStar className="absolute bottom-16 left-16 opacity-35 scale-75" />
+      <SparkleStar className="absolute top-[28%] left-[12%] opacity-20 scale-50" />
+      <SparkleStar className="absolute bottom-[28%] right-[12%] opacity-25 scale-50" />
+
+      {/* Quote text - upright, clean spacing, proper alignment */}
+      <div ref={textRef} className="max-w-5xl text-center leading-[1.1] tracking-tight relative z-10 py-16 px-4">
+        {words.map((word, idx) => (
+          <RevealWord
+            key={idx}
+            word={word}
+            index={idx}
+            total={words.length}
+            progress={scrollYProgress}
+          />
+        ))}
+      </div>
+
+      {/* Decorative Quote Mark */}
+      <div className="absolute bottom-10 right-10 text-violet-500/15 text-[140px] font-serif pointer-events-none select-none">
+        ”
+      </div>
+    </section>
+  );
+}
