@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { motion } from "framer-motion";
+import { ScrollReveal } from "../ScrollReveal";
 
 export function SectionHead({
   eyebrow,
@@ -35,13 +37,23 @@ export function SectionHead({
   sub?: string;
 }) {
   return (
-    <div className="mx-auto max-w-2xl text-center">
+    <motion.div
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.15 }}
+      transition={{ duration: 0.7, ease: [0.215, 0.61, 0.355, 1] }}
+      className="mx-auto max-w-2xl text-center"
+    >
       <div className="text-xs uppercase tracking-[0.22em] text-[var(--electric)]">{eyebrow}</div>
-      <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl">
-        {title}
+      <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-5xl text-white">
+        <ScrollReveal>{title}</ScrollReveal>
       </h2>
-      {sub && <p className="mt-4 text-muted-foreground">{sub}</p>}
-    </div>
+      {sub && (
+        <p className="mt-4 text-muted-foreground">
+          <ScrollReveal>{sub}</ScrollReveal>
+        </p>
+      )}
+    </motion.div>
   );
 }
 
@@ -160,9 +172,13 @@ export function HowItWorks() {
       <div className="mx-auto max-w-7xl px-6">
         <SectionHead eyebrow="How it works" title="Five steps from ambition to outcome." />
         <ol className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-          {steps.map(({ n, cat, t, d, img }) => (
-            <li
+          {steps.map(({ n, cat, t, d, img }, idx) => (
+            <motion.li
               key={n}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: idx * 0.08, ease: "easeOut" }}
               className="relative group overflow-hidden rounded-[24px] h-[450px] flex flex-col justify-end p-6 border-2 border-white/20 shadow-2xl transition-all duration-300 hover:border-purple-500/60"
             >
               {/* Background Image & Overlay */}
@@ -200,7 +216,7 @@ export function HowItWorks() {
                   </p>
                 </div>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ol>
       </div>
@@ -209,216 +225,129 @@ export function HowItWorks() {
 }
 
 export function Ecosystem() {
-  const cards = [
+  const roles = [
     {
       title: "Students",
-      index: "01",
+      num: "01",
       icon: GraduationCap,
+      accent: "#a78bfa",
+      accentRgb: "167,139,250",
+      description: "AI-powered skill mapping and personalized career trajectories that adapt to your growth.",
       metrics: [
-        { label: "Skills Profile", value: "92% Complete" },
+        { label: "Skills Profile", value: "92%" },
         { label: "Vetted Offers", value: "2 Secured" },
-        { label: "Career Pathing", value: "AI-Optimized" }
+        { label: "Career Path", value: "AI-Optimized" }
       ]
     },
     {
       title: "Researchers",
-      index: "02",
+      num: "02",
       icon: FlaskConical,
+      accent: "#38bdf8",
+      accentRgb: "56,189,248",
+      description: "Grant discovery, lab collaboration matching, and real-time publication tracking.",
       metrics: [
         { label: "Publications", value: "3 Accepted" },
-        { label: "Marie Curie Grant", value: "€186K Funded" },
-        { label: "Collaborations", value: "8 Active Labs" }
-      ]
-    },
-    {
-      title: "Universities",
-      index: "03",
-      icon: School,
-      metrics: [
-        { label: "R&D Projects", value: "42 Active" },
-        { label: "Academic Tier", value: "Tier 1 Partner" },
-        { label: "Placement Rate", value: "96.8% Verified" }
+        { label: "Grant Funded", value: "\u20ac186K" },
+        { label: "Active Labs", value: "8 Collab" }
       ]
     },
     {
       title: "Startups",
-      index: "04",
+      num: "03",
       icon: Rocket,
+      accent: "#34d399",
+      accentRgb: "52,211,153",
+      description: "Investor matching, advisor networks, and growth analytics built for scale.",
       metrics: [
-        { label: "Seed Funding", value: "$2.1M Raised" },
-        { label: "Advisor Matches", value: "4 Advisors" },
-        { label: "Growth Index", value: "+42% MoM" }
-      ]
-    },
-    {
-      title: "Investors",
-      index: "05",
-      icon: Coins,
-      metrics: [
-        { label: "Vetted Deal Flow", value: "28 Deals/mo" },
-        { label: "Portfolio Status", value: "12 Co-invests" },
-        { label: "Projected IRR", value: "32% Avg" }
-      ]
-    },
-    {
-      title: "Industry Experts",
-      index: "06",
-      icon: UserCheck,
-      metrics: [
-        { label: "Advisory Capacity", value: "14 hrs Matched" },
-        { label: "Consulting Pool", value: "Verified Mentor" },
-        { label: "Client Rating", value: "4.95 / 5.0" }
+        { label: "Seed Round", value: "$2.1M" },
+        { label: "Advisors", value: "4 Active" },
+        { label: "Growth", value: "+42% MoM" }
       ]
     }
   ];
 
-  // Connection paths in the SVG viewport (0 0 960 700)
-  const paths = [
-    { d: "M 480 350 C 400 350, 320 110, 240 110", dur: "4.2s" }, // Card 1 (Top Left)
-    { d: "M 480 350 L 240 350",                  dur: "3.6s" }, // Card 2 (Middle Left)
-    { d: "M 480 350 C 400 350, 320 590, 240 590", dur: "4.8s" }, // Card 3 (Bottom Left)
-    { d: "M 480 350 C 560 350, 640 110, 720 110", dur: "4.0s" }, // Card 4 (Top Right)
-    { d: "M 480 350 L 720 350",                  dur: "3.8s" }, // Card 5 (Middle Right)
-    { d: "M 480 350 C 560 350, 640 590, 720 590", dur: "4.5s" }  // Card 6 (Bottom Right)
-  ];
-
   return (
     <section id="ecosystem" className="border-y border-border py-28 overflow-hidden bg-[#05060F] relative">
-      {/* Subtle grid background */}
+      {/* Subtle noise texture */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
         style={{
-          backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
+          backgroundImage: "radial-gradient(circle at 20% 50%, rgba(167,139,250,0.15), transparent 50%), radial-gradient(circle at 80% 50%, rgba(52,211,153,0.1), transparent 50%)",
         }}
       />
-      {/* Ambient light glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-[radial-gradient(closest-side,rgba(56,189,248,0.12),transparent)] blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="The Ecosystem" title="One network. Every role. Real relationships." />
 
-        <div className="mt-16 relative">
-          {/* Layout Container */}
-          <div className="eco-layout-container">
-            {/* SVG Connections Layer (Visible on desktop) */}
-            <svg
-              className="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-0"
-              viewBox="0 0 960 700"
-              fill="none"
-            >
-              {paths.map((p, idx) => (
-                <g key={idx}>
-                  {/* Shadow/Glow Line */}
-                  <path
-                    d={p.d}
-                    stroke="#38bdf8"
-                    strokeWidth="4"
-                    strokeLinecap="round"
-                    className="opacity-[0.06]"
-                    style={{ filter: "blur(3px)" }}
-                  />
-                  {/* Core Static Connection Line */}
-                  <path
-                    d={p.d}
-                    stroke="rgba(255, 255, 255, 0.08)"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  {/* Animated Neon Flowing Dot */}
-                  <circle r="3.5" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 6px #38bdf8)" }}>
-                    <animateMotion dur={p.dur} repeatCount="indefinite" path={p.d} />
-                  </circle>
-                </g>
-              ))}
-
-              {/* Atomic Orbits loops around center (480, 350) with animated flowing dots */}
-              {/* Atomic Orbit 1 */}
-              <g transform="rotate(-30 480 350)">
-                <path
-                  d="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350"
-                  stroke="rgba(56, 189, 248, 0.25)"
-                  strokeWidth="1.2"
-                  fill="none"
-                />
-                <circle r="3" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 5px #38bdf8)" }}>
-                  <animateMotion dur="5s" repeatCount="indefinite" path="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350" />
-                </circle>
-              </g>
-
-              {/* Atomic Orbit 2 */}
-              <g transform="rotate(30 480 350)">
-                <path
-                  d="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350"
-                  stroke="rgba(56, 189, 248, 0.25)"
-                  strokeWidth="1.2"
-                  fill="none"
-                />
-                <circle r="3" fill="#38bdf8" style={{ filter: "drop-shadow(0 0 5px #38bdf8)" }}>
-                  <animateMotion dur="6s" repeatCount="indefinite" path="M 380 350 A 100 40 0 1 0 580 350 A 100 40 0 1 0 380 350" />
-                </circle>
-              </g>
-
-              {/* Atomic Orbit 3 */}
-              <g transform="rotate(90 480 350)">
-                <path
-                  d="M 375 350 A 105 45 0 1 0 585 350 A 105 45 0 1 0 375 350"
-                  stroke="rgba(192, 132, 252, 0.25)"
-                  strokeWidth="1.2"
-                  fill="none"
-                />
-                <circle r="3" fill="#c084fc" style={{ filter: "drop-shadow(0 0 5px #c084fc)" }}>
-                  <animateMotion dur="7s" repeatCount="indefinite" path="M 375 350 A 105 45 0 1 0 585 350 A 105 45 0 1 0 375 350" />
-                </circle>
-              </g>
-            </svg>
-
-            {/* Central AI Core */}
-            <div className="eco-core-wrapper">
-              <div className="eco-core-glow-bg" />
-              <div className="eco-core-sphere">
-                <div className="eco-core-inner-glow" />
-                {/* Brain core content */}
-                <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                  <span className="text-[7px] font-bold tracking-[0.2em] text-[#38bdf8] uppercase">
-                    AI CORE
-                  </span>
-                  <span className="text-xs font-black tracking-tight text-white uppercase mt-0.5">
-                    PH-OS
-                  </span>
+        {/* 3-Panel Grid */}
+        <div className="eco-panels-grid">
+          {roles.map((role, idx) => {
+            const Icon = role.icon;
+            return (
+              <motion.div
+                key={role.title}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.15 }}
+                transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
+                className="eco-panel"
+                style={{
+                  '--panel-accent': role.accent,
+                  '--panel-accent-rgb': role.accentRgb,
+                  '--panel-delay': `${idx * 0.15}s`,
+                } as React.CSSProperties}
+              >
+                {/* Animated gradient border wrapper */}
+                <div className="eco-panel-border-wrap">
+                  <div className="eco-panel-border-glow" />
                 </div>
-              </div>
-            </div>
 
-            {/* Ecosystem Cards */}
-            {cards.map((c, idx) => {
-              const Icon = c.icon;
-              return (
-                <div key={c.title} className={`eco-glass-card card-${idx + 1}`}>
-                  <div className="eco-card-header">
-                    <div className="eco-card-title-group">
-                      <span className="eco-card-title-icon">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="eco-card-title">{c.title}</span>
-                    </div>
-                    <span className="eco-card-index">{c.index}</span>
+                {/* Card content */}
+                <div className="eco-panel-content">
+                  {/* Large watermark number */}
+                  <span className="eco-panel-watermark">{role.num}</span>
+
+                  {/* Icon */}
+                  <div className="eco-panel-icon-wrap">
+                    <Icon className="h-5 w-5" />
                   </div>
-                  
-                  <div className="eco-card-divider" />
-                  
-                  <div className="eco-card-body">
-                    {c.metrics.map((m) => (
-                      <div key={m.label} className="eco-card-metric">
-                        <span className="eco-metric-label">{m.label}</span>
-                        <span className="eco-metric-value">{m.value}</span>
+
+                  {/* Title */}
+                  <h3 className="eco-panel-title">{role.title}</h3>
+
+                  {/* Description */}
+                  <p className="eco-panel-desc">{role.description}</p>
+
+                  {/* Divider with accent dot */}
+                  <div className="eco-panel-divider">
+                    <div className="eco-panel-divider-line" />
+                    <div className="eco-panel-divider-dot" />
+                    <div className="eco-panel-divider-line" />
+                  </div>
+
+                  {/* Metrics */}
+                  <div className="eco-panel-metrics">
+                    {role.metrics.map((m) => (
+                      <div key={m.label} className="eco-panel-metric">
+                        <span className="eco-panel-metric-dot" />
+                        <span className="eco-panel-metric-label">{m.label}</span>
+                        <span className="eco-panel-metric-value">{m.value}</span>
                       </div>
                     ))}
                   </div>
+
+                  {/* Bottom CTA arrow */}
+                  <div className="eco-panel-cta">
+                    <span>Explore</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -510,8 +439,12 @@ export function Features() {
 
         <div className="mt-14 platform-grid">
           {items.map(({ t, d, i: Icon, accent, accentGlow, featured }, idx) => (
-            <div
+            <motion.div
               key={t}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: (idx % 3) * 0.08, ease: "easeOut" }}
               className={`platform-card${featured ? " featured" : ""} platform-card-${idx + 1}`}
               style={{
                 "--card-accent-glow": accentGlow,
@@ -535,7 +468,7 @@ export function Features() {
               {/* Text */}
               <h3 className="platform-card-title">{t}</h3>
               <p className="platform-card-desc">{d}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -566,8 +499,15 @@ export function Stories() {
       <div className="mx-auto max-w-6xl px-6">
         <SectionHead eyebrow="Outcomes" title="Real people. Real, verified wins." />
         <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {cards.map((c) => (
-            <article key={c.who} className="glass-strong rounded-2xl p-6">
+          {cards.map((c, idx) => (
+            <motion.article
+              key={c.who}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
+              className="glass-strong rounded-2xl p-6"
+            >
               <div className="flex items-center gap-3">
                 <div
                   className="h-10 w-10 rounded-full"
@@ -586,7 +526,7 @@ export function Stories() {
                   </span>
                 ))}
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>
@@ -656,83 +596,90 @@ export function Pricing() {
         <SectionHead eyebrow="Pricing" title="Plans for every stage of growth." />
         
         <div className="mt-16 pricing-tickets-grid">
-          {plans.map((p) => (
-            <Link
+          {plans.map((p, idx) => (
+            <motion.div
               key={p.n}
-              to="/app"
-              search={{ tab: "home" }}
-              className="ticket-wrapper block text-left"
-              style={{
-                "--t-accent": p.accent,
-                "--t-accent-glow": p.accentGlow,
-              } as React.CSSProperties}
+              initial={{ opacity: 0, y: 35 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.15 }}
+              transition={{ duration: 0.65, delay: idx * 0.08, ease: "easeOut" }}
             >
-              <div className="ticket">
-                {/* Main Pass Info */}
-                <div className="t-main">
-                  <div className="t-content">
-                    
-                    {/* Top: Logo & Pass Category */}
-                    <div className="t-header">
-                      <div className="t-logo">
-                        <svg viewBox="0 0 24 24" className="w-5 h-5">
-                          <path
-                            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            fill="none"
-                          />
-                        </svg>
-                        {p.category}
-                      </div>
-                      <div className="t-type">{p.n} Pass</div>
-                    </div>
-
-                    {/* Pricing Tier Details */}
-                    <div className="t-title">
-                      {p.p}
-                      {p.p !== "Custom" && <span className="text-sm font-semibold tracking-normal text-slate-500 lowercase ml-1">/mo</span>}
-                    </div>
-                    <div className="t-subtitle">{p.d}</div>
-
-                    {/* Features Detail Grid */}
-                    <div className="t-details">
-                      {p.f.map((feature, idx) => (
-                        <div className="t-detail-item" key={idx}>
-                          <span className="t-label">Feature 0{idx + 1}</span>
-                          <span className="t-value" title={feature}>{feature}</span>
+              <Link
+                to="/app"
+                search={{ tab: "home" }}
+                className="ticket-wrapper block text-left"
+                style={{
+                  "--t-accent": p.accent,
+                  "--t-accent-glow": p.accentGlow,
+                } as React.CSSProperties}
+              >
+                <div className="ticket">
+                  {/* Main Pass Info */}
+                  <div className="t-main">
+                    <div className="t-content">
+                      
+                      {/* Top: Logo & Pass Category */}
+                      <div className="t-header">
+                        <div className="t-logo">
+                          <svg viewBox="0 0 24 24" className="w-5 h-5">
+                            <path
+                              d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              fill="none"
+                            />
+                          </svg>
+                          {p.category}
                         </div>
-                      ))}
+                        <div className="t-type">{p.n} Pass</div>
+                      </div>
+
+                      {/* Pricing Tier Details */}
+                      <div className="t-title">
+                        {p.p}
+                        {p.p !== "Custom" && <span className="text-sm font-semibold tracking-normal text-slate-500 lowercase ml-1">/mo</span>}
+                      </div>
+                      <div className="t-subtitle">{p.d}</div>
+
+                      {/* Features Detail Grid */}
+                      <div className="t-details">
+                        {p.f.map((feature, idx) => (
+                          <div className="t-detail-item" key={idx}>
+                            <span className="t-label">Feature 0{idx + 1}</span>
+                            <span className="t-value" title={feature}>{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                      
+                    </div>
+
+                    {/* Perf separator */}
+                    <div className="t-perforation" style={{ position: "absolute", bottom: 0, left: 0, width: "100%", transform: "translateY(50%)" }}>
+                      <div className="t-perf-line" />
+                    </div>
+                  </div>
+
+                  {/* Ticket Stub Barcode / Admit */}
+                  <div className="t-stub">
+                    
+                    {/* Barcode details */}
+                    <div className="t-barcode-container">
+                      <div className="t-barcode" />
+                      <div className="t-barcode-id">{p.barcode}</div>
+                    </div>
+
+                    {/* Admission details (Tier index) */}
+                    <div className="t-admit">
+                      <div className="t-admit-text">Tier</div>
+                      <div className="t-admit-num">{p.tier.split("-")[1]}</div>
                     </div>
                     
                   </div>
-
-                  {/* Perf separator */}
-                  <div className="t-perforation" style={{ position: "absolute", bottom: 0, left: 0, width: "100%", transform: "translateY(50%)" }}>
-                    <div className="t-perf-line" />
-                  </div>
                 </div>
-
-                {/* Ticket Stub Barcode / Admit */}
-                <div className="t-stub">
-                  
-                  {/* Barcode details */}
-                  <div className="t-barcode-container">
-                    <div className="t-barcode" />
-                    <div className="t-barcode-id">{p.barcode}</div>
-                  </div>
-
-                  {/* Admission details (Tier index) */}
-                  <div className="t-admit">
-                    <div className="t-admit-text">Tier</div>
-                    <div className="t-admit-num">{p.tier.split("-")[1]}</div>
-                  </div>
-                  
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -859,7 +806,7 @@ export function Footer() {
           <Link to="/cookies" className="hover:text-white transition-colors">Manage Cookies</Link>
         </div>
         <div>
-          © 2026 Professional Home Pvt Ltd. All rights reserved.
+          ┬⌐ 2026 Professional Home Pvt Ltd. All rights reserved.
         </div>
       </div>
 
