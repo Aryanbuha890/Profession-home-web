@@ -1,3 +1,4 @@
+import { useState, useRef, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Brain,
@@ -357,77 +358,47 @@ export function Ecosystem() {
 export function Features() {
   const items = [
     {
-      t: "AI Assessment Engine",
-      d: "Deep multi-domain analysis of your skills, goals, risk profile, and timing — actionable insights in minutes, not months.",
-      i: Brain,
+      t: "Professional Home",
+      d: "Understands your skills, goals, strengths, and opportunities.",
+      i: School,
       accent: "#7c3aed",
       accentGlow: "rgba(124,58,237,0.3)",
-      featured: true,
     },
     {
-      t: "Expert Marketplace",
-      d: "Access a vetted network of mentors, advisors, and investors matched precisely to your domain and growth stage.",
+      t: "Personalized Guidance Session",
+      d: "Your ambitions deserve more than generic advice. Get personalised guidance tailored to your unique journey and aspirations.",
       i: Users,
       accent: "#06b6d4",
       accentGlow: "rgba(6,182,212,0.3)",
       featured: true,
     },
     {
-      t: "Roadmap Builder",
-      d: "Milestones, dependencies, and projections.",
+      t: "Growth Roadmap",
+      d: "Personalised milestones and action plans for your goals.",
       i: Map,
       accent: "#8b5cf6",
       accentGlow: "rgba(139,92,246,0.3)",
     },
     {
-      t: "Execution Tracker",
-      d: "Kanban, calendar, timeline, and KPIs.",
-      i: GanttChart,
+      t: "Career Growth",
+      d: "Internships, jobs, portfolio building, and career guidance.",
+      i: Briefcase,
       accent: "#10b981",
       accentGlow: "rgba(16,185,129,0.3)",
     },
     {
-      t: "Research Hub",
-      d: "Projects, grants, teams, publications.",
-      i: FlaskConical,
-      accent: "#d946ef",
-      accentGlow: "rgba(217,70,239,0.3)",
-    },
-    {
-      t: "Startup Hub",
-      d: "Pitch reviews, fundraising, milestones.",
-      i: Rocket,
-      accent: "#f97316",
-      accentGlow: "rgba(249,115,22,0.3)",
-    },
-    {
-      t: "Career Hub",
-      d: "Skill gap, resume, interview prep.",
-      i: Briefcase,
-      accent: "#3b82f6",
-      accentGlow: "rgba(59,130,246,0.3)",
-    },
-    {
-      t: "Funding Hub",
-      d: "Grants, accelerators, and term sheets.",
-      i: Coins,
+      t: "Achievement Tracker",
+      d: "Track progress, outcomes, certifications, and verified achievements.",
+      i: Trophy,
       accent: "#f59e0b",
       accentGlow: "rgba(245,158,11,0.3)",
     },
     {
-      t: "AI Copilot",
-      d: "Your always-on AI assistant that works across every workflow — drafting, scheduling, research, and strategic nudges on autopilot.",
+      t: "AI",
+      d: "Your always-on assistant for planning, learning, research, and execution.",
       i: Bot,
       accent: "#14b8a6",
       accentGlow: "rgba(20,184,166,0.3)",
-      featured: true,
-    },
-    {
-      t: "Outcome Analytics",
-      d: "Real-time dashboards tracking success metrics by cohort, institution, and individual — proof that the system delivers.",
-      i: BarChart3,
-      accent: "#ec4899",
-      accentGlow: "rgba(236,72,153,0.3)",
       featured: true,
     },
   ];
@@ -435,7 +406,7 @@ export function Features() {
   return (
     <section id="platform" className="py-28">
       <div className="mx-auto max-w-6xl px-6">
-        <SectionHead eyebrow="Platform" title="Ten systems. One operating model." />
+        <SectionHead eyebrow="Platform" title="One Platform for Professional Growth" />
 
         <div className="mt-14 platform-grid">
           {items.map(({ t, d, i: Icon, accent, accentGlow, featured }, idx) => (
@@ -470,6 +441,337 @@ export function Features() {
               <p className="platform-card-desc">{d}</p>
             </motion.div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function FeaturesCarousel() {
+  const items = [
+    {
+      number: "01",
+      title: "Professional Home",
+      description: "Understands your skills, goals, strengths, and opportunities.",
+      icon: Brain,
+      colorStart: "124, 58, 237", // Purple/Indigo
+      colorEnd: "79, 70, 229",
+    },
+    {
+      number: "02",
+      title: "Personalized Guidance Session",
+      description: "Your ambitions deserve more than generic advice.",
+      icon: Users,
+      colorStart: "6, 182, 212", // Cyan/Teal
+      colorEnd: "13, 148, 136",
+    },
+    {
+      number: "03",
+      title: "Growth Roadmap",
+      description: "Personalised milestones and action plans for your goals.",
+      icon: Map,
+      colorStart: "217, 70, 239", // Fuchsia/Pink
+      colorEnd: "219, 39, 119",
+    },
+    {
+      number: "04",
+      title: "Career Growth",
+      description: "Internships, jobs, portfolio building, and career guidance.",
+      icon: Briefcase,
+      colorStart: "16, 185, 129", // Emerald/Green
+      colorEnd: "22, 163, 74",
+    },
+    {
+      number: "05",
+      title: "Achievement Tracker",
+      description: "Track progress, outcomes, certifications, and verified achievements.",
+      icon: Trophy,
+      colorStart: "245, 158, 11", // Amber/Orange
+      colorEnd: "234, 88, 12",
+    },
+    {
+      number: "06",
+      title: "AI",
+      description: "Your always-on assistant for planning, learning, research, and execution.",
+      icon: Bot,
+      colorStart: "59, 130, 246", // Blue/Violet
+      colorEnd: "124, 58, 237",
+    },
+  ];
+
+  return (
+    <section 
+      id="platform-carousel" 
+      className="py-24 bg-[#05060F] overflow-visible select-none"
+    >
+      <div className="mx-auto max-w-6xl px-6 overflow-visible relative">
+        {/* Section header */}
+        <div className="mx-auto max-w-3xl text-center mb-10">
+          <div className="text-xs uppercase tracking-[0.22em] text-[#8B5CF6] font-semibold">
+            Interactive
+          </div>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+            Interactive 3D Ecosystem
+          </h2>
+          <p className="mt-4 text-white/60 text-sm sm:text-base">
+            Explore the professional growth modules in a continuous 3D rotating loop.
+          </p>
+        </div>
+
+        {/* ====== 3D Carousel – Flex Centered ====== */}
+        <style>{`
+          .carousel-uiverse-wrapper {
+            width: 100%;
+            height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            margin: 0.5rem 0 2rem 0;
+          }
+          .carousel-uiverse-inner {
+            --w: 200px;
+            --h: 290px;
+            --translateZ: calc(var(--w) * 2.5);
+            --rotateX: -6deg;
+            --perspective: 2000px;
+            width: var(--w);
+            height: var(--h);
+            transform-style: preserve-3d;
+            transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(0deg);
+            animation: rotating-uiverse 36s linear infinite;
+            position: relative;
+          }
+          @keyframes rotating-uiverse {
+            from {
+              transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(0deg);
+            }
+            to {
+              transform: perspective(var(--perspective)) rotateX(var(--rotateX)) rotateY(360deg);
+            }
+          }
+          .carousel-uiverse-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border: 1.5px solid transparent;
+            border-radius: 20px;
+            overflow: hidden;
+            transform: rotateY(calc((360deg / var(--quantity)) * var(--index))) translateZ(var(--translateZ));
+            box-shadow: 
+              0 15px 35px -10px rgba(0,0,0,0.85),
+              inset 0 1px 1px rgba(255,255,255,0.12);
+            
+            /* True glass gradient border technique using padding-box and border-box */
+            background: 
+              linear-gradient(135deg, rgba(15, 16, 35, 0.6) 0%, rgba(5, 6, 15, 0.8) 100%) padding-box,
+              linear-gradient(135deg, rgba(var(--color-start), 0.45) 0%, rgba(var(--color-end), 0.1) 100%) border-box;
+
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 28px 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: 
+              transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              box-shadow 0.4s ease;
+            cursor: default;
+          }
+
+          /* Premium diagonal shine sweep */
+          .carousel-uiverse-card::after {
+            content: '';
+            position: absolute;
+            top: -150%;
+            left: -150%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.12) 50%, transparent 55%);
+            transition: transform 0.8s ease;
+            transform: rotate(45deg);
+            pointer-events: none;
+            z-index: 5;
+          }
+          .carousel-uiverse-card:hover::after {
+            transform: translate(100%, 100%) rotate(45deg);
+          }
+
+          .carousel-uiverse-card:hover {
+            transform: rotateY(calc((360deg / var(--quantity)) * var(--index))) translateZ(calc(var(--translateZ) + 25px));
+            box-shadow: 
+              0 25px 50px -15px rgba(var(--color-start), 0.5),
+              inset 0 1px 2px rgba(255,255,255,0.22);
+            background: 
+              linear-gradient(135deg, rgba(15, 16, 35, 0.5) 0%, rgba(5, 6, 15, 0.7) 100%) padding-box,
+              linear-gradient(135deg, rgba(var(--color-start), 0.85) 0%, rgba(var(--color-end), 0.3) 100%) border-box;
+          }
+          
+          .carousel-uiverse-card .card-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: rgba(var(--color-start), 0.95);
+            font-family: 'Big Shoulders Stencil Display', sans-serif;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+            line-height: 1;
+          }
+          .carousel-uiverse-card .card-icon {
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(var(--color-start), 0.15);
+            border: 1px solid rgba(var(--color-start), 0.35);
+            color: rgba(var(--color-start), 1);
+            transition: all 0.3s ease;
+          }
+          .carousel-uiverse-card:hover .card-icon {
+            background: rgba(var(--color-start), 0.25);
+            border-color: rgba(var(--color-start), 0.55);
+            transform: scale(1.08) rotate(3deg);
+          }
+          .carousel-uiverse-card .card-icon svg {
+            width: 24px;
+            height: 24px;
+          }
+          .carousel-uiverse-card .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+          }
+          .carousel-uiverse-card .card-desc {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.55;
+            font-weight: 400;
+          }
+          @media (max-width: 1024px) {
+            .carousel-uiverse-wrapper {
+              height: 550px;
+            }
+            .carousel-uiverse-inner {
+              --w: 170px;
+              --h: 250px;
+              --translateZ: calc(var(--w) * 2.2);
+            }
+            .carousel-uiverse-card {
+              padding: 24px 18px;
+            }
+            .carousel-uiverse-card .card-title {
+              font-size: 1.1rem;
+            }
+            .carousel-uiverse-card .card-desc {
+              font-size: 0.82rem;
+            }
+          }
+          @media (max-width: 768px) {
+            .carousel-uiverse-wrapper {
+              height: 480px;
+            }
+            .carousel-uiverse-inner {
+              --w: 140px;
+              --h: 210px;
+              --translateZ: calc(var(--w) * 1.9);
+            }
+            .carousel-uiverse-card {
+              padding: 20px 14px;
+              border-radius: 16px;
+            }
+            .carousel-uiverse-card .card-title {
+              font-size: 0.98rem;
+            }
+            .carousel-uiverse-card .card-desc {
+              font-size: 0.72rem;
+              line-height: 1.45;
+            }
+            .carousel-uiverse-card .card-icon {
+              width: 38px;
+              height: 38px;
+              margin-bottom: 12px;
+            }
+            .carousel-uiverse-card .card-icon svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
+          @media (max-width: 480px) {
+            .carousel-uiverse-wrapper {
+              height: 380px;
+            }
+            .carousel-uiverse-inner {
+              --w: 110px;
+              --h: 170px;
+              --translateZ: calc(var(--w) * 1.6);
+            }
+            .carousel-uiverse-card {
+              padding: 14px 10px;
+              border-radius: 12px;
+            }
+            .carousel-uiverse-card .card-number {
+              font-size: 0.65rem;
+              margin-bottom: 8px;
+            }
+            .carousel-uiverse-card .card-title {
+              font-size: 0.8rem;
+            }
+            .carousel-uiverse-card .card-desc {
+              font-size: 0.62rem;
+            }
+            .carousel-uiverse-card .card-icon {
+              width: 28px;
+              height: 28px;
+              border-radius: 8px;
+              margin-bottom: 8px;
+            }
+            .carousel-uiverse-card .card-icon svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        `}</style>
+
+        <div className="carousel-uiverse-wrapper">
+          <div
+            className="carousel-uiverse-inner"
+            style={
+              {
+                '--quantity': items.length,
+              } as React.CSSProperties
+            }
+          >
+            {items.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={item.number}
+                  className="carousel-uiverse-card"
+                  style={
+                    {
+                      '--index': idx,
+                      '--color-start': item.colorStart,
+                      '--color-end': item.colorEnd,
+                    } as React.CSSProperties
+                  }
+                >
+                  <div className="card-number">{item.number}</div>
+                  <div className="card-icon">
+                    <Icon />
+                  </div>
+                  <div className="card-title">{item.title}</div>
+                  <div className="card-desc">{item.description}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -806,7 +1108,7 @@ export function Footer() {
           <Link to="/cookies" className="hover:text-white transition-colors">Manage Cookies</Link>
         </div>
         <div>
-          ┬⌐ 2026 Professional Home Pvt Ltd. All rights reserved.
+          © 2026 Professional Home Pvt Ltd. All rights reserved.
         </div>
       </div>
 

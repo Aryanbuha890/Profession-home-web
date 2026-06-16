@@ -1,4 +1,4 @@
-﻿import { Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import {
   Brain,
   Users,
@@ -859,7 +859,7 @@ export function Footer() {
           <Link to="/cookies" className="hover:text-white transition-colors">Manage Cookies</Link>
         </div>
         <div>
-          ┬⌐ 2026 Professional Home Pvt Ltd. All rights reserved.
+          © 2026 Professional Home Pvt Ltd. All rights reserved.
         </div>
       </div>
 
