@@ -83,11 +83,13 @@ import { Route as AppResearchResearch_copilotRouteImport } from './routes/app.re
 import { Route as AppResearchResearch_arenaRouteImport } from './routes/app.research/research_arena'
 import { Route as AppResearchPublicationsRouteImport } from './routes/app.research/publications'
 import { Route as AppResearchPatentsRouteImport } from './routes/app.research/patents'
+import { Route as AppResearchOpportunitiesRouteImport } from './routes/app.research/opportunities'
 import { Route as AppResearchGrantsRouteImport } from './routes/app.research/grants'
 import { Route as AppResearchEventsRouteImport } from './routes/app.research/events'
 import { Route as AppResearchDocsRouteImport } from './routes/app.research/docs'
 import { Route as AppResearchCommunityRouteImport } from './routes/app.research/community'
 import { Route as AppResearchCollaboratorsRouteImport } from './routes/app.research/collaborators'
+import { Route as AppResearchCareer_arenaRouteImport } from './routes/app.research/career_arena'
 import { Route as AppResearchAchievementsRouteImport } from './routes/app.research/achievements'
 import { Route as AppInvestorStartup_discoveryRouteImport } from './routes/app.investor/startup_discovery'
 import { Route as AppInvestorSettingsRouteImport } from './routes/app.investor/settings'
@@ -512,6 +514,12 @@ const AppResearchPatentsRoute = AppResearchPatentsRouteImport.update({
   path: '/patents',
   getParentRoute: () => AppResearchRoute,
 } as any)
+const AppResearchOpportunitiesRoute =
+  AppResearchOpportunitiesRouteImport.update({
+    id: '/opportunities',
+    path: '/opportunities',
+    getParentRoute: () => AppResearchRoute,
+  } as any)
 const AppResearchGrantsRoute = AppResearchGrantsRouteImport.update({
   id: '/grants',
   path: '/grants',
@@ -538,6 +546,11 @@ const AppResearchCollaboratorsRoute =
     path: '/collaborators',
     getParentRoute: () => AppResearchRoute,
   } as any)
+const AppResearchCareer_arenaRoute = AppResearchCareer_arenaRouteImport.update({
+  id: '/career_arena',
+  path: '/career_arena',
+  getParentRoute: () => AppResearchRoute,
+} as any)
 const AppResearchAchievementsRoute = AppResearchAchievementsRouteImport.update({
   id: '/achievements',
   path: '/achievements',
@@ -815,11 +828,13 @@ export interface FileRoutesByFullPath {
   '/app/investor/settings': typeof AppInvestorSettingsRoute
   '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
   '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/career_arena': typeof AppResearchCareer_arenaRoute
   '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
   '/app/research/community': typeof AppResearchCommunityRoute
   '/app/research/docs': typeof AppResearchDocsRoute
   '/app/research/events': typeof AppResearchEventsRoute
   '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/opportunities': typeof AppResearchOpportunitiesRoute
   '/app/research/patents': typeof AppResearchPatentsRoute
   '/app/research/publications': typeof AppResearchPublicationsRoute
   '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
@@ -931,11 +946,13 @@ export interface FileRoutesByTo {
   '/app/investor/settings': typeof AppInvestorSettingsRoute
   '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
   '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/career_arena': typeof AppResearchCareer_arenaRoute
   '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
   '/app/research/community': typeof AppResearchCommunityRoute
   '/app/research/docs': typeof AppResearchDocsRoute
   '/app/research/events': typeof AppResearchEventsRoute
   '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/opportunities': typeof AppResearchOpportunitiesRoute
   '/app/research/patents': typeof AppResearchPatentsRoute
   '/app/research/publications': typeof AppResearchPublicationsRoute
   '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
@@ -1055,11 +1072,13 @@ export interface FileRoutesById {
   '/app/investor/settings': typeof AppInvestorSettingsRoute
   '/app/investor/startup_discovery': typeof AppInvestorStartup_discoveryRoute
   '/app/research/achievements': typeof AppResearchAchievementsRoute
+  '/app/research/career_arena': typeof AppResearchCareer_arenaRoute
   '/app/research/collaborators': typeof AppResearchCollaboratorsRoute
   '/app/research/community': typeof AppResearchCommunityRoute
   '/app/research/docs': typeof AppResearchDocsRoute
   '/app/research/events': typeof AppResearchEventsRoute
   '/app/research/grants': typeof AppResearchGrantsRoute
+  '/app/research/opportunities': typeof AppResearchOpportunitiesRoute
   '/app/research/patents': typeof AppResearchPatentsRoute
   '/app/research/publications': typeof AppResearchPublicationsRoute
   '/app/research/research_arena': typeof AppResearchResearch_arenaRoute
@@ -1180,11 +1199,13 @@ export interface FileRouteTypes {
     | '/app/investor/settings'
     | '/app/investor/startup_discovery'
     | '/app/research/achievements'
+    | '/app/research/career_arena'
     | '/app/research/collaborators'
     | '/app/research/community'
     | '/app/research/docs'
     | '/app/research/events'
     | '/app/research/grants'
+    | '/app/research/opportunities'
     | '/app/research/patents'
     | '/app/research/publications'
     | '/app/research/research_arena'
@@ -1296,11 +1317,13 @@ export interface FileRouteTypes {
     | '/app/investor/settings'
     | '/app/investor/startup_discovery'
     | '/app/research/achievements'
+    | '/app/research/career_arena'
     | '/app/research/collaborators'
     | '/app/research/community'
     | '/app/research/docs'
     | '/app/research/events'
     | '/app/research/grants'
+    | '/app/research/opportunities'
     | '/app/research/patents'
     | '/app/research/publications'
     | '/app/research/research_arena'
@@ -1419,11 +1442,13 @@ export interface FileRouteTypes {
     | '/app/investor/settings'
     | '/app/investor/startup_discovery'
     | '/app/research/achievements'
+    | '/app/research/career_arena'
     | '/app/research/collaborators'
     | '/app/research/community'
     | '/app/research/docs'
     | '/app/research/events'
     | '/app/research/grants'
+    | '/app/research/opportunities'
     | '/app/research/patents'
     | '/app/research/publications'
     | '/app/research/research_arena'
@@ -2014,6 +2039,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResearchPatentsRouteImport
       parentRoute: typeof AppResearchRoute
     }
+    '/app/research/opportunities': {
+      id: '/app/research/opportunities'
+      path: '/opportunities'
+      fullPath: '/app/research/opportunities'
+      preLoaderRoute: typeof AppResearchOpportunitiesRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
     '/app/research/grants': {
       id: '/app/research/grants'
       path: '/grants'
@@ -2047,6 +2079,13 @@ declare module '@tanstack/react-router' {
       path: '/collaborators'
       fullPath: '/app/research/collaborators'
       preLoaderRoute: typeof AppResearchCollaboratorsRouteImport
+      parentRoute: typeof AppResearchRoute
+    }
+    '/app/research/career_arena': {
+      id: '/app/research/career_arena'
+      path: '/career_arena'
+      fullPath: '/app/research/career_arena'
+      preLoaderRoute: typeof AppResearchCareer_arenaRouteImport
       parentRoute: typeof AppResearchRoute
     }
     '/app/research/achievements': {
@@ -2466,11 +2505,13 @@ const AppInvestorRouteWithChildren = AppInvestorRoute._addFileChildren(
 
 interface AppResearchRouteChildren {
   AppResearchAchievementsRoute: typeof AppResearchAchievementsRoute
+  AppResearchCareer_arenaRoute: typeof AppResearchCareer_arenaRoute
   AppResearchCollaboratorsRoute: typeof AppResearchCollaboratorsRoute
   AppResearchCommunityRoute: typeof AppResearchCommunityRoute
   AppResearchDocsRoute: typeof AppResearchDocsRoute
   AppResearchEventsRoute: typeof AppResearchEventsRoute
   AppResearchGrantsRoute: typeof AppResearchGrantsRoute
+  AppResearchOpportunitiesRoute: typeof AppResearchOpportunitiesRoute
   AppResearchPatentsRoute: typeof AppResearchPatentsRoute
   AppResearchPublicationsRoute: typeof AppResearchPublicationsRoute
   AppResearchResearch_arenaRoute: typeof AppResearchResearch_arenaRoute
@@ -2483,11 +2524,13 @@ interface AppResearchRouteChildren {
 
 const AppResearchRouteChildren: AppResearchRouteChildren = {
   AppResearchAchievementsRoute: AppResearchAchievementsRoute,
+  AppResearchCareer_arenaRoute: AppResearchCareer_arenaRoute,
   AppResearchCollaboratorsRoute: AppResearchCollaboratorsRoute,
   AppResearchCommunityRoute: AppResearchCommunityRoute,
   AppResearchDocsRoute: AppResearchDocsRoute,
   AppResearchEventsRoute: AppResearchEventsRoute,
   AppResearchGrantsRoute: AppResearchGrantsRoute,
+  AppResearchOpportunitiesRoute: AppResearchOpportunitiesRoute,
   AppResearchPatentsRoute: AppResearchPatentsRoute,
   AppResearchPublicationsRoute: AppResearchPublicationsRoute,
   AppResearchResearch_arenaRoute: AppResearchResearch_arenaRoute,

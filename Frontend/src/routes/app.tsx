@@ -11,9 +11,9 @@ function AppLayout() {
   return (
     <RoleProvider>
       <SidebarProvider>
-        <div className="flex min-h-screen w-full bg-background text-foreground">
+        <div className="flex h-screen w-full overflow-hidden bg-background text-foreground">
           <AppSidebar />
-          <main className="flex min-w-0 flex-1 flex-col">
+          <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
             <Outlet />
           </main>
           <CopilotFab />

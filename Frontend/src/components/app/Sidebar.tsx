@@ -77,9 +77,9 @@ const roleConfigs: Record<
     gradient: "from-sky-400 to-indigo-500",
   },
   researcher: {
-    name: "Research Command Center",
+    name: "Research Student Hub",
     theme: "Researcher OS",
-    sub: "Dr. Aryan · Publications",
+    sub: "Aryan · Research Student",
     icon: Brain,
     accentColor: "#a78bfa",
     gradient: "from-violet-400 to-fuchsia-500",
@@ -192,18 +192,11 @@ export function AppSidebar() {
       case "researcher":
         return [
           { icon: LayoutDashboard, label: "Home", to: "/app/research", exact: true },
-          { icon: Compass, label: "Research Arena", to: "/app/research/research_arena" },
+          { icon: Compass, label: "Career Arena", to: "/app/research/career_arena" },
+          { icon: Brain, label: "Research Arena", to: "/app/research/research_arena" },
           { icon: Folder, label: "Research Projects", to: "/app/research/research_projects" },
-          { icon: Users, label: "Collaborators", to: "/app/research/collaborators" },
-          { icon: FileText, label: "Publications", to: "/app/research/publications" },
-          { icon: Coins, label: "Grants", to: "/app/research/grants" },
-          { icon: Award, label: "Patents", to: "/app/research/patents" },
-          { icon: Map, label: "Research Roadmaps", to: "/app/research/research_roadmap" },
-          { icon: ListChecks, label: "Research Tasks", to: "/app/research/research_tasks" },
-          { icon: FileSearch, label: "Document Intelligence", to: "/app/research/docs" },
-          { icon: Bot, label: "AI Research Copilot", to: "/app/research/research_copilot" },
+          { icon: BriefcaseBusiness, label: "Opportunities Hub", to: "/app/research/opportunities" },
           { icon: Award, label: "Achievement Vault", to: "/app/research/achievements" },
-          { icon: Users, label: "Research Community", to: "/app/research/community" },
           { icon: Calendar, label: "Events", to: "/app/research/events" },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
