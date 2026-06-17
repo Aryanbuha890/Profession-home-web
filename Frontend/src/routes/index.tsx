@@ -21,7 +21,7 @@ import {
   LineChart,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
-import { Trust, Footer, HowItWorks, Ecosystem, Features, FeaturesCarousel, Pricing } from "@/components/landing/Sections";
+import { Trust, Footer, HowItWorks, Ecosystem, Features, FeaturesCarousel, Pricing, FAQ, ContactCTA } from "@/components/landing/Sections";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { ScrollReveal } from "../components/ScrollReveal";
@@ -64,6 +64,8 @@ function Landing() {
       <Features />
       <FeaturesCarousel />
       <Pricing />
+      <FAQ />
+      <ContactCTA />
       <Footer />
     </div>
   );
@@ -82,7 +84,24 @@ function Hero() {
 
   const word1 = "PROFESSIONAL".split("");
   const word2 = "HOME".split("");
-  const images = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+  const images = [
+    "/pexels-ai25studioai-5466251.jpg",
+    "/pexels-jakubzerdzicki-30260904.jpg",
+    "/pexels-karola-g-8539456.jpg",
+    "/pexels-katerina-holmes-5905529.jpg",
+    "/pexels-konat-umut-budak-765467672-37296311.jpg",
+    "/pexels-larissafarber-7593250.jpg",
+    "/pexels-n-voitkevich-6532364.jpg",
+    "/pexels-peaky-31177212.jpg",
+    "/pexels-rdne-7843009.jpg",
+    "/pexels-samuel-francis-830136920-37916490.jpg",
+    "/pexels-shubhamdhage-37911158.jpg",
+    "/pexels-shvets-production-7562363.jpg",
+    "/pexels-shvetsa-5324972.jpg",
+    "/pexels-silverkblack-36697950.jpg",
+    "/pexels-tima-miroshnichenko-6914003.jpg",
+    "/pexels-tima-miroshnichenko-9574458.jpg"
+  ];
 
   return (
     <section
@@ -133,7 +152,7 @@ function Hero() {
                       }`}
                     style={{
                       backgroundImage: isHovered ? `url(${imgUrl})` : "none",
-                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
                     }}
                   >
                     {char}
@@ -164,7 +183,7 @@ function Hero() {
                       }`}
                     style={{
                       backgroundImage: isHovered ? `url(${imgUrl})` : "none",
-                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
                     }}
                   >
                     {char}
@@ -838,35 +857,35 @@ function JourneySection() {
       title: "AI Assessment",
       subtitle: "Map your situation, domain competencies, and target career goals.",
       price: "AI Diagnostic Analysis",
-      img: "/1.png",
+      img: "/AI Assessment.jpeg",
     },
     {
       badge: "STAGE 02",
       title: "Expert Matching",
       subtitle: "Personalized matching with verified academic and industry experts.",
       price: "Expert Consultations",
-      img: "/2.png",
+      img: "/Expert Matching.jpeg",
     },
     {
       badge: "STAGE 03",
       title: "Roadmap Creation",
       subtitle: "Generate dynamic task checklists, resource plans, and project phases.",
       price: "Actionable Roadmaps",
-      img: "/3.png",
+      img: "/Roadmap Creation.jpeg",
     },
     {
       badge: "STAGE 04",
       title: "Execution Tracking",
       subtitle: "Track weekly deliverables and manage projects with Kanban tools.",
       price: "Milestone Tracking",
-      img: "/4.png",
+      img: "/Execution Tracking.jpeg",
     },
     {
       badge: "STAGE 05",
       title: "Outcome Achievement",
       subtitle: "Log placements, verify publications, track grants and funding.",
       price: "Outcome Analytics",
-      img: "/5.png",
+      img: "/Outcome Achievement.jpeg",
     },
   ];
 
@@ -1052,7 +1071,7 @@ function ScrollRevealSection() {
 
   const { scrollYProgress } = useScroll({
     target: textRef,
-    offset: ["start 0.85", "end 0.45"],
+    offset: ["start 0.85", "start 0.4"],
   });
 
   return (

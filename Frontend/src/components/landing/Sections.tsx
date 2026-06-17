@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import {
   Brain,
@@ -1083,6 +1084,7 @@ export function Footer() {
               { to: "/", hash: "ecosystem", label: "Ecosystem" },
               { to: "/", hash: "platform", label: "Platform" },
               { to: "/", hash: "pricing", label: "Pricing" },
+              { to: "/", hash: "faq", label: "FAQ" },
               { to: "/login", label: "Login / Sign Up" },
             ].map((link) => (
               <li key={link.label}>
@@ -1126,3 +1128,280 @@ export function Footer() {
     </footer>
   );
 }
+
+export function FAQ() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  const faqData = [
+    {
+      question: "What is Professional Home?",
+      answer: "Professional Home is a unified career operating system designed to turn professional ambition into achievement. We combine AI diagnostics, expert mentorship matching, interactive growth roadmaps, and verified outcome tracking to help students, researchers, and founders succeed."
+    },
+    {
+      question: "Who is Professional Home for?",
+      answer: "It is built for three primary groups: Students looking to accelerate academic and career velocity; Researchers seeking citation impact, collaborations, and grant funding; and Startup Founders looking to secure capital, build advisor boards, and manage pitch data rooms."
+    },
+    {
+      question: "How does the AI Career Diagnostic work?",
+      answer: "Our proprietary AI analysis maps your current skill profile, academic/professional situation, and career aspirations, cross-referencing them with industry pathways to generate a personalized action roadmap."
+    },
+    {
+      question: "What is the Expert Matching system?",
+      answer: "We match you with verified industry veterans and academic advisors (e.g., McKinsey partners, Tier-1 startup founders, MIT researchers) who provide one-on-one consultations, resume deep-scans, and pitch deck reviews."
+    },
+    {
+      question: "Is there a free trial or entry-level tier?",
+      answer: "Yes! The Student tier is completely free ($0/mo) and includes basic AI assessments, roadmap building, and workspace hub features. We also offer 14-day trials on our Pro Research and Growth Startup passes."
+    }
+  ];
+
+  return (
+    <section id="faq" className="py-24 relative overflow-hidden bg-[#05060F]">
+      {/* Glow details */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-violet-600/5 blur-3xl pointer-events-none" />
+
+      <div className="mx-auto max-w-4xl px-6 relative z-10 text-center">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-violet-500/20 bg-violet-500/5 text-xs font-semibold uppercase tracking-[0.2em] text-violet-400">
+          FAQ
+        </div>
+        
+        <h2 className="mt-4 font-display text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+          Frequently asked questions
+        </h2>
+        
+        <p className="mt-4 text-slate-400 text-sm sm:text-base">
+          Haven't found what you're looking for?{" "}
+          <button
+            onClick={() => {
+              document.getElementById("contact-cta")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="text-violet-400 hover:text-violet-300 transition-colors font-medium underline underline-offset-4 decoration-violet-400/30 cursor-pointer bg-transparent border-none p-0"
+          >
+            Contact us.
+          </button>
+        </p>
+
+        <div className="mt-16 max-w-3xl mx-auto flex flex-col border-t border-white/5 text-left">
+          {faqData.map((item, idx) => {
+            const isOpen = openIdx === idx;
+            return (
+              <div key={idx} className="border-b border-white/5 py-6 sm:py-7">
+                <button
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  className="w-full flex items-center justify-between text-left gap-4 group cursor-pointer bg-transparent border-none p-0"
+                >
+                  <span className="text-base sm:text-xl font-semibold text-white/90 group-hover:text-white transition-colors duration-200 tracking-tight">
+                    {item.question}
+                  </span>
+                  <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
+                    {/* Horizontal line */}
+                    <div className="absolute w-4.5 h-[1.5px] bg-slate-500 group-hover:bg-slate-300 transition-colors duration-205" />
+                    {/* Vertical line */}
+                    <motion.div
+                      className="absolute w-[1.5px] h-4.5 bg-slate-500 group-hover:bg-slate-300 transition-colors duration-205"
+                      animate={{ rotate: isOpen ? 90 : 0, opacity: isOpen ? 0 : 1, scaleY: isOpen ? 0 : 1 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                    />
+                  </div>
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-4 text-sm sm:text-base text-slate-400 leading-relaxed max-w-[90%] font-normal">
+                    {item.answer}
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function ContactCTA() {
+  const [email, setEmail] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    toast.success("Welcome aboard! Let's get started on your professional roadmap.", {
+      description: `We've sent a kickoff diagnostic roadmap email to ${email}`,
+    });
+    setEmail("");
+  };
+
+  return (
+    <section id="contact-cta" className="py-24 relative overflow-hidden bg-[#05060F]">
+      <div className="mx-auto max-w-6xl px-6 relative z-10">
+        <div className="relative w-full max-w-5xl mx-auto rounded-[32px] border border-white/[0.08] cta-glass-card overflow-hidden px-6 py-16 sm:py-20 text-center">
+          
+          {/* Top perspective grid - converging downward into deep center */}
+          <div className="absolute top-0 left-0 right-0 h-[180px] pointer-events-none overflow-hidden select-none">
+            <svg 
+              viewBox="0 0 1000 180" 
+              className="w-full h-full" 
+              preserveAspectRatio="none"
+              style={{
+                maskImage: "linear-gradient(to bottom, black 35%, transparent 95%)",
+                WebkitMaskImage: "linear-gradient(to bottom, black 35%, transparent 95%)"
+              }}
+            >
+              <defs>
+                <linearGradient id="top-glow-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#A78BFA" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              
+              {/* Converging vertical lines (wide at top y=0, narrow at bottom y=180) */}
+              {Array.from({ length: 21 }).map((_, i) => {
+                const t = (i - 10) / 10;
+                const x1 = 500 + t * 620;
+                const x2 = 500 + t * 90;
+                return (
+                  <line
+                    key={`top-v-${i}`}
+                    x1={x1}
+                    y1={0}
+                    x2={x2}
+                    y2={180}
+                    stroke="rgba(139, 92, 246, 0.08)"
+                    strokeWidth="1"
+                  />
+                );
+              })}
+              
+              {/* Perspective spaced horizontal lines (closer together near bottom vanishing point) */}
+              {[0, 45, 85, 120, 145, 162, 174, 180].map((y, idx) => (
+                <line
+                  key={`top-h-${idx}`}
+                  x1={0}
+                  y1={y}
+                  x2={1000}
+                  y2={y}
+                  stroke="rgba(139, 92, 246, 0.08)"
+                  strokeWidth="1"
+                />
+              ))}
+            </svg>
+          </div>
+
+          {/* Bottom perspective grid - converging upward into deep center */}
+          <div className="absolute bottom-0 left-0 right-0 h-[180px] pointer-events-none overflow-hidden select-none">
+            <svg 
+              viewBox="0 0 1000 180" 
+              className="w-full h-full" 
+              preserveAspectRatio="none"
+              style={{
+                maskImage: "linear-gradient(to top, black 35%, transparent 95%)",
+                WebkitMaskImage: "linear-gradient(to top, black 35%, transparent 95%)"
+              }}
+            >
+              <defs>
+                <linearGradient id="bottom-glow-gradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#A78BFA" stopOpacity="1" />
+                  <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+
+              {/* Converging vertical lines (wide at bottom y=180, narrow at top y=0) */}
+              {Array.from({ length: 21 }).map((_, i) => {
+                const t = (i - 10) / 10;
+                const x1 = 500 + t * 620;
+                const x2 = 500 + t * 90;
+                return (
+                  <line
+                    key={`bottom-v-${i}`}
+                    x1={x1}
+                    y1={180}
+                    x2={x2}
+                    y2={0}
+                    stroke="rgba(139, 92, 246, 0.08)"
+                    strokeWidth="1"
+                  />
+                );
+              })}
+
+              {/* Perspective spaced horizontal lines (closer together near top vanishing point) */}
+              {[0, 6, 18, 35, 60, 95, 135, 180].map((y, idx) => (
+                <line
+                  key={`bottom-h-${idx}`}
+                  x1={0}
+                  y1={y}
+                  x2={1000}
+                  y2={y}
+                  stroke="rgba(139, 92, 246, 0.08)"
+                  strokeWidth="1"
+                />
+              ))}
+            </svg>
+          </div>
+
+          {/* Symmetrical glowing ambient orbs */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.12)_0%,transparent_60%)] blur-3xl pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] rounded-full bg-[radial-gradient(circle,rgba(217,70,239,0.08)_0%,transparent_60%)] blur-3xl pointer-events-none" />
+
+          {/* Symmetrical static stars/sparkles in background matching 3rd image */}
+          <div className="absolute top-[18%] left-[12%] w-1.5 h-1.5 bg-white rounded-full opacity-30 animate-pulse pointer-events-none" />
+          <div className="absolute top-[35%] right-[10%] w-1 h-1 bg-white rounded-full opacity-40 pointer-events-none" />
+          <div className="absolute bottom-[22%] left-[18%] w-1 h-1 bg-white rounded-full opacity-25 pointer-events-none" />
+          <div className="absolute bottom-[30%] right-[16%] w-1.5 h-1.5 bg-white rounded-full opacity-35 animate-pulse pointer-events-none" />
+          <div className="absolute top-[50%] left-[8%] w-1.5 h-1.5 bg-white rounded-full opacity-20 pointer-events-none" />
+          <div className="absolute bottom-[55%] right-[22%] w-1 h-1 bg-white rounded-full opacity-30 pointer-events-none" />
+
+          {/* Content wrapper */}
+          <div className="relative z-10 flex flex-col items-center max-w-3xl mx-auto">
+            {/* Glowing Logo Container with White Border */}
+            <div className="relative w-16 h-16 rounded-2xl bg-[#090b16] border-2 border-white flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.18)] mb-8 transition-transform duration-500 hover:scale-105 overflow-hidden select-none pointer-events-none">
+              <img 
+                src="/Logo.png" 
+                alt="Professional Home Logo" 
+                className="w-10 h-10 object-contain"
+              />
+            </div>
+
+            {/* Heading */}
+            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-5 font-sans leading-[1.15]">
+              Achieve Your Potential.<br />Starting Now.
+            </h2>
+
+            {/* Subtitle */}
+            <p className="text-slate-400 text-sm sm:text-base max-w-lg mb-10 leading-relaxed font-sans">
+              Professional Home combines AI assessments, expert guidance, and execution tracking to accelerate your growth.
+            </p>
+
+            {/* Shared Pill-shaped Input Container matching 3rd image */}
+            <form onSubmit={handleSubmit} className="flex items-center bg-[#070913]/60 border border-white/[0.08] hover:border-white/15 focus-within:border-violet-500/50 rounded-full p-1.5 pl-6 transition-all duration-300 w-full max-w-md mx-auto z-10 relative">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-transparent border-none outline-none text-white text-sm placeholder:text-slate-500/70 flex-1 h-10"
+              />
+              <button
+                type="submit"
+                className="h-10 px-6 rounded-full border border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.08] active:scale-95 transition-all duration-300 text-sm font-semibold cursor-pointer shrink-0"
+              >
+                Get Started
+              </button>
+            </form>
+
+            {/* Form Meta Subtext (Horizontal layout with star badge) */}
+            <div className="flex items-center justify-center gap-2 text-[12px] text-slate-500/80 mt-6 font-sans pointer-events-none select-none">
+              <span>No credit card required</span>
+              <span className="text-violet-400/60 mx-1">✦</span>
+              <span>Free diagnostic assessment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
