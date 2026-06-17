@@ -57,7 +57,6 @@ function Landing() {
       <Hero />
       <DashboardSection />
       <Trust />
-      <JourneySection />
       <ScrollRevealSection />
       <HowItWorks />
       <Ecosystem />
@@ -848,135 +847,7 @@ function DashboardSection() {
   );
 }
 
-// Apple-style horizontal scroll shelf Journey section
-function JourneySection() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const journeyCards = [
-    {
-      badge: "STAGE 01",
-      title: "AI Assessment",
-      subtitle: "Map your situation, domain competencies, and target career goals.",
-      price: "AI Diagnostic Analysis",
-      img: "/AI Assessment.jpeg",
-    },
-    {
-      badge: "STAGE 02",
-      title: "Expert Matching",
-      subtitle: "Personalized matching with verified academic and industry experts.",
-      price: "Expert Consultations",
-      img: "/Expert Matching.jpeg",
-    },
-    {
-      badge: "STAGE 03",
-      title: "Roadmap Creation",
-      subtitle: "Generate dynamic task checklists, resource plans, and project phases.",
-      price: "Actionable Roadmaps",
-      img: "/Roadmap Creation.jpeg",
-    },
-    {
-      badge: "STAGE 04",
-      title: "Execution Tracking",
-      subtitle: "Track weekly deliverables and manage projects with Kanban tools.",
-      price: "Milestone Tracking",
-      img: "/Execution Tracking.jpeg",
-    },
-    {
-      badge: "STAGE 05",
-      title: "Outcome Achievement",
-      subtitle: "Log placements, verify publications, track grants and funding.",
-      price: "Outcome Analytics",
-      img: "/Outcome Achievement.jpeg",
-    },
-  ];
 
-  const scroll = (direction: "left" | "right") => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const scrollAmount = 360; // Card width + gap
-    container.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  return (
-    <section className="relative py-24 bg-[#05060F] overflow-hidden">
-      {/* subtle glowing background effects */}
-      <div className="pointer-events-none absolute top-1/2 left-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.08),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 right-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.06),transparent)] blur-3xl" />
-
-      <div className="mx-auto max-w-6xl px-6 relative z-10">
-        {/* Section heading with Navigation Arrows */}
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl max-w-3xl">
-            <ScrollReveal>The latest. Explore the stages of professional growth.</ScrollReveal>
-          </h2>
-          {/* Navigation Arrows */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => scroll("left")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="h-5 w-5 text-white/80" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="h-5 w-5 text-white/80" />
-            </button>
-          </div>
-        </div>
-
-        {/* Horizontal scroll snap shelf */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth"
-        >
-          {journeyCards.map((card, idx) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.15 }}
-              transition={{ duration: 0.6, delay: idx * 0.08, type: "spring", stiffness: 80, damping: 15 }}
-              className="flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start rounded-[24px] border border-white/10 bg-[#0c0d16]/90 overflow-hidden transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(124,58,237,0.25)] hover:border-violet-500/30 cursor-default flex flex-col h-[500px] shadow-2xl"
-            >
-              {/* Card text content */}
-              <div className="px-6 pt-6 pb-2">
-                {card.badge && (
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-1.5">
-                    {card.badge}
-                  </span>
-                )}
-                <h3 className="text-xl font-bold tracking-[0.08em] leading-tight text-white font-mango uppercase">
-                  {card.title}
-                </h3>
-                <p className="text-[12.5px] mt-1.5 leading-snug text-white/60 min-h-[38px]">
-                  {card.subtitle}
-                </p>
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white/90 mt-2 hover:text-violet-300 transition-colors">
-                  {card.price} <ArrowRight className="w-3 h-3 text-white/40 group-hover:text-violet-300" />
-                </span>
-              </div>
-
-              {/* Card product image */}
-              <div className="flex-1 flex items-center justify-center px-4 pb-5 mt-2 relative overflow-hidden bg-black/40">
-                <img
-                  src={card.img}
-                  alt={card.title}
-                  className="w-full h-full object-cover object-top rounded-2xl border border-white/5 shadow-sm transition-transform duration-700"
-                />
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 interface RevealWordProps {
   word: string;
