@@ -2,27 +2,30 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   PlayCircle,
-  ShieldCheck,
-  CheckCircle2,
   Sparkles,
   Users,
-  LayoutDashboard,
+  Eye,
+  Cpu,
   Brain,
   TrendingUp,
   Compass,
-  Eye,
-  Cpu,
   Bot,
-  Trophy,
-  Coins,
-  Code,
-  Database,
+  ChevronLeft,
+  ChevronRight,
+  GraduationCap,
+  FlaskConical,
+  Rocket,
+  Award,
+  CheckCircle2,
+  FileText,
+  LineChart,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
-import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { AnimatedCounter } from "@/components/AnimatedCounter";
+import { Trust, Footer, HowItWorks, Ecosystem, Features, FeaturesCarousel, Pricing, FAQ, ContactCTA } from "@/components/landing/Sections";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { ScrollReveal } from "../components/ScrollReveal";
+import ScrollStack, { ScrollStackItem } from "../components/ui/ScrollStack";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -54,159 +57,147 @@ function Landing() {
       <Hero />
       <DashboardSection />
       <Trust />
-      <JourneySection />
+      <ScrollRevealSection />
       <HowItWorks />
       <Ecosystem />
       <Features />
+      <FeaturesCarousel />
       <Pricing />
+      <FAQ />
+      <ContactCTA />
       <Footer />
     </div>
   );
 }
 
 function Hero() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   const ref = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
+  const word1 = "PROFESSIONAL".split("");
+  const word2 = "HOME".split("");
+  const images = [
+    "/pexels-ai25studioai-5466251.jpg",
+    "/pexels-jakubzerdzicki-30260904.jpg",
+    "/pexels-karola-g-8539456.jpg",
+    "/pexels-katerina-holmes-5905529.jpg",
+    "/pexels-konat-umut-budak-765467672-37296311.jpg",
+    "/pexels-larissafarber-7593250.jpg",
+    "/pexels-n-voitkevich-6532364.jpg",
+    "/pexels-peaky-31177212.jpg",
+    "/pexels-rdne-7843009.jpg",
+    "/pexels-samuel-francis-830136920-37916490.jpg",
+    "/pexels-shubhamdhage-37911158.jpg",
+    "/pexels-shvets-production-7562363.jpg",
+    "/pexels-shvetsa-5324972.jpg",
+    "/pexels-silverkblack-36697950.jpg",
+    "/pexels-tima-miroshnichenko-6914003.jpg",
+    "/pexels-tima-miroshnichenko-9574458.jpg"
+  ];
+
   return (
     <section
       ref={ref}
       className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden text-white pt-24 pb-12"
-      style={{
-        background:
-          "radial-gradient(1200px 600px at 50% 10%, rgba(124,58,237,0.32), transparent 60%), radial-gradient(900px 500px at 80% 0%, rgba(37,99,235,0.22), transparent 60%), radial-gradient(700px 400px at 10% 20%, rgba(13,148,136,0.15), transparent 60%), linear-gradient(180deg, #05060F 0%, #07091A 60%, #05060F 100%)",
-      }}
     >
-      {/* Grid + scanline overlays */}
-      <div
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255,255,255,0.6) 3px, transparent 4px)",
-        }}
-      />
-      {/* Aurora radial backdrops */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 h-[620px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.45),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute top-40 -left-32 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(37,99,235,0.3),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 right-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(closest-side,rgba(13,148,136,0.25),transparent)] blur-3xl" />
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden bg-[#05060F] pointer-events-none">
+        <video
+          src="/bg%20video%20ph.mp4"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.45]"
+          muted
+          loop
+          playsInline
+          autoPlay
+        />
 
-      <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1">
+        {/* Blending overlay layers for contrast and modern neon look */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#05060F]/20 via-transparent to-[#05060F]" />
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#05060F]/30 to-[#05060F]/90" />
+      </div>
+
+      <div className="relative w-full max-w-6xl px-6 flex flex-col justify-center items-center flex-1 z-10">
         <motion.div style={{ y }} className="mx-auto max-w-5xl text-center w-full flex flex-col items-center justify-center">
-          {/* Tagline Badge - 3D Rotating Wordmark */}
-          <div style={{ perspective: "1500px" }} className="mb-8 flex justify-center select-none">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.85, y: 20 }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-                y: 0,
-                rotateY: [0, 360],
-                rotateX: [10, -10, 10],
-              }}
-              transition={{
-                opacity: { duration: 0.8 },
-                scale: { duration: 0.8 },
-                y: { duration: 0.8 },
-                rotateY: { duration: 18, ease: "linear", repeat: Infinity },
-                rotateX: { duration: 9, ease: "easeInOut", repeat: Infinity },
-              }}
-              style={{
-                transformStyle: "preserve-3d",
-              }}
-              className="relative flex items-center justify-center px-12 py-6 cursor-grab active:cursor-grabbing"
-            >
-              {/* Layered 3D Text Extrusion (Creates a solid blocky 3D depth of letters) */}
-              <span 
-                className="relative inline-block font-sans font-black tracking-[0.2em] text-xl sm:text-2xl md:text-4xl lg:text-5xl uppercase text-center" 
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {Array.from({ length: 30 }).map((_, i) => {
-                  const zValue = i * 0.85;
-                  const pct = i / 30;
-                  
-                  // Generates smooth lighting shades from base shadow to highlight
-                  let color = "#0a0518"; // deep shadow backplate
-                  if (pct > 0.95) {
-                    color = "#c084fc"; // violet-400 near front
-                  } else if (pct > 0.8) {
-                    color = "#a855f7"; // purple-500
-                  } else if (pct > 0.6) {
-                    color = "#9333ea"; // purple-600
-                  } else if (pct > 0.4) {
-                    color = "#7e22ce"; // purple-700
-                  } else if (pct > 0.2) {
-                    color = "#581c87"; // purple-900
-                  } else if (pct > 0.08) {
-                    color = "#3b0764"; // dark violet shadow
-                  }
 
-                  return (
-                    <span
-                      key={i}
-                      className="absolute inset-0 flex items-center justify-center whitespace-nowrap pointer-events-none"
-                      style={{
-                        transform: `translate3d(0, 0, ${zValue}px)`,
-                        color: color,
-                        filter: i === 0 ? "blur(4px) opacity(0.7)" : "none",
-                        WebkitTextStroke: i < 28 ? "1.5px rgba(0,0,0,0.3)" : "none",
-                      }}
-                    >
-                      PROFESSIONAL HOME
-                    </span>
-                  );
-                })}
-                
-                {/* Frontmost Layer (Glossy holographic styling) */}
-                <span
-                  className="relative flex items-center justify-center whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-violet-100 to-fuchsia-300 filter drop-shadow-[0_4px_10px_rgba(167,139,250,0.6)]"
-                  style={{
-                    transform: "translate3d(0, 0, 25.5px)",
-                  }}
-                >
-                  PROFESSIONAL HOME
-                </span>
-              </span>
-            </motion.div>
+          {/* Giant Interactive Serif Display Typography */}
+          <div className="flex flex-col items-center justify-center select-none tracking-tight leading-[0.95] text-center w-full max-w-6xl mb-6 font-serif-display">
+
+            {/* Word 1: PROFESSIONAL - Strict flex-nowrap to avoid breaking onto new lines */}
+            <div className="flex flex-row flex-nowrap justify-center gap-[0.02em] text-[11vw] font-bold whitespace-nowrap">
+              {word1.map((char, idx) => {
+                const globalIdx = idx;
+                const imgUrl = images[globalIdx % images.length];
+                const isHovered = hoveredIdx === globalIdx;
+
+                return (
+                  <span
+                    key={idx}
+                    onMouseEnter={() => {
+                      setHoveredIdx(globalIdx);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIdx(null);
+                    }}
+                    className={`inline-block transition-all duration-300 ease-out transform ${isHovered
+                        ? "scale-[1.08] text-transparent bg-clip-text bg-cover bg-center drop-shadow-[0_0_35px_rgba(167,139,250,0.85)] z-20"
+                        : "text-slate-100 hover:text-transparent bg-clip-text bg-cover bg-center"
+                      }`}
+                    style={{
+                      backgroundImage: isHovered ? `url(${imgUrl})` : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Word 2: HOME */}
+            <div className="flex flex-row flex-nowrap justify-center gap-[0.02em] text-[11vw] font-bold mt-2 whitespace-nowrap">
+              {word2.map((char, idx) => {
+                const globalIdx = word1.length + idx;
+                const imgUrl = images[globalIdx % images.length];
+                const isHovered = hoveredIdx === globalIdx;
+
+                return (
+                  <span
+                    key={idx}
+                    onMouseEnter={() => {
+                      setHoveredIdx(globalIdx);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredIdx(null);
+                    }}
+                    className={`inline-block transition-all duration-300 ease-out transform ${isHovered
+                        ? "scale-[1.08] text-transparent bg-clip-text bg-cover bg-center drop-shadow-[0_0_35px_rgba(167,139,250,0.85)] z-20"
+                        : "text-slate-100 hover:text-transparent bg-clip-text bg-cover bg-center"
+                      }`}
+                    style={{
+                      backgroundImage: isHovered ? `url(${imgUrl})` : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
+                    }}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+            </div>
           </div>
-
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="mt-6 font-display text-4xl font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[76px] xl:text-[82px] md:leading-[1.05]"
-          >
-            Autonomous Intelligence
-            <br className="hidden sm:inline" />{" "}
-            <span
-              className="bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-violet-300"
-              style={{
-                backgroundImage:
-                  "linear-gradient(120deg, #ffffff 0%, #C7D2FE 35%, #A78BFA 65%, #67E8F9 100%)",
-              }}
-            >
-              for Modern Careers.
-            </span>
-          </motion.h1>
 
           {/* Subtitle */}
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
-            className="mx-auto mt-6 max-w-2xl text-base text-white/65 sm:text-lg"
+            className="mx-auto mt-8 max-w-2xl text-base text-white/60 sm:text-lg"
           >
             Professional Home combines AI Assessment, Expert Mentorship, Research Tools, Startup
             Operations and Outcome Analytics into one unified command center.
@@ -236,229 +227,144 @@ function Hero() {
             </button>
           </motion.div>
 
-          {/* Trust strip indicators - Replaced with 4 premium HUD status widgets */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl px-4"
-          >
-            {/* System Pulse Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-emerald-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(16,185,129,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="relative flex items-center justify-center h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-                  <span className="absolute flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  </span>
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">TELEMETRY // PH-OS</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">SYSTEM PULSE: ACTIVE</div>
-                </div>
-              </div>
-              
-              {/* Pulse Audio Ticker Waveform */}
-              <div className="flex items-end gap-0.5 h-6">
-                {[4, 10, 6, 14, 8, 4].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-0.5 bg-emerald-400/70 rounded-full animate-pulse"
-                    style={{
-                      height: `${h}px`,
-                      animationDuration: `${0.8 + i * 0.15}s`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* AI Agents Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(6,182,212,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform duration-300">
-                  <Bot className="h-5 w-5 animate-pulse" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">AGENT CLUSTER</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">6 COPILOTS ONLINE</div>
-                </div>
-              </div>
-
-              {/* Glowing active dots */}
-              <div className="flex gap-1 select-none pr-1">
-                {Array.from({ length: 6 }).map((_, idx) => (
-                  <span
-                    key={idx}
-                    className="h-1.5 w-1.5 rounded-full bg-cyan-400/80 animate-ping"
-                    style={{
-                      animationDuration: "1.5s",
-                      animationDelay: `${idx * 200}ms`,
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Placement/Success Rate Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-amber-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(245,158,11,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:rotate-12 transition-transform duration-300">
-                  <Trophy className="h-5 w-5" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">OUTCOME METRIC</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">94.2% PLACEMENT</div>
-                </div>
-              </div>
-
-              {/* Radial Progress Mini-circle */}
-              <div className="relative h-7 w-7 flex items-center justify-center">
-                <svg className="h-7 w-7 -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3.5" />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="14"
-                    fill="none"
-                    stroke="#f59e0b"
-                    strokeWidth="3.5"
-                    strokeDasharray="88"
-                    strokeDashoffset={88 - 88 * 0.942}
-                    strokeLinecap="round"
-                    className="group-hover:stroke-amber-300 transition-colors duration-300"
-                  />
-                </svg>
-                <span className="absolute text-[8px] font-mono font-bold text-amber-400/90 group-hover:scale-105 transition-transform">94%</span>
-              </div>
-            </div>
-
-            {/* Seed Runway Widget */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 flex items-center justify-between backdrop-blur-2xl transition-all duration-300 hover:border-violet-500/30 hover:bg-white/[0.04] hover:shadow-[0_15px_30px_-10px_rgba(139,92,246,0.15)] hover:-translate-y-0.5 select-none cursor-pointer">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 group-hover:translate-y-[-2px] transition-transform duration-300">
-                  <Coins className="h-5 w-5" />
-                </div>
-                <div className="text-left">
-                  <div className="text-[9px] font-mono font-bold tracking-wider text-slate-500 uppercase">CAPITAL VALUE</div>
-                  <div className="text-xs font-semibold font-mono text-white/80 tracking-wide mt-0.5 uppercase">₹40M RUNWAY</div>
-                </div>
-              </div>
-
-              {/* Sparkline mini chart */}
-              <svg className="h-5 w-12 text-violet-400/80 group-hover:text-violet-300 transition-colors duration-300" viewBox="0 0 50 20">
-                <path d="M0,16 Q10,12 20,13 T40,6 T50,2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                <path d="M0,16 Q10,12 20,13 T40,6 T50,2 L50,20 L0,20 Z" fill="currentColor" opacity="0.12" />
-              </svg>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>
   );
 }
 
-function FloatingDashboard() {
+interface DashboardMockupCardProps {
+  roleName: string;
+  accentColor: string;
+  accentColorClass: string;
+  accentBgClass: string;
+  successScore: number;
+  successStatus: string;
+  progressMetrics: { label: string; value: string; percentage: number; fromColor: string; toColor: string }[];
+  chartTitle: string;
+  chartValue: string;
+  chartChange: string;
+  chartAreaGradId: string;
+  chartLineGradId: string;
+  chartLinePath: string;
+  chartAreaPath: string;
+  chartTooltipTime: string;
+  chartTooltipValue: string;
+  chartTooltipChange: string;
+  sparklines: { label: string; value: string; change: string; color: string; sparkPoints: number[] }[];
+  liveEvents: { time: string; message: string; color: string; tag: string }[];
+  sidebarItems: { icon: any; label: string; active?: boolean }[];
+  floatingChips: { title: string; subtitle: string; icon: any; gradFrom: string; gradTo: string; xPosClass: string; yPosClass: string }[];
+  copilotStatus: string;
+}
+
+function DashboardMockupCard({
+  roleName,
+  accentColor,
+  accentColorClass,
+  successScore,
+  successStatus,
+  progressMetrics,
+  chartTitle,
+  chartValue,
+  chartChange,
+  chartAreaGradId,
+  chartLineGradId,
+  chartLinePath,
+  chartAreaPath,
+  chartTooltipTime,
+  chartTooltipValue,
+  chartTooltipChange,
+  sparklines,
+  liveEvents,
+  sidebarItems,
+  floatingChips,
+  copilotStatus,
+}: DashboardMockupCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.8 }}
-      className="relative mx-auto mt-12 max-w-5xl"
-    >
+    <div className="relative mx-auto max-w-5xl w-full">
       {/* Glow aura */}
-      <div className="absolute -inset-x-16 -inset-y-10 -z-10 rounded-[44px] bg-gradient-to-b from-violet-500/20 via-blue-500/10 to-transparent blur-3xl" />
+      <div 
+        className="absolute -inset-x-16 -inset-y-10 -z-10 rounded-[44px] blur-3xl opacity-35 animate-pulse"
+        style={{
+          background: `radial-gradient(circle, ${accentColor}33 0%, transparent 70%)`
+        }}
+      />
 
       {/* Outer gradient bordered window */}
       <div
         className="rounded-[20px] p-[1px]"
         style={{
-          background:
-            "linear-gradient(140deg, rgba(255,255,255,0.35), rgba(139,92,246,0.4) 30%, rgba(37,99,235,0.3) 60%, rgba(255,255,255,0.06) 100%)",
+          background: `linear-gradient(140deg, rgba(255,255,255,0.2) 0%, ${accentColor}40 30%, rgba(255,255,255,0.05) 100%)`,
         }}
       >
-        <div className="overflow-hidden rounded-[19px] bg-[#0A0E1F]/95 backdrop-blur-2xl shadow-[0_60px_120px_-30px_rgba(0,0,0,0.85)]">
+        <div 
+          className="overflow-hidden rounded-[19px] bg-[#070913]/95 backdrop-blur-2xl"
+          style={{
+            boxShadow: `0 45px 100px -25px rgba(0,0,0,0.95), 0 0 50px -10px ${accentColor}55`
+          }}
+        >
           {/* Top window browser bar */}
-          <div className="flex items-center gap-2 border-b border-white/5 bg-gradient-to-b from-[#0B1024] to-[#070A17] px-4 py-2.5">
-            <span className="h-3 w-3 rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <span className="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <span className="h-3 w-3 rounded-full bg-[#28C840] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <div className="ml-3 hidden items-center gap-1 text-[10px] font-mono text-white/35 lg:flex">
-              <span className="text-white/55">professionalhome</span>
-              <span className="text-white/25">/</span>
-              <span className="text-white/55">command</span>
-              <span className="text-white/25">/</span>
-              <span className="text-white/80">overview</span>
+          <div className="flex items-center gap-2 border-b border-white/5 bg-gradient-to-b from-[#090b16] to-[#05060f] px-4 py-2.5">
+            <div className="flex items-center gap-1.5 w-[20%]">
+              <span className="h-3 w-3 rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
+              <span className="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
+              <span className="h-3 w-3 rounded-full bg-[#28C840] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
             </div>
 
-            <div className="mx-auto flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            <div className="mx-auto flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-mono text-white/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
               </span>
-              professionalhome.ai/command
-              <span className="ml-1 text-white/25">·</span>
-              <span className="text-white/40">user-portal</span>
+              professionalhome.ai/command?role={roleName}
             </div>
 
-            <div className="ml-auto flex items-center gap-2 text-[10px] font-mono text-white/40">
-              <span className="hidden items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] px-1.5 py-0.5 md:inline-flex">
-                <span>⌘</span>
-                <span>K</span>
-              </span>
+            <div className="ml-auto flex items-center gap-2 text-[10px] font-mono text-white/40 w-[20%] justify-end">
               <span className="hidden items-center gap-1 md:inline-flex">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 LIVE
               </span>
-              <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 text-[9px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.06)]">
-                AM
-              </div>
             </div>
           </div>
 
           {/* Main workspace frame */}
           <div className="grid grid-cols-12 gap-px bg-white/5">
             {/* Sidebar */}
-            <aside className="col-span-2 hidden flex-col gap-1 bg-[#0A0E1F] p-3 lg:flex">
-              {[
-                { i: Cpu, l: "Overview", a: true },
-                { i: Brain, l: "AI Assessment" },
-                { i: Users, l: "Expert Network" },
-                { i: TrendingUp, l: "Execution Map" },
-                { i: Compass, l: "Opportunities" },
-              ].map((it, i) => {
-                const Ic = it.i;
+            <aside className="col-span-2 hidden flex-col gap-1.5 bg-[#05060F] p-3 lg:flex">
+              {sidebarItems.map((it, i) => {
+                const Ic = it.icon;
                 return (
                   <div
                     key={i}
                     className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-[11px] font-medium transition-colors cursor-pointer ${
-                      it.a
+                      it.active
                         ? "bg-white/10 text-white"
-                        : "text-white/50 hover:text-white/80 hover:bg-white/5"
+                        : "text-white/45 hover:text-white/80 hover:bg-white/5"
                     }`}
                   >
-                    <Ic className="h-3.5 w-3.5" />
-                    {it.l}
+                    <Ic className="h-3.5 w-3.5" style={{ color: it.active ? accentColor : "currentColor" }} />
+                    {it.label}
                   </div>
                 );
               })}
             </aside>
 
             {/* Content panel */}
-            <div className="col-span-12 grid grid-cols-12 gap-3 bg-[#0A0E1F] p-4 lg:col-span-10">
+            <div className="col-span-12 grid grid-cols-12 gap-3 bg-[#070913] p-4 lg:col-span-10">
               {/* Success Score Gauge */}
-              <div className="col-span-12 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-4 sm:col-span-4 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/40">
+              <div className="col-span-12 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-4 sm:col-span-4 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/45">
                   <span>Success Score</span>
-                  <span className="text-emerald-300">Healthy</span>
+                  <span style={{ color: accentColor }}>{successStatus}</span>
                 </div>
 
                 <div className="mt-3 flex items-center gap-4">
-                  <div className="relative h-20 w-20">
+                  <div className="relative h-20 w-20 shrink-0">
                     <svg viewBox="0 0 36 36" className="h-20 w-20 -rotate-90">
                       <defs>
-                        <linearGradient id="score-g" x1="0" x2="1" y1="0" y2="1">
-                          <stop offset="0%" stopColor="#34D399" />
+                        <linearGradient id={`score-grad-${roleName}`} x1="0" x2="1" y1="0" y2="1">
+                          <stop offset="0%" stopColor={accentColor} />
                           <stop offset="100%" stopColor="#22D3EE" />
                         </linearGradient>
                       </defs>
@@ -475,44 +381,40 @@ function FloatingDashboard() {
                         cy="18"
                         r="15.5"
                         fill="none"
-                        stroke="url(#score-g)"
+                        stroke={`url(#score-grad-${roleName})`}
                         strokeWidth="3"
                         strokeLinecap="round"
                         strokeDasharray="97"
                         initial={{ strokeDashoffset: 97 }}
-                        animate={{ strokeDashoffset: 97 - 97 * 0.86 }}
+                        animate={{ strokeDashoffset: 97 - (97 * successScore) / 100 }}
                         transition={{ duration: 1.6, delay: 0.6 }}
                       />
                     </svg>
                     <div className="absolute inset-0 grid place-items-center">
                       <div className="text-center">
-                        <div className="font-display text-xl font-bold text-white">86</div>
+                        <div className="font-display text-xl font-bold text-white">{successScore}</div>
                         <div className="text-[8px] font-mono uppercase text-white/40">/100</div>
                       </div>
                     </div>
                   </div>
                   <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Skills</span>
-                      <span className="font-mono text-emerald-300">92%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Research</span>
-                      <span className="font-mono text-cyan-300">74%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[74%] rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Outcomes</span>
-                      <span className="font-mono text-blue-300">88%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[88%] rounded-full bg-gradient-to-r from-blue-400 to-violet-400" />
-                    </div>
+                    {progressMetrics.map((pm, i) => (
+                      <div key={i} className="space-y-0.5">
+                        <div className="flex items-center justify-between text-[10px] text-white/60">
+                          <span>{pm.label}</span>
+                          <span className="font-mono" style={{ color: pm.toColor }}>{pm.value}</span>
+                        </div>
+                        <div className="h-1 overflow-hidden rounded-full bg-white/5">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${pm.percentage}%`,
+                              background: `linear-gradient(to right, ${pm.fromColor}, ${pm.toColor})`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -522,10 +424,10 @@ function FloatingDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-[10px] font-mono uppercase tracking-widest text-white/40">
-                      User Growth Velocity · 24h
+                      {chartTitle} · 24h
                     </div>
                     <div className="mt-1 font-display text-2xl font-semibold text-white">
-                      12,408 <span className="text-xs font-medium text-emerald-300">↑ 8.4%</span>
+                      {chartValue} <span className="text-xs font-medium text-emerald-300">{chartChange}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-0.5 text-[10px] font-mono text-white/50">
@@ -538,15 +440,15 @@ function FloatingDashboard() {
                 <div className="relative mt-3">
                   <svg viewBox="0 0 400 120" preserveAspectRatio="none" className="h-32 w-full">
                     <defs>
-                      <linearGradient id="ar1" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.55" />
-                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                      <linearGradient id={chartAreaGradId} x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stopColor={accentColor} stopOpacity="0.55" />
+                        <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
                       </linearGradient>
-                      <linearGradient id="line1" x1="0" x2="1" y1="0" y2="0">
-                        <stop offset="0%" stopColor="#A78BFA" />
+                      <linearGradient id={chartLineGradId} x1="0" x2="1" y1="0" y2="0">
+                        <stop offset="0%" stopColor={accentColor} />
                         <stop offset="100%" stopColor="#22D3EE" />
                       </linearGradient>
-                      <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+                      <filter id={`glow-${roleName}`} x="-20%" y="-20%" width="140%" height="140%">
                         <feGaussianBlur stdDeviation="2.5" result="b" />
                         <feMerge>
                           <feMergeNode in="b" />
@@ -584,18 +486,18 @@ function FloatingDashboard() {
                       </text>
                     ))}
                     <motion.path
-                      d="M0,80 C30,72 50,60 80,58 C110,56 130,30 170,35 C210,40 230,70 270,62 C310,55 340,22 400,28 L400,110 L0,110 Z"
-                      fill="url(#ar1)"
+                      d={chartAreaPath}
+                      fill={`url(#${chartAreaGradId})`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 1.2, delay: 0.4 }}
                     />
                     <motion.path
-                      d="M0,80 C30,72 50,60 80,58 C110,56 130,30 170,35 C210,40 230,70 270,62 C310,55 340,22 400,28"
+                      d={chartLinePath}
                       fill="none"
-                      stroke="url(#line1)"
+                      stroke={`url(#${chartLineGradId})`}
                       strokeWidth="2"
-                      filter="url(#glow1)"
+                      filter={`url(#glow-${roleName})`}
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ duration: 1.6 }}
@@ -606,18 +508,18 @@ function FloatingDashboard() {
                       x2="270"
                       y1="0"
                       y2="110"
-                      stroke="rgba(167,139,250,0.35)"
+                      stroke={`${accentColor}55`}
                       strokeDasharray="2 3"
                     />
                     <circle
                       cx="270"
                       cy="62"
                       r="5"
-                      fill="#A78BFA"
+                      fill={accentColor}
                       stroke="#0A0E1F"
                       strokeWidth="2.5"
                     />
-                    <circle cx="270" cy="62" r="9" fill="none" stroke="rgba(167,139,250,0.35)" />
+                    <circle cx="270" cy="62" r="9" fill="none" stroke={`${accentColor}55`} />
                     {/* labels */}
                     {["00:00", "06:00", "12:00", "18:00", "24:00"].map((lbl, idx) => (
                       <text
@@ -639,49 +541,20 @@ function FloatingDashboard() {
                     style={{ left: "calc(67.5% - 56px)", top: "8%" }}
                   >
                     <div className="rounded-lg border border-white/10 bg-[#0B1024]/90 px-2.5 py-1.5 text-[10px] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl">
-                      <div className="font-mono text-white/40">18:00</div>
-                      <div className="font-display text-sm font-semibold text-white">11,842</div>
-                      <div className="text-[9px] text-emerald-300">+6.2% vs avg</div>
+                      <div className="font-mono text-white/40">{chartTooltipTime}</div>
+                      <div className="font-display text-sm font-semibold text-white">{chartTooltipValue}</div>
+                      <div className="text-[9px]" style={{ color: accentColor }}>{chartTooltipChange}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Sparkline cards */}
-              {[
-                {
-                  l: "Active Goals",
-                  v: "7",
-                  c: "#60A5FA",
-                  d: "+3 target",
-                  spark: [6, 8, 7, 10, 9, 12, 11, 14],
-                },
-                {
-                  l: "Verified Outcomes",
-                  v: "14",
-                  c: "#A78BFA",
-                  d: "+8.4%",
-                  spark: [4, 6, 5, 8, 7, 9, 11, 13],
-                },
-                {
-                  l: "Active Mentors",
-                  v: "3",
-                  c: "#67E8F9",
-                  d: "-2",
-                  spark: [9, 8, 10, 7, 6, 5, 4, 3],
-                },
-                {
-                  l: "Match Accuracy",
-                  v: "98%",
-                  c: "#34D399",
-                  d: "stable",
-                  spark: [10, 11, 10, 12, 11, 12, 11, 12],
-                },
-              ].map((k, i) => {
-                const max = Math.max(...k.spark);
-                const pts = k.spark
+              {sparklines.map((k, i) => {
+                const max = Math.max(...k.sparkPoints);
+                const pts = k.sparkPoints
                   .map(
-                    (val, idx) => `${(idx / (k.spark.length - 1)) * 100},${30 - (val / max) * 24}`,
+                    (val, idx) => `${(idx / (k.sparkPoints.length - 1)) * 100},${30 - (val / (max || 1)) * 24}`,
                   )
                   .join(" ");
                 return (
@@ -691,16 +564,16 @@ function FloatingDashboard() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] font-mono text-white/45 uppercase tracking-wider">
-                        {k.l}
+                        {k.label}
                       </span>
                       <span
                         className="rounded-full px-1.5 py-0.5 text-[9px] font-mono"
-                        style={{ background: `${k.c}1a`, color: k.c }}
+                        style={{ background: `${k.color}1a`, color: k.color }}
                       >
-                        {k.d}
+                        {k.change}
                       </span>
                     </div>
-                    <div className="mt-2 font-display text-xl font-semibold text-white">{k.v}</div>
+                    <div className="mt-2 font-display text-xl font-semibold text-white">{k.value}</div>
                     <svg
                       viewBox="0 0 100 30"
                       preserveAspectRatio="none"
@@ -709,13 +582,13 @@ function FloatingDashboard() {
                       <polyline
                         points={pts}
                         fill="none"
-                        stroke={k.c}
+                        stroke={k.color}
                         strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         opacity="0.9"
                       />
-                      <polyline points={`${pts} 100,30 0,30`} fill={k.c} opacity="0.12" />
+                      <polyline points={`${pts} 100,30 0,30`} fill={k.color} opacity="0.12" />
                     </svg>
                   </div>
                 );
@@ -734,23 +607,19 @@ function FloatingDashboard() {
                 </div>
 
                 <ul className="mt-3 grid gap-1.5 text-[11px] sm:grid-cols-3">
-                  {[
-                    ["14:32", "New Opportunity: Microsoft Fellowship", "#67E8F9", "matched"],
-                    ["14:28", "Milestone: Quantitative Methods 86%", "#EF4444", "alert"],
-                    ["14:15", "Response: Dr. Helena Chen sent abstract", "#34D399", "ok"],
-                  ].map(([t, msg, c, tag]) => (
+                  {liveEvents.map((evt, idx) => (
                     <li
-                      key={t}
+                      key={idx}
                       className="flex items-center gap-2 rounded-md border border-white/5 bg-white/[0.02] px-2 py-1.5"
                     >
-                      <span className="font-mono text-white/40">{t}</span>
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />
-                      <span className="flex-1 truncate text-white/80">{msg}</span>
+                      <span className="font-mono text-white/40">{evt.time}</span>
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: evt.color }} />
+                      <span className="flex-1 truncate text-white/80">{evt.message}</span>
                       <span
                         className="rounded-full px-1.5 py-0.5 text-[9px] font-mono uppercase"
-                        style={{ background: `${c}22`, color: c }}
+                        style={{ background: `${evt.color}22`, color: evt.color }}
                       >
-                        {tag}
+                        {evt.tag}
                       </span>
                     </li>
                   ))}
@@ -761,317 +630,378 @@ function FloatingDashboard() {
         </div>
       </div>
 
-      {/* Floating interactive chips */}
-      <motion.div
-        initial={{ opacity: 0, x: -20, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 0.9 }}
-        className="absolute -left-6 top-24 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex"
-      >
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
-          <Eye className="h-3.5 w-3.5 text-white" />
-        </div>
-        <div>
-          <div className="font-semibold">AI Copilot · Streaming</div>
-          <div className="text-[10px] text-white/50">Marie Curie application checking</div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 20, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 1.1 }}
-        className="absolute -right-6 bottom-20 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex"
-      >
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500">
-          <Cpu className="h-3.5 w-3.5 text-white" />
-        </div>
-        <div>
-          <div className="font-semibold">Velocity · 60 FPS</div>
-          <div className="text-[10px] text-white/50">Diagnostic engine running</div>
-        </div>
-      </motion.div>
+      {/* Floating chips */}
+      {floatingChips.map((chip, idx) => {
+        const ChipIcon = chip.icon;
+        return (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 + idx * 0.15 }}
+            className={`absolute z-20 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex ${chip.xPosClass} ${chip.yPosClass}`}
+          >
+            <div className={`grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br ${chip.gradFrom} ${chip.gradTo}`}>
+              <ChipIcon className="h-3.5 w-3.5 text-white" />
+            </div>
+            <div>
+              <div className="font-semibold">{chip.title}</div>
+              <div className="text-[10px] text-white/50">{chip.subtitle}</div>
+            </div>
+          </motion.div>
+        );
+      })}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ delay: 1.3 }}
         className="absolute -bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[11px] text-white backdrop-blur-2xl md:inline-flex"
       >
         <Sparkles className="h-3.5 w-3.5 text-violet-300 animate-pulse" />
-        Copilot: "Analyzing Marie Curie application draft, found 3 recommendations."
+        {copilotStatus}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
-// HeroStats removed as requested
+const studentOSProps: DashboardMockupCardProps = {
+  roleName: "student",
+  accentColor: "#8B5CF6",
+  accentColorClass: "text-[#8B5CF6]",
+  accentBgClass: "bg-[#8B5CF6]",
+  successScore: 94,
+  successStatus: "Academic Velocity: Exceptional",
+  progressMetrics: [
+    { label: "Skills Profile", value: "96%", percentage: 96, fromColor: "#8B5CF6", toColor: "#A78BFA" },
+    { label: "Vetted Mentors", value: "4 Active", percentage: 80, fromColor: "#3B82F6", toColor: "#60A5FA" },
+    { label: "Placement Success", value: "94%", percentage: 94, fromColor: "#10B981", toColor: "#34D399" },
+  ],
+  chartTitle: "Academic Velocity Trend",
+  chartValue: "96.4 pts",
+  chartChange: "↑ 12.8% vs base",
+  chartAreaGradId: "student-area-grad",
+  chartLineGradId: "student-line-grad",
+  chartLinePath: "M0,90 C40,82 80,68 120,52 C160,36 200,22 240,18 C280,14 320,10 400,5",
+  chartAreaPath: "M0,90 C40,82 80,68 120,52 C160,36 200,22 240,18 C280,14 320,10 400,5 L400,110 L0,110 Z",
+  chartTooltipTime: "Semester 2",
+  chartTooltipValue: "96.4 pts",
+  chartTooltipChange: "Top 2% of cohort",
+  sparklines: [
+    { label: "Active Goals", value: "7", change: "+3 target", color: "#8B5CF6", sparkPoints: [4, 6, 5, 8, 7, 9, 11, 13] },
+    { label: "Diagnostic Rank", value: "98th", change: "Top 5%", color: "#3B82F6", sparkPoints: [90, 92, 91, 95, 94, 96, 97, 98] },
+    { label: "Weekly Hours", value: "32.5h", change: "+4.2h", color: "#10B981", sparkPoints: [28, 30, 29, 34, 32, 31, 33, 32.5] },
+    { label: "Expert Calls", value: "4", change: "100%", color: "#F59E0B", sparkPoints: [1, 2, 2, 3, 3, 4, 4, 4] },
+  ],
+  liveEvents: [
+    { time: "14:32", message: "Matched with McKinsey Advisor", color: "#8B5CF6", tag: "match" },
+    { time: "14:28", message: "AI Diagnostic Analysis Completed", color: "#3B82F6", tag: "completed" },
+    { time: "14:15", message: "Completed: Resume Deep-Scan review", color: "#10B981", tag: "ok" },
+  ],
+  sidebarItems: [
+    { icon: GraduationCap, label: "Academics", active: true },
+    { icon: Brain, label: "AI Diagnostic" },
+    { icon: Users, label: "Expert Mentors" },
+    { icon: TrendingUp, label: "Career Path" },
+    { icon: Compass, label: "Placements" },
+  ],
+  floatingChips: [
+    { title: "Advisor Matched", subtitle: "McKinsey Engagement Lead", icon: Sparkles, gradFrom: "from-purple-500", gradTo: "to-indigo-500", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "Resume Score: 92", subtitle: "Ready for submission", icon: Award, gradFrom: "from-blue-500", gradTo: "to-cyan-400", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Matching with McKinsey Advisor, found 2 preparation roadmaps."',
+};
 
-// Standalone section for the Dashboard Mockup
+const researcherOSProps: DashboardMockupCardProps = {
+  roleName: "researcher",
+  accentColor: "#0EA5E9",
+  accentColorClass: "text-[#0EA5E9]",
+  accentBgClass: "bg-[#0EA5E9]",
+  successScore: 88,
+  successStatus: "Citations & Impact: High",
+  progressMetrics: [
+    { label: "Citations", value: "312", percentage: 85, fromColor: "#38BDF8", toColor: "#0EA5E9" },
+    { label: "Collaborations", value: "8 Active", percentage: 75, fromColor: "#A78BFA", toColor: "#8B5CF6" },
+    { label: "Publication Index", value: "88%", percentage: 88, fromColor: "#10B981", toColor: "#34D399" },
+  ],
+  chartTitle: "Citation Index Growth",
+  chartValue: "312 cites",
+  chartChange: "↑ 24% YoY",
+  chartAreaGradId: "researcher-area-grad",
+  chartLineGradId: "researcher-line-grad",
+  chartLinePath: "M0,85 C40,78 80,74 120,62 C160,50 200,45 240,38 C280,30 320,20 400,10",
+  chartAreaPath: "M0,85 C40,78 80,74 120,62 C160,50 200,45 240,38 C280,30 320,20 400,10 L400,110 L0,110 Z",
+  chartTooltipTime: "Q2 2026",
+  chartTooltipValue: "312 cites",
+  chartTooltipChange: "h-index: 14 (+2)",
+  sparklines: [
+    { label: "Active Papers", value: "5", change: "+2 draft", color: "#0EA5E9", sparkPoints: [2, 3, 3, 4, 3, 5, 4, 5] },
+    { label: "Grant Submissions", value: "3", change: "1 approved", color: "#10B981", sparkPoints: [1, 1, 2, 2, 2, 3, 3, 3] },
+    { label: "Co-Authors", value: "12", change: "+4 new", color: "#8B5CF6", sparkPoints: [6, 8, 8, 9, 10, 10, 11, 12] },
+    { label: "Review Requests", value: "8", change: "completed", color: "#F59E0B", sparkPoints: [3, 4, 5, 5, 6, 7, 7, 8] },
+  ],
+  liveEvents: [
+    { time: "16:45", message: "Co-author match: Dr. Helena Chen", color: "#0EA5E9", tag: "match" },
+    { time: "16:10", message: "Grant Funding Approved: NSF Call", color: "#10B981", tag: "grant" },
+    { time: "15:30", message: "Manuscript review request: IEEE Trans", color: "#8B5CF6", tag: "review" },
+  ],
+  sidebarItems: [
+    { icon: FlaskConical, label: "Research Lab", active: true },
+    { icon: FileText, label: "Manuscripts" },
+    { icon: Users, label: "Co-Authors" },
+    { icon: Award, label: "Grants & Funding" },
+    { icon: Compass, label: "Conferences" },
+  ],
+  floatingChips: [
+    { title: "Co-Author Found", subtitle: "Dr. Helena Chen (MIT)", icon: Users, gradFrom: "from-sky-500", gradTo: "to-blue-600", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "NSF Grant Approved", subtitle: "$450k funding unlocked", icon: Award, gradFrom: "from-emerald-500", gradTo: "to-teal-400", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Analyzing Marie Curie draft, found 3 citations to add."',
+};
+
+const startupOSProps: DashboardMockupCardProps = {
+  roleName: "startup",
+  accentColor: "#10B981",
+  accentColorClass: "text-[#10B981]",
+  accentBgClass: "bg-[#10B981]",
+  successScore: 92,
+  successStatus: "Growth Velocity: Hyper",
+  progressMetrics: [
+    { label: "Seed Capital", value: "$2.1M", percentage: 84, fromColor: "#34D399", toColor: "#10B981" },
+    { label: "Advisor Board", value: "4 Active", percentage: 100, fromColor: "#3B82F6", toColor: "#60A5FA" },
+    { label: "Growth Velocity", value: "+42% MoM", percentage: 92, fromColor: "#A78BFA", toColor: "#8B5CF6" },
+  ],
+  chartTitle: "MRR Growth Curve",
+  chartValue: "$124K MRR",
+  chartChange: "↑ 42% MoM",
+  chartAreaGradId: "startup-area-grad",
+  chartLineGradId: "startup-line-grad",
+  chartLinePath: "M0,95 C40,93 80,90 120,85 C160,78 200,68 240,54 C280,36 320,18 400,2",
+  chartAreaPath: "M0,95 C40,93 80,90 120,85 C160,78 200,68 240,54 C280,36 320,18 400,2 L400,110 L0,110 Z",
+  chartTooltipTime: "Month 12",
+  chartTooltipValue: "$124,080 MRR",
+  chartTooltipChange: "4.2x LTV/CAC",
+  sparklines: [
+    { label: "Active Pilots", value: "8", change: "+3 live", color: "#10B981", sparkPoints: [2, 3, 3, 5, 4, 6, 7, 8] },
+    { label: "Burn Rate", value: "$45k/mo", change: "stable", color: "#EF4444", sparkPoints: [40, 42, 45, 44, 45, 45, 45, 45] },
+    { label: "Net Promoter", value: "76", change: "+2 pts", color: "#0EA5E9", sparkPoints: [68, 70, 72, 70, 74, 75, 74, 76] },
+    { label: "Pitch Meetings", value: "14", change: "+8 booked", color: "#8B5CF6", sparkPoints: [2, 4, 5, 8, 7, 10, 12, 14] },
+  ],
+  liveEvents: [
+    { time: "18:02", message: "Investor Meeting: Sequoia Capital", color: "#10B981", tag: "meeting" },
+    { time: "17:40", message: "Prototype validation complete: 94% score", color: "#3B82F6", tag: "milestone" },
+    { time: "16:20", message: "Enterprise Pilot signed: Acme Corp", color: "#8B5CF6", tag: "sales" },
+  ],
+  sidebarItems: [
+    { icon: Rocket, label: "Startup OS", active: true },
+    { icon: LineChart, label: "Metrics & KPIs" },
+    { icon: Users, label: "Cap Table" },
+    { icon: FileText, label: "Data Room" },
+    { icon: Compass, label: "Investor Pipeline" },
+  ],
+  floatingChips: [
+    { title: "Sequoia Call Booked", subtitle: "Partner Pitch Scheduled", icon: Rocket, gradFrom: "from-emerald-500", gradTo: "to-emerald-600", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "$2.1M Seed Closed", subtitle: "Tier-1 lead VCs onboard", icon: Award, gradFrom: "from-violet-500", gradTo: "to-purple-600", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Reviewing Seed Pitch deck, updated financial model."',
+};
+
 function DashboardSection() {
   return (
-    <section className="relative overflow-hidden pt-16 pb-16 bg-[#05060F]">
-      <div className="mx-auto max-w-6xl px-6">
-        <FloatingDashboard />
-      </div>
-    </section>
-  );
-}
-
-// Premium custom SVGs for the Journey Section cards
-const DiscoverSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(139,92,246,0.15)]">
-    <defs>
-      <radialGradient id="glow-discover" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.3" />
-        <stop offset="100%" stopColor="#A78BFA" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-discover" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#C7D2FE" />
-        <stop offset="50%" stopColor="#8B5CF6" />
-        <stop offset="100%" stopColor="#6366F1" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-discover)" />
-    
-    {/* Orbiting rings */}
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(30 100 100)" strokeDasharray="4 4" className="opacity-60" />
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="1.5" transform="rotate(-30 100 100)" className="opacity-80" />
-    <ellipse cx="100" cy="100" rx="70" ry="24" fill="none" stroke="url(#grad-discover)" strokeWidth="2" transform="rotate(90 100 100)" />
-    
-    {/* Glowing particles */}
-    <circle cx="135" cy="40" r="5" fill="#C7D2FE" />
-    <circle cx="65" cy="160" r="4" fill="#8B5CF6" />
-    <circle cx="160" cy="135" r="3" fill="#6366F1" />
-    <circle cx="40" cy="65" r="5" fill="#A78BFA" />
-
-    {/* Central bulb shape */}
-    <g transform="translate(70, 60)">
-      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="url(#grad-discover)" opacity="0.15" />
-      <path d="M30,0 C13.4,0 0,13.4 0,30 C0,41.4 6.4,51.3 15.8,56.3 C18,57.5 19.4,59.8 19.4,62.3 L19.4,68 C19.4,71.3 22.1,74 25.4,74 L34.6,74 C37.9,74 40.6,71.3 40.6,68 L40.6,62.3 C40.6,59.8 42,57.5 44.2,56.3 C53.6,51.3 60,41.4 60,30 C60,13.4 46.6,0 30,0 Z" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" />
-      {/* Filament */}
-      <path d="M22,35 L26,30 L34,30 L38,35" fill="none" stroke="url(#grad-discover)" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M26,30 L26,45 M34,30 L34,45" fill="none" stroke="url(#grad-discover)" strokeWidth="2" />
-      <circle cx="30" cy="20" r="10" fill="#FFF" opacity="0.9" className="animate-pulse" style={{ filter: "blur(3px)" }} />
-    </g>
-  </svg>
-);
-
-const CompareSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(34,211,238,0.15)]">
-    <defs>
-      <radialGradient id="glow-compare" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#22D3EE" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-compare" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#22D3EE" />
-        <stop offset="50%" stopColor="#0EA5E9" />
-        <stop offset="100%" stopColor="#6366F1" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-compare)" />
-
-    {/* Browser Card Mockup */}
-    <g transform="translate(45, 50)" className="opacity-90">
-      {/* Card Base */}
-      <rect x="0" y="0" width="110" height="80" rx="8" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="2" />
-      {/* Card Header / Browser bar */}
-      <path d="M0,8 A8,8 0 0,1 8,0 L102,0 A8,8 0 0,1 110,8 L110,18 L0,18 Z" fill="#14193F" />
-      <circle cx="8" cy="9" r="3" fill="#FF5F57" />
-      <circle cx="18" cy="9" r="3" fill="#FEBC2E" />
-      <circle cx="28" cy="9" r="3" fill="#28C840" />
-      {/* Card Content lines */}
-      <rect x="10" y="28" width="50" height="8" rx="2" fill="url(#grad-compare)" opacity="0.8" />
-      <rect x="10" y="42" width="90" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-      <rect x="10" y="54" width="75" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-      <rect x="10" y="66" width="45" height="6" rx="2" fill="#38BDF8" opacity="0.4" />
-    </g>
-
-    {/* Magnifying Glass */}
-    <g transform="translate(100, 90)">
-      {/* Handle */}
-      <line x1="16" y1="16" x2="48" y2="48" stroke="url(#grad-compare)" strokeWidth="6" strokeLinecap="round" />
-      <line x1="22" y1="22" x2="42" y2="42" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.6" />
-      {/* Glass Circle */}
-      <circle cx="0" cy="0" r="28" fill="#0B0F2B" stroke="url(#grad-compare)" strokeWidth="4.5" />
-      <circle cx="0" cy="0" r="23" fill="#38BDF8" opacity="0.15" />
-      {/* Inner search details */}
-      <path d="M-10,-5 L10,-5 M-10,5 L5,5" stroke="#FFF" strokeWidth="2.5" strokeLinecap="round" />
-      {/* Reflection shine */}
-      <path d="M-14,-14 A20,20 0 0,1 14,-14" fill="none" stroke="#FFF" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
-    </g>
-  </svg>
-);
-
-const DecideSvg = () => (
-  <svg viewBox="0 0 200 200" className="w-44 h-44 drop-shadow-[0_10px_20px_rgba(236,72,153,0.15)]">
-    <defs>
-      <radialGradient id="glow-decide" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="#EC4899" stopOpacity="0.25" />
-        <stop offset="100%" stopColor="#EC4899" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-decide" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#F472B6" />
-        <stop offset="50%" stopColor="#EC4899" />
-        <stop offset="100%" stopColor="#D946EF" />
-      </linearGradient>
-      <linearGradient id="grad-book" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#312E81" />
-        <stop offset="100%" stopColor="#4F46E5" />
-      </linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="75" fill="url(#glow-decide)" />
-
-    {/* Stack of books */}
-    <g transform="translate(45, 95)">
-      {/* Bottom Book */}
-      <path d="M0,20 L90,20 C100,20 110,25 110,30 L110,38 C110,43 100,48 90,48 L0,48 Z" fill="url(#grad-book)" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      <rect x="5" y="28" width="90" height="12" fill="#FFF" opacity="0.9" />
-      <line x1="95" y1="28" x2="95" y2="40" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      
-      {/* Middle Book */}
-      <path d="M10,2 L95,2 C103,2 112,6 112,11 L112,19 C112,24 103,28 95,28 L10,28 Z" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="1.5" />
-      <rect x="15" y="10" width="87" height="10" fill="#FFF" opacity="0.9" />
-      <line x1="98" y1="10" x2="98" y2="20" stroke="url(#grad-decide)" strokeWidth="1.5" />
-    </g>
-
-    {/* Graduation Cap */}
-    <g transform="translate(100, 65)">
-      {/* Cap Stand/Base */}
-      <path d="M-26,10 L-26,24 C-26,29 0,34 0,34 C0,34 26,29 26,24 L26,10 Z" fill="#0B0F2B" stroke="url(#grad-decide)" strokeWidth="2.5" />
-      <path d="M-26,18 C-26,18 0,25 0,25 C0,25 26,18 26,18" fill="none" stroke="url(#grad-decide)" strokeWidth="1.5" opacity="0.5" />
-      
-      {/* Cap Diamond Top */}
-      <polygon points="0,-16 56,0 0,16 -56,0" fill="#1E1B4B" stroke="url(#grad-decide)" strokeWidth="3" />
-      <polygon points="0,-11 44,0 0,11 -44,0" fill="url(#grad-decide)" opacity="0.2" />
-
-      {/* Tassel */}
-      <circle cx="0" cy="0" r="3.5" fill="url(#grad-decide)" />
-      <path d="M0,0 C12,4 28,12 32,22 L34,34" fill="none" stroke="url(#grad-decide)" strokeWidth="2" strokeLinecap="round" />
-      {/* Tassel Fringe */}
-      <polygon points="34,34 31,44 37,44" fill="url(#grad-decide)" />
-    </g>
-  </svg>
-);
-
-// Animated Journey Section
-function JourneySection() {
-  return (
-    <section className="relative py-24 overflow-hidden bg-[#05060F]">
-      {/* subtle glowing background effects */}
-      <div className="pointer-events-none absolute top-1/2 left-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.08),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 right-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.06),transparent)] blur-3xl" />
-
-      <div className="mx-auto max-w-6xl px-6">
-        <div className="mx-auto max-w-3xl text-center mb-16">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl">
-            Start your journey with Professional Home
+    <section className="relative overflow-hidden py-24 bg-[#05060F] border-b border-white/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-16 text-center max-w-2xl mx-auto">
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-violet-400">Command Center</span>
+          <h2 className="mt-3 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            One platform. <span className="text-white/50">Custom operating systems.</span>
           </h2>
-          <p className="mt-4 text-white/60 text-base sm:text-lg">
-            An ecosystem built to guide you from initial curiosity to verified professional achievements.
+          <p className="mt-4 text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Scroll down to see the custom operating systems for Students, Researchers, and Founders stack seamlessly.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Card 1: Assess (Slides in from the Left) */}
-          <motion.div
-            initial={{ opacity: 0, x: -60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Assess.jpg" alt="Assess Background" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Assess
-                </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Evaluate your multi-domain skills, discover knowledge gaps, and define your personalized innovation roadmap.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 2: Achieve (Slides up in the Center) */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Achieve.jpg" alt="Achieve Background" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Achieve
-                </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Verify your career milestones, secure patents or grants, and unlock career outcomes with analytics.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Card 3: Execute (Slides in from the Right) */}
-          <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 80, damping: 15 }}
-            className="p-[1px] rounded-3xl bg-gradient-to-br from-violet-500/40 via-violet-950/20 to-transparent shadow-[0_10px_30px_rgba(139,92,246,0.1)] transition-all duration-300 flex w-full h-[450px] group cursor-default"
-          >
-            <div className="bg-[#080911]/95 text-white rounded-[23px] p-8 flex flex-col justify-end h-full w-full relative overflow-hidden border border-violet-500/20">
-              {/* Background Image Overlay */}
-              <div className="absolute inset-0 z-0 opacity-30 transition-transform duration-500 group-hover:scale-105">
-                <img src="/Execute.jpg" alt="Execute Background" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-[#080911] pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col h-full justify-end items-center text-center pb-2">
-                {/* Title */}
-                <h3 className="text-xl font-bold font-mono text-violet-400">
-                  Execute
-                </h3>
-
-                {/* Separator */}
-                <div className="border-t border-violet-500/20 my-4 w-1/3 mx-auto" />
-
-                {/* Description */}
-                <p className="text-xs text-white/70 leading-relaxed max-w-[90%] mx-auto">
-                  Work with vetted expert mentors, utilize advanced research tools, and coordinate projects in your dashboard.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        <ScrollStack 
+          useWindowScroll={true} 
+          itemDistance={120} 
+          baseScale={0.86} 
+          itemScale={0.03}
+          itemStackDistance={35}
+          rotationAmount={0}
+          blurAmount={1.5}
+          stackPosition="12%"
+        >
+          <ScrollStackItem>
+            <DashboardMockupCard {...studentOSProps} />
+          </ScrollStackItem>
+          <ScrollStackItem>
+            <DashboardMockupCard {...researcherOSProps} />
+          </ScrollStackItem>
+          <ScrollStackItem>
+            <DashboardMockupCard {...startupOSProps} />
+          </ScrollStackItem>
+        </ScrollStack>
       </div>
     </section>
   );
 }
 
+
+
+interface RevealWordProps {
+  word: string;
+  index: number;
+  total: number;
+  progress: any;
+}
+
+function RevealWord({ word, index, total, progress }: RevealWordProps) {
+  const start = index / total;
+  const end = (index + 1.5) / total;
+  const opacity = useTransform(progress, [start, end], [0.15, 1]);
+
+  return (
+    <motion.span
+      style={{ opacity }}
+      className="inline-block mx-2 text-[6vw] sm:text-[5.2vw] md:text-[4.5vw] font-black uppercase text-white font-mango tracking-wide"
+    >
+      {word}
+    </motion.span>
+  );
+}
+
+function SparkleStar({ className }: { className?: string }) {
+  return (
+    <motion.svg
+      className={`w-6 h-6 text-violet-400 fill-current drop-shadow-[0_0_8px_rgba(167,139,250,0.8)] ${className}`}
+      viewBox="0 0 24 24"
+      animate={{
+        scale: [0.9, 1.1, 0.9],
+        opacity: [0.5, 1, 0.5],
+        rotate: [0, 90, 180, 270, 360],
+      }}
+      transition={{
+        duration: 12,
+        repeat: Infinity,
+        ease: "linear"
+      }}
+    >
+      <path d="M12 0L14.6 9.4L24 12L14.6 14.6L12 24L9.4 14.6L0 12L9.4 9.4L12 0Z" />
+    </motion.svg>
+  );
+}
+
+function PurpleCrosshair({ className, pulse = false }: { className?: string; pulse?: boolean }) {
+  return (
+    <div className={`absolute -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none z-0 ${className}`}>
+      {/* Horizontal line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-24 h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+      {/* Vertical line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1px] h-24 bg-gradient-to-b from-transparent via-violet-500/30 to-transparent" />
+      {/* Glowing center dot */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-2 h-2 bg-violet-400 rounded-full shadow-[0_0_10px_#a78bfa,0_0_20px_rgba(139,92,246,0.6)]" />
+      {/* Pulse ring */}
+      {pulse && (
+        <motion.div
+          className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full border border-violet-500/30 bg-violet-500/5"
+          animate={{
+            scale: [0.8, 1.3, 0.8],
+            opacity: [0.2, 0.6, 0.2],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function FaintIntersection({ className }: { className?: string }) {
+  return (
+    <div className={`absolute -translate-x-1/2 -translate-y-1/2 select-none pointer-events-none opacity-25 z-0 ${className}`}>
+      {/* Horizontal faint line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-12 h-[1px] bg-white/10" />
+      {/* Vertical faint line */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-[1px] h-12 bg-white/10" />
+      {/* Faint center dot */}
+      <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-1 bg-white/30 rounded-full" />
+    </div>
+  );
+}
+
+// Scroll Reveal Text Block Component
+function ScrollRevealSection() {
+  const textRef = useRef<HTMLDivElement>(null);
+  const text =
+    "AMBITION WITHOUT SYSTEMATIC DIRECTION IS WASTED POTENTIAL. DYNAMIC ROADMAPS, EXPERT MENTORSHIP, AND OUTCOME ANALYTICS BRIDGE THE GAP BETWEEN AMBITION AND OUTCOME. BUILD YOUR CAREER SYSTEM.";
+  const words = text.split(" ");
+
+  const { scrollYProgress } = useScroll({
+    target: textRef,
+    offset: ["start 0.85", "start 0.4"],
+  });
+
+  return (
+    <section
+      className="relative py-40 bg-[#05060F] flex flex-col items-center justify-center min-h-[90vh] px-6 overflow-hidden border-t border-white/5 select-none"
+    >
+      {/* Background Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
+        {/* Vertical Lines */}
+        <div className="absolute top-0 bottom-0 left-[20%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[40%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[60%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-gradient-to-b from-transparent via-violet-500/10 to-transparent" />
+
+        {/* Horizontal Lines */}
+        <div className="absolute left-0 right-0 top-[20%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[40%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[60%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+        <div className="absolute left-0 right-0 top-[80%] h-[1px] bg-gradient-to-r from-transparent via-violet-500/10 to-transparent" />
+      </div>
+
+      {/* Active Glowing Crosshairs */}
+      <PurpleCrosshair className="top-[20%] left-[40%]" pulse />
+      <PurpleCrosshair className="top-[40%] left-[80%]" pulse />
+      <PurpleCrosshair className="top-[60%] left-[20%]" pulse />
+      <PurpleCrosshair className="top-[80%] left-[60%]" pulse />
+
+      {/* Faint Intersections */}
+      <FaintIntersection className="top-[20%] left-[20%]" />
+      <FaintIntersection className="top-[20%] left-[80%]" />
+      <FaintIntersection className="top-[40%] left-[40%]" />
+      <FaintIntersection className="top-[60%] left-[60%]" />
+      <FaintIntersection className="top-[80%] left-[40%]" />
+      <FaintIntersection className="top-[80%] left-[80%]" />
+
+      {/* Premium Sparkling Star Decorations */}
+      <SparkleStar className="absolute top-12 left-12" />
+      <SparkleStar className="absolute top-12 right-12" />
+      <SparkleStar className="absolute bottom-16 left-16 opacity-35 scale-75" />
+      <SparkleStar className="absolute top-[28%] left-[12%] opacity-20 scale-50" />
+      <SparkleStar className="absolute bottom-[28%] right-[12%] opacity-25 scale-50" />
+
+      {/* Quote text - upright, clean spacing, proper alignment */}
+      <div ref={textRef} className="max-w-5xl text-center leading-[1.1] tracking-tight relative z-10 py-16 px-4">
+        {words.map((word, idx) => (
+          <RevealWord
+            key={idx}
+            word={word}
+            index={idx}
+            total={words.length}
+            progress={scrollYProgress}
+          />
+        ))}
+      </div>
+
+      {/* Decorative Quote Mark */}
+      <div className="absolute bottom-10 right-10 text-violet-500/15 text-[140px] font-serif pointer-events-none select-none">
+        ”
+      </div>
+    </section>
+  );
+}

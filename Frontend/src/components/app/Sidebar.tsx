@@ -145,48 +145,39 @@ export function AppSidebar() {
       case 'founder':
         navigate({ to: "/app/startup" });
         break;
-      case 'investor':
-        navigate({ to: "/app/investor" });
-        break;
-      case 'university':
-        navigate({ to: "/app/university" });
-        break;
-      case 'expert':
-        navigate({ to: "/app/experts" });
-        break;
-      case 'researcher':
-        navigate({ to: "/app/research" });
-        break;
-      case 'admin':
-        navigate({ to: "/app/admin" });
-        break;
-      case 'student':
-        navigate({ to: "/app/student" });
-        break;
       default:
         navigate({ to: "/app", search: { tab: "home" } as any });
         break;
     }
   };
 
-  const navItems = (() => {
+  const search = useSearch({ strict: false }) as any;
+  const currentTab = search?.tab || "home";
+
+  const navItems: Array<{
+    icon: any;
+    label: string;
+    to: string;
+    search?: Record<string, string>;
+    exact?: boolean;
+  }> = (() => {
     switch (role) {
       case "student":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/student", exact: true },
-          { icon: Compass, label: "Career Arena", to: "/app/student/arena" },
-          { icon: Trophy, label: "Challenges", to: "/app/student/challenges" },
-          { icon: Brain, label: "AI Assessment", to: "/app/student/assessment" },
-          { icon: Map, label: "Career Roadmap", to: "/app/student/roadmap" },
-          { icon: ListChecks, label: "Skill Builder", to: "/app/student/skills" },
-          { icon: Folder, label: "Projects", to: "/app/student/projects" },
-          { icon: Briefcase, label: "Internships", to: "/app/student/internships" },
-          { icon: Briefcase, label: "Jobs", to: "/app/student/jobs" },
-          { icon: Users, label: "Mentors", to: "/app/student/mentors" },
-          { icon: Bot, label: "AI Copilot", to: "/app/student/copilot" },
-          { icon: Award, label: "Achievement Vault", to: "/app/student/achievements" },
-          { icon: Ticket, label: "Reward Center", to: "/app/student/rewards" },
-          { icon: Users, label: "Community", to: "/app/student/community" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: Compass, label: "Career Arena", to: "/app", search: { tab: "arena" } },
+          { icon: Trophy, label: "Challenges", to: "/app", search: { tab: "challenges" } },
+          { icon: Brain, label: "AI Assessment", to: "/app", search: { tab: "assessment" } },
+          { icon: Map, label: "Career Roadmap", to: "/app", search: { tab: "roadmap" } },
+          { icon: ListChecks, label: "Skill Builder", to: "/app", search: { tab: "skills" } },
+          { icon: Folder, label: "Projects", to: "/app", search: { tab: "projects" } },
+          { icon: Briefcase, label: "Internships", to: "/app", search: { tab: "internships" } },
+          { icon: Briefcase, label: "Jobs", to: "/app", search: { tab: "jobs" } },
+          { icon: Users, label: "Mentors", to: "/app", search: { tab: "mentors" } },
+          { icon: Bot, label: "AI Copilot", to: "/app", search: { tab: "copilot" } },
+          { icon: Award, label: "Achievement Vault", to: "/app", search: { tab: "achievements" } },
+          { icon: Ticket, label: "Reward Center", to: "/app", search: { tab: "rewards" } },
+          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
       case "researcher":
@@ -198,6 +189,20 @@ export function AppSidebar() {
           { icon: BriefcaseBusiness, label: "Opportunities Hub", to: "/app/research/opportunities" },
           { icon: Award, label: "Achievement Vault", to: "/app/research/achievements" },
           { icon: Calendar, label: "Events", to: "/app/research/events" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: Compass, label: "Research Arena", to: "/app", search: { tab: "research_arena" } },
+          { icon: Folder, label: "Research Projects", to: "/app", search: { tab: "research_projects" } },
+          { icon: Users, label: "Collaborators", to: "/app", search: { tab: "collaborators" } },
+          { icon: FileText, label: "Publications", to: "/app", search: { tab: "publications" } },
+          { icon: Coins, label: "Grants", to: "/app", search: { tab: "grants" } },
+          { icon: Award, label: "Patents", to: "/app", search: { tab: "patents" } },
+          { icon: Map, label: "Research Roadmaps", to: "/app", search: { tab: "research_roadmap" } },
+          { icon: ListChecks, label: "Research Tasks", to: "/app", search: { tab: "research_tasks" } },
+          { icon: FileSearch, label: "Document Intelligence", to: "/app", search: { tab: "docs" } },
+          { icon: Bot, label: "AI Research Copilot", to: "/app", search: { tab: "research_copilot" } },
+          { icon: Award, label: "Achievement Vault", to: "/app", search: { tab: "achievements" } },
+          { icon: Users, label: "Research Community", to: "/app", search: { tab: "community" } },
+          { icon: Calendar, label: "Events", to: "/app", search: { tab: "events" } },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
       case "founder":
@@ -223,77 +228,77 @@ export function AppSidebar() {
         ];
       case "investor":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/investor", exact: true },
-          { icon: TrendingUp, label: "Deal Flow", to: "/app/investor/deal_flow" },
-          { icon: Sparkles, label: "Startup Discovery", to: "/app/investor/startup_discovery" },
-          { icon: Coins, label: "Investment Opportunities", to: "/app/investor/investments" },
-          { icon: Bot, label: "AI Investment Analyst", to: "/app/investor/investor_copilot" },
-          { icon: ShieldCheck, label: "Due Diligence Center", to: "/app/investor/due_diligence" },
-          { icon: Calendar, label: "Founder Meetings", to: "/app/investor/founder_meetings" },
-          { icon: Compass, label: "Portfolio Companies", to: "/app/investor/portfolio" },
-          { icon: TrendingUp, label: "Investment Pipeline", to: "/app/investor/investment_pipeline" },
-          { icon: Map, label: "Market Intelligence", to: "/app/investor/market_intel" },
-          { icon: Users, label: "Community", to: "/app/investor/community" },
-          { icon: Ticket, label: "Reward Center", to: "/app/investor/rewards" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: TrendingUp, label: "Deal Flow", to: "/app", search: { tab: "deal_flow" } },
+          { icon: Sparkles, label: "Startup Discovery", to: "/app", search: { tab: "startup_discovery" } },
+          { icon: Coins, label: "Investment Opportunities", to: "/app", search: { tab: "investments" } },
+          { icon: Bot, label: "AI Investment Analyst", to: "/app", search: { tab: "investor_copilot" } },
+          { icon: ShieldCheck, label: "Due Diligence Center", to: "/app", search: { tab: "due_diligence" } },
+          { icon: Calendar, label: "Founder Meetings", to: "/app", search: { tab: "founder_meetings" } },
+          { icon: Compass, label: "Portfolio Companies", to: "/app", search: { tab: "portfolio" } },
+          { icon: TrendingUp, label: "Investment Pipeline", to: "/app", search: { tab: "investment_pipeline" } },
+          { icon: Map, label: "Market Intelligence", to: "/app", search: { tab: "market_intel" } },
+          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
+          { icon: Ticket, label: "Reward Center", to: "/app", search: { tab: "rewards" } },
           { icon: User, label: "Profile", to: "/app/profile" },
-          { icon: Settings, label: "Settings", to: "/app/investor/settings" },
+          { icon: Settings, label: "Settings", to: "/app", search: { tab: "settings" } },
         ];
       case "university":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/university", exact: true },
-          { icon: GraduationCap, label: "Students", to: "/app/university/students_list" },
-          { icon: Brain, label: "Researchers", to: "/app/university/researchers_list" },
-          { icon: Users, label: "Faculty Profiles", to: "/app/university/faculty" },
-          { icon: Briefcase, label: "Placement Drive", to: "/app/university/placements" },
-          { icon: Compass, label: "Startup Incubator", to: "/app/university/startup_incubator" },
-          { icon: Sparkles, label: "Innovation Hub", to: "/app/university/innovation_hub" },
-          { icon: Building, label: "Industry Partners", to: "/app/university/partners" },
-          { icon: FileText, label: "Research Center", to: "/app/university/research_center" },
-          { icon: Coins, label: "Grants & Funding", to: "/app/university/grants" },
-          { icon: Calendar, label: "Events Center", to: "/app/university/events" },
-          { icon: TrendingUp, label: "Analytics Center", to: "/app/university/analytics" },
-          { icon: ScrollText, label: "Report Center", to: "/app/university/reports" },
-          { icon: Bot, label: "AI University Copilot", to: "/app/university/uni_copilot" },
-          { icon: Users, label: "Community", to: "/app/university/community" },
-          { icon: Settings, label: "Settings", to: "/app/university/settings" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: GraduationCap, label: "Students", to: "/app", search: { tab: "students_list" } },
+          { icon: Brain, label: "Researchers", to: "/app", search: { tab: "researchers_list" } },
+          { icon: Users, label: "Faculty Profiles", to: "/app", search: { tab: "faculty" } },
+          { icon: Briefcase, label: "Placement Drive", to: "/app", search: { tab: "placements" } },
+          { icon: Compass, label: "Startup Incubator", to: "/app", search: { tab: "startup_incubator" } },
+          { icon: Sparkles, label: "Innovation Hub", to: "/app", search: { tab: "innovation_hub" } },
+          { icon: Building, label: "Industry Partners", to: "/app", search: { tab: "partners" } },
+          { icon: FileText, label: "Research Center", to: "/app", search: { tab: "research_center" } },
+          { icon: Coins, label: "Grants & Funding", to: "/app", search: { tab: "grants" } },
+          { icon: Calendar, label: "Events Center", to: "/app", search: { tab: "events" } },
+          { icon: TrendingUp, label: "Analytics Center", to: "/app", search: { tab: "analytics" } },
+          { icon: ScrollText, label: "Report Center", to: "/app", search: { tab: "reports" } },
+          { icon: Bot, label: "AI University Copilot", to: "/app", search: { tab: "uni_copilot" } },
+          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
+          { icon: Settings, label: "Settings", to: "/app", search: { tab: "settings" } },
         ];
       case "expert":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/experts", exact: true },
-          { icon: Users, label: "Clients", to: "/app/experts/clients" },
-          { icon: Sparkles, label: "Discovery Sessions", to: "/app/experts/discovery_sessions" },
-          { icon: Briefcase, label: "Consultations", to: "/app/experts/consultations" },
-          { icon: Ticket, label: "Arena Rewards", to: "/app/experts/rewards" },
-          { icon: Map, label: "Roadmaps", to: "/app/experts/roadmaps" },
-          { icon: ListChecks, label: "Tasks", to: "/app/experts/tasks" },
-          { icon: Calendar, label: "Meetings", to: "/app/experts/meetings" },
-          { icon: Folder, label: "Workspace", to: "/app/experts/workspace" },
-          { icon: FileText, label: "Documents", to: "/app/experts/documents" },
-          { icon: Bot, label: "AI Expert Assistant", to: "/app/experts/expert_copilot" },
-          { icon: Coins, label: "Revenue Center", to: "/app/experts/revenue" },
-          { icon: Award, label: "Reviews & Reputation", to: "/app/experts/reviews" },
-          { icon: TrendingUp, label: "Analytics", to: "/app/experts/analytics" },
-          { icon: Users, label: "Community", to: "/app/experts/community" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: Users, label: "Clients", to: "/app", search: { tab: "clients" } },
+          { icon: Sparkles, label: "Discovery Sessions", to: "/app", search: { tab: "discovery_sessions" } },
+          { icon: Briefcase, label: "Consultations", to: "/app", search: { tab: "consultations" } },
+          { icon: Ticket, label: "Arena Rewards", to: "/app", search: { tab: "rewards" } },
+          { icon: Map, label: "Roadmaps", to: "/app", search: { tab: "roadmaps" } },
+          { icon: ListChecks, label: "Tasks", to: "/app", search: { tab: "tasks" } },
+          { icon: Calendar, label: "Meetings", to: "/app", search: { tab: "meetings" } },
+          { icon: Folder, label: "Workspace", to: "/app", search: { tab: "workspace" } },
+          { icon: FileText, label: "Documents", to: "/app", search: { tab: "documents" } },
+          { icon: Bot, label: "AI Expert Assistant", to: "/app", search: { tab: "expert_copilot" } },
+          { icon: Coins, label: "Revenue Center", to: "/app", search: { tab: "revenue" } },
+          { icon: Award, label: "Reviews & Reputation", to: "/app", search: { tab: "reviews" } },
+          { icon: TrendingUp, label: "Analytics", to: "/app", search: { tab: "analytics" } },
+          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
           { icon: User, label: "Profile", to: "/app/profile" },
-          { icon: Settings, label: "Settings", to: "/app/experts/settings" },
+          { icon: Settings, label: "Settings", to: "/app", search: { tab: "settings" } },
         ];
       case "admin":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/admin", exact: true },
-          { icon: Users, label: "Users", to: "/app/admin/users" },
-          { icon: GraduationCap, label: "Students", to: "/app/admin/students" },
-          { icon: Brain, label: "Researchers", to: "/app/admin/researchers" },
-          { icon: Compass, label: "Startups", to: "/app/admin/startups" },
-          { icon: Users, label: "Experts", to: "/app/admin/experts" },
-          { icon: Building, label: "Universities", to: "/app/admin/universities" },
-          { icon: Coins, label: "Investors", to: "/app/admin/investors" },
-          { icon: Ticket, label: "Rewards", to: "/app/admin/rewards" },
-          { icon: Compass, label: "Arena Management", to: "/app/admin/arena_mgmt" },
-          { icon: FileText, label: "Tickets", to: "/app/admin/tickets" },
-          { icon: Coins, label: "Payments", to: "/app/admin/payments" },
-          { icon: TrendingUp, label: "Analytics", to: "/app/admin/analytics" },
-          { icon: ShieldCheck, label: "Moderation", to: "/app/admin/moderation" },
-          { icon: ShieldCheck, label: "Support", to: "/app/admin/support" },
+          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
+          { icon: Users, label: "Users", to: "/app", search: { tab: "users" } },
+          { icon: GraduationCap, label: "Students", to: "/app", search: { tab: "students" } },
+          { icon: Brain, label: "Researchers", to: "/app", search: { tab: "researchers" } },
+          { icon: Compass, label: "Startups", to: "/app", search: { tab: "startups" } },
+          { icon: Users, label: "Experts", to: "/app", search: { tab: "experts" } },
+          { icon: Building, label: "Universities", to: "/app", search: { tab: "universities" } },
+          { icon: Coins, label: "Investors", to: "/app", search: { tab: "investors" } },
+          { icon: Ticket, label: "Rewards", to: "/app", search: { tab: "rewards" } },
+          { icon: Compass, label: "Arena Management", to: "/app", search: { tab: "arena_mgmt" } },
+          { icon: FileText, label: "Tickets", to: "/app", search: { tab: "tickets" } },
+          { icon: Coins, label: "Payments", to: "/app", search: { tab: "payments" } },
+          { icon: TrendingUp, label: "Analytics", to: "/app", search: { tab: "analytics" } },
+          { icon: ShieldCheck, label: "Moderation", to: "/app", search: { tab: "moderation" } },
+          { icon: ShieldCheck, label: "Support", to: "/app", search: { tab: "support" } },
         ];
       default:
         return [];
@@ -398,15 +403,18 @@ export function AppSidebar() {
         {/* Navigation Links */}
         <nav className="mt-4 flex-1 overflow-y-auto px-2 pb-4 space-y-0.5 scrollbar-thin">
           {navItems.map((n) => {
-            const active = (n as any).exact 
-              ? pathname === n.to || pathname === n.to + '/'
-              : pathname.startsWith(n.to);
+            const active = n.search?.tab 
+              ? pathname.startsWith(n.to) && currentTab === n.search.tab
+              : n.exact
+                ? pathname === n.to || pathname === n.to + '/'
+                : pathname.startsWith(n.to);
             const Icon = n.icon;
 
             return (
               <li key={n.label} className="list-none">
                 <Link
-                  to={n.to}
+                  to={n.to as any}
+                  search={n.search as any}
                   onClick={() => setIsOpen(false)}
                   className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs transition select-none ${
                     active
