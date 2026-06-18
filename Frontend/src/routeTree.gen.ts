@@ -60,20 +60,13 @@ import { Route as AppStudentChallengesRouteImport } from './routes/app.student/c
 import { Route as AppStudentAssessmentRouteImport } from './routes/app.student/assessment'
 import { Route as AppStudentArenaRouteImport } from './routes/app.student/arena'
 import { Route as AppStudentAchievementsRouteImport } from './routes/app.student/achievements'
-import { Route as AppStartupTeamRouteImport } from './routes/app.startup/team'
+import { Route as AppStartupVaultRouteImport } from './routes/app.startup/vault'
 import { Route as AppStartupTasksRouteImport } from './routes/app.startup/tasks'
 import { Route as AppStartupRoadmapRouteImport } from './routes/app.startup/roadmap'
-import { Route as AppStartupRewardsRouteImport } from './routes/app.startup/rewards'
-import { Route as AppStartupPitch_decksRouteImport } from './routes/app.startup/pitch_decks'
 import { Route as AppStartupMentorsRouteImport } from './routes/app.startup/mentors'
-import { Route as AppStartupInvestorsRouteImport } from './routes/app.startup/investors'
-import { Route as AppStartupFundingRouteImport } from './routes/app.startup/funding'
-import { Route as AppStartupDocsRouteImport } from './routes/app.startup/docs'
-import { Route as AppStartupCustomersRouteImport } from './routes/app.startup/customers'
+import { Route as AppStartupDocumentsRouteImport } from './routes/app.startup/documents'
 import { Route as AppStartupCommunityRouteImport } from './routes/app.startup/community'
 import { Route as AppStartupAssessmentRouteImport } from './routes/app.startup/assessment'
-import { Route as AppStartupArenaRouteImport } from './routes/app.startup/arena'
-import { Route as AppStartupAnalyticsRouteImport } from './routes/app.startup/analytics'
 import { Route as AppStartupAiRouteImport } from './routes/app.startup/ai'
 import { Route as AppStartupAchievementsRouteImport } from './routes/app.startup/achievements'
 import { Route as AppResearchResearch_tasksRouteImport } from './routes/app.research/research_tasks'
@@ -392,9 +385,9 @@ const AppStudentAchievementsRoute = AppStudentAchievementsRouteImport.update({
   path: '/student/achievements',
   getParentRoute: () => AppRoute,
 } as any)
-const AppStartupTeamRoute = AppStartupTeamRouteImport.update({
-  id: '/team',
-  path: '/team',
+const AppStartupVaultRoute = AppStartupVaultRouteImport.update({
+  id: '/vault',
+  path: '/vault',
   getParentRoute: () => AppStartupRoute,
 } as any)
 const AppStartupTasksRoute = AppStartupTasksRouteImport.update({
@@ -407,39 +400,14 @@ const AppStartupRoadmapRoute = AppStartupRoadmapRouteImport.update({
   path: '/roadmap',
   getParentRoute: () => AppStartupRoute,
 } as any)
-const AppStartupRewardsRoute = AppStartupRewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupPitch_decksRoute = AppStartupPitch_decksRouteImport.update({
-  id: '/pitch_decks',
-  path: '/pitch_decks',
-  getParentRoute: () => AppStartupRoute,
-} as any)
 const AppStartupMentorsRoute = AppStartupMentorsRouteImport.update({
   id: '/mentors',
   path: '/mentors',
   getParentRoute: () => AppStartupRoute,
 } as any)
-const AppStartupInvestorsRoute = AppStartupInvestorsRouteImport.update({
-  id: '/investors',
-  path: '/investors',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupFundingRoute = AppStartupFundingRouteImport.update({
-  id: '/funding',
-  path: '/funding',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupDocsRoute = AppStartupDocsRouteImport.update({
-  id: '/docs',
-  path: '/docs',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupCustomersRoute = AppStartupCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
+const AppStartupDocumentsRoute = AppStartupDocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
   getParentRoute: () => AppStartupRoute,
 } as any)
 const AppStartupCommunityRoute = AppStartupCommunityRouteImport.update({
@@ -450,16 +418,6 @@ const AppStartupCommunityRoute = AppStartupCommunityRouteImport.update({
 const AppStartupAssessmentRoute = AppStartupAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupArenaRoute = AppStartupArenaRouteImport.update({
-  id: '/arena',
-  path: '/arena',
-  getParentRoute: () => AppStartupRoute,
-} as any)
-const AppStartupAnalyticsRoute = AppStartupAnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
   getParentRoute: () => AppStartupRoute,
 } as any)
 const AppStartupAiRoute = AppStartupAiRouteImport.update({
@@ -829,20 +787,13 @@ export interface FileRoutesByFullPath {
   '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
   '/app/startup/achievements': typeof AppStartupAchievementsRoute
   '/app/startup/ai': typeof AppStartupAiRoute
-  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
-  '/app/startup/arena': typeof AppStartupArenaRoute
   '/app/startup/assessment': typeof AppStartupAssessmentRoute
   '/app/startup/community': typeof AppStartupCommunityRoute
-  '/app/startup/customers': typeof AppStartupCustomersRoute
-  '/app/startup/docs': typeof AppStartupDocsRoute
-  '/app/startup/funding': typeof AppStartupFundingRoute
-  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/documents': typeof AppStartupDocumentsRoute
   '/app/startup/mentors': typeof AppStartupMentorsRoute
-  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
-  '/app/startup/rewards': typeof AppStartupRewardsRoute
   '/app/startup/roadmap': typeof AppStartupRoadmapRoute
   '/app/startup/tasks': typeof AppStartupTasksRoute
-  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/startup/vault': typeof AppStartupVaultRoute
   '/app/student/achievements': typeof AppStudentAchievementsRoute
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
@@ -945,20 +896,13 @@ export interface FileRoutesByTo {
   '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
   '/app/startup/achievements': typeof AppStartupAchievementsRoute
   '/app/startup/ai': typeof AppStartupAiRoute
-  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
-  '/app/startup/arena': typeof AppStartupArenaRoute
   '/app/startup/assessment': typeof AppStartupAssessmentRoute
   '/app/startup/community': typeof AppStartupCommunityRoute
-  '/app/startup/customers': typeof AppStartupCustomersRoute
-  '/app/startup/docs': typeof AppStartupDocsRoute
-  '/app/startup/funding': typeof AppStartupFundingRoute
-  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/documents': typeof AppStartupDocumentsRoute
   '/app/startup/mentors': typeof AppStartupMentorsRoute
-  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
-  '/app/startup/rewards': typeof AppStartupRewardsRoute
   '/app/startup/roadmap': typeof AppStartupRoadmapRoute
   '/app/startup/tasks': typeof AppStartupTasksRoute
-  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/startup/vault': typeof AppStartupVaultRoute
   '/app/student/achievements': typeof AppStudentAchievementsRoute
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
@@ -1069,20 +1013,13 @@ export interface FileRoutesById {
   '/app/research/research_tasks': typeof AppResearchResearch_tasksRoute
   '/app/startup/achievements': typeof AppStartupAchievementsRoute
   '/app/startup/ai': typeof AppStartupAiRoute
-  '/app/startup/analytics': typeof AppStartupAnalyticsRoute
-  '/app/startup/arena': typeof AppStartupArenaRoute
   '/app/startup/assessment': typeof AppStartupAssessmentRoute
   '/app/startup/community': typeof AppStartupCommunityRoute
-  '/app/startup/customers': typeof AppStartupCustomersRoute
-  '/app/startup/docs': typeof AppStartupDocsRoute
-  '/app/startup/funding': typeof AppStartupFundingRoute
-  '/app/startup/investors': typeof AppStartupInvestorsRoute
+  '/app/startup/documents': typeof AppStartupDocumentsRoute
   '/app/startup/mentors': typeof AppStartupMentorsRoute
-  '/app/startup/pitch_decks': typeof AppStartupPitch_decksRoute
-  '/app/startup/rewards': typeof AppStartupRewardsRoute
   '/app/startup/roadmap': typeof AppStartupRoadmapRoute
   '/app/startup/tasks': typeof AppStartupTasksRoute
-  '/app/startup/team': typeof AppStartupTeamRoute
+  '/app/startup/vault': typeof AppStartupVaultRoute
   '/app/student/achievements': typeof AppStudentAchievementsRoute
   '/app/student/arena': typeof AppStudentArenaRoute
   '/app/student/assessment': typeof AppStudentAssessmentRoute
@@ -1194,20 +1131,13 @@ export interface FileRouteTypes {
     | '/app/research/research_tasks'
     | '/app/startup/achievements'
     | '/app/startup/ai'
-    | '/app/startup/analytics'
-    | '/app/startup/arena'
     | '/app/startup/assessment'
     | '/app/startup/community'
-    | '/app/startup/customers'
-    | '/app/startup/docs'
-    | '/app/startup/funding'
-    | '/app/startup/investors'
+    | '/app/startup/documents'
     | '/app/startup/mentors'
-    | '/app/startup/pitch_decks'
-    | '/app/startup/rewards'
     | '/app/startup/roadmap'
     | '/app/startup/tasks'
-    | '/app/startup/team'
+    | '/app/startup/vault'
     | '/app/student/achievements'
     | '/app/student/arena'
     | '/app/student/assessment'
@@ -1310,20 +1240,13 @@ export interface FileRouteTypes {
     | '/app/research/research_tasks'
     | '/app/startup/achievements'
     | '/app/startup/ai'
-    | '/app/startup/analytics'
-    | '/app/startup/arena'
     | '/app/startup/assessment'
     | '/app/startup/community'
-    | '/app/startup/customers'
-    | '/app/startup/docs'
-    | '/app/startup/funding'
-    | '/app/startup/investors'
+    | '/app/startup/documents'
     | '/app/startup/mentors'
-    | '/app/startup/pitch_decks'
-    | '/app/startup/rewards'
     | '/app/startup/roadmap'
     | '/app/startup/tasks'
-    | '/app/startup/team'
+    | '/app/startup/vault'
     | '/app/student/achievements'
     | '/app/student/arena'
     | '/app/student/assessment'
@@ -1433,20 +1356,13 @@ export interface FileRouteTypes {
     | '/app/research/research_tasks'
     | '/app/startup/achievements'
     | '/app/startup/ai'
-    | '/app/startup/analytics'
-    | '/app/startup/arena'
     | '/app/startup/assessment'
     | '/app/startup/community'
-    | '/app/startup/customers'
-    | '/app/startup/docs'
-    | '/app/startup/funding'
-    | '/app/startup/investors'
+    | '/app/startup/documents'
     | '/app/startup/mentors'
-    | '/app/startup/pitch_decks'
-    | '/app/startup/rewards'
     | '/app/startup/roadmap'
     | '/app/startup/tasks'
-    | '/app/startup/team'
+    | '/app/startup/vault'
     | '/app/student/achievements'
     | '/app/student/arena'
     | '/app/student/assessment'
@@ -1853,11 +1769,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStudentAchievementsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/startup/team': {
-      id: '/app/startup/team'
-      path: '/team'
-      fullPath: '/app/startup/team'
-      preLoaderRoute: typeof AppStartupTeamRouteImport
+    '/app/startup/vault': {
+      id: '/app/startup/vault'
+      path: '/vault'
+      fullPath: '/app/startup/vault'
+      preLoaderRoute: typeof AppStartupVaultRouteImport
       parentRoute: typeof AppStartupRoute
     }
     '/app/startup/tasks': {
@@ -1874,20 +1790,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStartupRoadmapRouteImport
       parentRoute: typeof AppStartupRoute
     }
-    '/app/startup/rewards': {
-      id: '/app/startup/rewards'
-      path: '/rewards'
-      fullPath: '/app/startup/rewards'
-      preLoaderRoute: typeof AppStartupRewardsRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/pitch_decks': {
-      id: '/app/startup/pitch_decks'
-      path: '/pitch_decks'
-      fullPath: '/app/startup/pitch_decks'
-      preLoaderRoute: typeof AppStartupPitch_decksRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
     '/app/startup/mentors': {
       id: '/app/startup/mentors'
       path: '/mentors'
@@ -1895,32 +1797,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStartupMentorsRouteImport
       parentRoute: typeof AppStartupRoute
     }
-    '/app/startup/investors': {
-      id: '/app/startup/investors'
-      path: '/investors'
-      fullPath: '/app/startup/investors'
-      preLoaderRoute: typeof AppStartupInvestorsRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/funding': {
-      id: '/app/startup/funding'
-      path: '/funding'
-      fullPath: '/app/startup/funding'
-      preLoaderRoute: typeof AppStartupFundingRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/docs': {
-      id: '/app/startup/docs'
-      path: '/docs'
-      fullPath: '/app/startup/docs'
-      preLoaderRoute: typeof AppStartupDocsRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/customers': {
-      id: '/app/startup/customers'
-      path: '/customers'
-      fullPath: '/app/startup/customers'
-      preLoaderRoute: typeof AppStartupCustomersRouteImport
+    '/app/startup/documents': {
+      id: '/app/startup/documents'
+      path: '/documents'
+      fullPath: '/app/startup/documents'
+      preLoaderRoute: typeof AppStartupDocumentsRouteImport
       parentRoute: typeof AppStartupRoute
     }
     '/app/startup/community': {
@@ -1935,20 +1816,6 @@ declare module '@tanstack/react-router' {
       path: '/assessment'
       fullPath: '/app/startup/assessment'
       preLoaderRoute: typeof AppStartupAssessmentRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/arena': {
-      id: '/app/startup/arena'
-      path: '/arena'
-      fullPath: '/app/startup/arena'
-      preLoaderRoute: typeof AppStartupArenaRouteImport
-      parentRoute: typeof AppStartupRoute
-    }
-    '/app/startup/analytics': {
-      id: '/app/startup/analytics'
-      path: '/analytics'
-      fullPath: '/app/startup/analytics'
-      preLoaderRoute: typeof AppStartupAnalyticsRouteImport
       parentRoute: typeof AppStartupRoute
     }
     '/app/startup/ai': {
@@ -2505,40 +2372,26 @@ const AppResearchRouteWithChildren = AppResearchRoute._addFileChildren(
 interface AppStartupRouteChildren {
   AppStartupAchievementsRoute: typeof AppStartupAchievementsRoute
   AppStartupAiRoute: typeof AppStartupAiRoute
-  AppStartupAnalyticsRoute: typeof AppStartupAnalyticsRoute
-  AppStartupArenaRoute: typeof AppStartupArenaRoute
   AppStartupAssessmentRoute: typeof AppStartupAssessmentRoute
   AppStartupCommunityRoute: typeof AppStartupCommunityRoute
-  AppStartupCustomersRoute: typeof AppStartupCustomersRoute
-  AppStartupDocsRoute: typeof AppStartupDocsRoute
-  AppStartupFundingRoute: typeof AppStartupFundingRoute
-  AppStartupInvestorsRoute: typeof AppStartupInvestorsRoute
+  AppStartupDocumentsRoute: typeof AppStartupDocumentsRoute
   AppStartupMentorsRoute: typeof AppStartupMentorsRoute
-  AppStartupPitch_decksRoute: typeof AppStartupPitch_decksRoute
-  AppStartupRewardsRoute: typeof AppStartupRewardsRoute
   AppStartupRoadmapRoute: typeof AppStartupRoadmapRoute
   AppStartupTasksRoute: typeof AppStartupTasksRoute
-  AppStartupTeamRoute: typeof AppStartupTeamRoute
+  AppStartupVaultRoute: typeof AppStartupVaultRoute
   AppStartupIndexRoute: typeof AppStartupIndexRoute
 }
 
 const AppStartupRouteChildren: AppStartupRouteChildren = {
   AppStartupAchievementsRoute: AppStartupAchievementsRoute,
   AppStartupAiRoute: AppStartupAiRoute,
-  AppStartupAnalyticsRoute: AppStartupAnalyticsRoute,
-  AppStartupArenaRoute: AppStartupArenaRoute,
   AppStartupAssessmentRoute: AppStartupAssessmentRoute,
   AppStartupCommunityRoute: AppStartupCommunityRoute,
-  AppStartupCustomersRoute: AppStartupCustomersRoute,
-  AppStartupDocsRoute: AppStartupDocsRoute,
-  AppStartupFundingRoute: AppStartupFundingRoute,
-  AppStartupInvestorsRoute: AppStartupInvestorsRoute,
+  AppStartupDocumentsRoute: AppStartupDocumentsRoute,
   AppStartupMentorsRoute: AppStartupMentorsRoute,
-  AppStartupPitch_decksRoute: AppStartupPitch_decksRoute,
-  AppStartupRewardsRoute: AppStartupRewardsRoute,
   AppStartupRoadmapRoute: AppStartupRoadmapRoute,
   AppStartupTasksRoute: AppStartupTasksRoute,
-  AppStartupTeamRoute: AppStartupTeamRoute,
+  AppStartupVaultRoute: AppStartupVaultRoute,
   AppStartupIndexRoute: AppStartupIndexRoute,
 }
 
