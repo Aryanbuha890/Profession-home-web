@@ -1,0 +1,16 @@
+export { ResearchHomePage } from "./pages/HomePage";
+export { ResearchCareerArenaPage } from "./pages/CareerArenaPage";
+export { ResearchArenaPage } from "./pages/ArenaPage";
+export { ResearchProjectsPage } from "./pages/ProjectsPage";
+export { ResearchOpportunitiesPage } from "./pages/OpportunitiesPage";
+export { ResearchAchievementsPage } from "./pages/AchievementsPage";
+export { ResearchEventsPage } from "./pages/EventsPage";
+/* Legacy pages — routes still exist but not in sidebar */
+export { ResearchCollaboratorsPage } from "./pages/CollaboratorsPage";
+export { ResearchPublicationsPage } from "./pages/PublicationsPage";
+export { ResearchGrantsPage } from "./pages/GrantsPage";
+export { ResearchPatentsPage } from "./pages/PatentsPage";
+export { ResearchRoadmapPage } from "./pages/RoadmapPage";
+export { ResearchTasksPage } from "./pages/TasksPage";
+export { ResearchDocsPage } from "./pages/DocsPage";
+export { ResearchCommunityPage } from "./pages/CommunityPage";

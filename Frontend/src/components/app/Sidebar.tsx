@@ -77,9 +77,9 @@ const roleConfigs: Record<
     gradient: "from-sky-400 to-indigo-500",
   },
   researcher: {
-    name: "Research Command Center",
+    name: "Research Student Hub",
     theme: "Researcher OS",
-    sub: "Dr. Aryan · Publications",
+    sub: "Aryan · Research Student",
     icon: Brain,
     accentColor: "#a78bfa",
     gradient: "from-violet-400 to-fuchsia-500",
@@ -182,20 +182,13 @@ export function AppSidebar() {
         ];
       case "researcher":
         return [
-          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
-          { icon: Compass, label: "Research Arena", to: "/app", search: { tab: "research_arena" } },
-          { icon: Folder, label: "Research Projects", to: "/app", search: { tab: "research_projects" } },
-          { icon: Users, label: "Collaborators", to: "/app", search: { tab: "collaborators" } },
-          { icon: FileText, label: "Publications", to: "/app", search: { tab: "publications" } },
-          { icon: Coins, label: "Grants", to: "/app", search: { tab: "grants" } },
-          { icon: Award, label: "Patents", to: "/app", search: { tab: "patents" } },
-          { icon: Map, label: "Research Roadmaps", to: "/app", search: { tab: "research_roadmap" } },
-          { icon: ListChecks, label: "Research Tasks", to: "/app", search: { tab: "research_tasks" } },
-          { icon: FileSearch, label: "Document Intelligence", to: "/app", search: { tab: "docs" } },
-          { icon: Bot, label: "AI Research Copilot", to: "/app", search: { tab: "research_copilot" } },
-          { icon: Award, label: "Achievement Vault", to: "/app", search: { tab: "achievements" } },
-          { icon: Users, label: "Research Community", to: "/app", search: { tab: "community" } },
-          { icon: Calendar, label: "Events", to: "/app", search: { tab: "events" } },
+          { icon: LayoutDashboard, label: "Home", to: "/app/research", exact: true },
+          { icon: Compass, label: "Career Arena", to: "/app/research/career_arena" },
+          { icon: Brain, label: "Research Arena", to: "/app/research/research_arena" },
+          { icon: Folder, label: "Research Projects", to: "/app/research/research_projects" },
+          { icon: BriefcaseBusiness, label: "Opportunities Hub", to: "/app/research/opportunities" },
+          { icon: Award, label: "Achievement Vault", to: "/app/research/achievements" },
+          { icon: Calendar, label: "Events", to: "/app/research/events" },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
       case "founder":
