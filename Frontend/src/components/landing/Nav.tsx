@@ -28,7 +28,7 @@ export function Nav() {
       <motion.div
         initial={false}
         animate={{
-          maxWidth: scrolled ? 860 : 1180,
+          maxWidth: scrolled ? 960 : 1180,
           paddingLeft: scrolled ? 12 : 20,
           paddingRight: scrolled ? 6 : 10,
           paddingTop: scrolled ? 5 : 9,
@@ -84,12 +84,13 @@ export function Nav() {
             { hash: "ecosystem", t: "Ecosystem" },
             { hash: "platform", t: "Platform" },
             { hash: "pricing", t: "Pricing" },
+            { hash: "faq", t: "FAQ" },
           ].map((i) => (
             <Link
               key={i.t}
               to="/"
               hash={i.hash}
-              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10"
+              className="relative rounded-full px-3.5 py-1.5 text-[13.5px] font-medium text-white/70 transition-colors hover:text-white hover:bg-white/10 whitespace-nowrap"
             >
               {i.t}
             </Link>
@@ -99,14 +100,14 @@ export function Nav() {
         <div className="relative ml-auto flex items-center gap-1.5">
           <Link
             to="/login"
-            className="hidden sm:inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium text-white/75 hover:text-white hover:bg-white/10"
+            className="hidden sm:inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium text-white/75 hover:text-white hover:bg-white/10 whitespace-nowrap"
           >
             Sign in
           </Link>
           <Link
             to="/app"
             search={{ tab: "home" }}
-            className="group relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-full px-4 text-sm font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.7),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-px"
+            className="group relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-full px-4 text-sm font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.7),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-px whitespace-nowrap"
             style={{
               backgroundImage: "linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 110%)",
             }}
@@ -142,6 +143,7 @@ export function Nav() {
                 { hash: "ecosystem", t: "Ecosystem" },
                 { hash: "platform", t: "Platform" },
                 { hash: "pricing", t: "Pricing" },
+                { hash: "faq", t: "FAQ" },
               ].map((i) => (
                 <Link
                   key={i.t}

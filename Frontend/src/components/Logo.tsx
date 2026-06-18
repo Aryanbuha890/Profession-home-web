@@ -8,7 +8,7 @@ export function Logo({ className = "", to = "/" }: { className?: string; to?: st
         alt="Professional Home Logo"
         className="h-8 w-8 object-contain rounded-lg shadow-sm"
       />
-      <span className="font-sans text-[17px] font-semibold tracking-tight text-white">
+      <span className="font-sans text-[17px] font-semibold tracking-tight text-white whitespace-nowrap">
         Professional{" "}
         <span className="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent">
           Home

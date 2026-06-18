@@ -13,15 +13,23 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
-  const [hoveredCells, setHoveredCells] = useState<Record<string, boolean>>({});
+  const [hoveredCell, setHoveredCell] = useState<string | null>(null);
 
-  // 6 columns x 4 rows config mapping to Warhol artwork fragments
-  // true = visible image slice, false = empty/black space (discoverable on hover)
-  const gridConfig = [
-    [true, false, true, true, true, true],
-    [true, false, true, false, true, true],
-    [true, true, true, false, true, true],
-    [false, false, true, true, true, false]
+  // 6 columns x 4 rows characters spelling 404 PAGE NOT FOUND
+  const charGrid = [
+    ["4", "0", "4", "P", "A", "G"],
+    ["E", " ", "N", "O", "T", " "],
+    ["F", "O", "U", "N", "D", "!"],
+    ["✦", "✦", "✦", "✦", "✦", "✦"]
+  ];
+
+  const colors = [
+    "#FF007F", // Neon Magenta
+    "#00F5FF", // Neon Cyan
+    "#FFD700", // Neon Yellow
+    "#39FF14", // Neon Green
+    "#FF5722", // Neon Orange
+    "#9D4EDD", // Neon Purple
   ];
 
   return (
@@ -58,30 +66,30 @@ function NotFoundComponent() {
       </p>
 
       {/* Sliced Warhol Grid puzzle */}
-      <div className="grid grid-cols-6 gap-2 sm:gap-2.5 p-3 sm:p-4 rounded-2xl bg-neutral-950/80 border border-neutral-900 shadow-3xl z-10 mb-8 max-w-md w-full aspect-[3/2]">
-        {gridConfig.flatMap((row, rIdx) =>
-          row.map((isVisible, cIdx) => {
+      <div className="grid grid-cols-6 gap-2 sm:gap-2.5 p-3 sm:p-4 rounded-2xl bg-neutral-950/80 border border-neutral-900 shadow-3xl z-10 mb-8 max-w-md w-full aspect-[3/2] select-none">
+        {charGrid.flatMap((row, rIdx) =>
+          row.map((char, cIdx) => {
             const cellKey = `${rIdx}-${cIdx}`;
-            const isHovered = hoveredCells[cellKey];
-            const showImage = isVisible || isHovered;
+            const isHovered = hoveredCell === cellKey;
+            const baseColor = colors[(rIdx + cIdx) % colors.length];
 
             return (
               <div
                 key={cellKey}
-                onMouseEnter={() => setHoveredCells(prev => ({ ...prev, [cellKey]: true }))}
-                className="relative aspect-square w-full rounded bg-[#0b0c10] border border-neutral-900/60 overflow-hidden cursor-crosshair transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_15px_rgba(249,115,22,0.35)]"
+                onMouseEnter={() => setHoveredCell(cellKey)}
+                onMouseLeave={() => setHoveredCell(null)}
+                className="relative aspect-square w-full rounded overflow-hidden flex items-center justify-center border border-black/25 transition-all duration-300 hover:scale-[1.06] hover:rotate-[2deg] hover:shadow-[0_0_15px_rgba(249,115,22,0.35)] cursor-crosshair"
                 style={{
-                  backgroundImage: showImage ? "url('/andy_warhol_404.png')" : "none",
-                  backgroundSize: "600% 400%",
-                  backgroundPosition: `${(cIdx / 5) * 100}% ${(rIdx / 3) * 100}%`,
-                  opacity: showImage ? 1 : 0.05,
-                  transition: "opacity 0.6s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out",
+                  backgroundColor: isHovered ? "#FFFFFF" : baseColor,
+                  color: isHovered ? baseColor : "#000000",
                 }}
               >
-                {/* Glowing borders on discovered tiles */}
-                {isHovered && !isVisible && (
-                  <div className="absolute inset-0 border border-orange-500/40 animate-pulse pointer-events-none" />
-                )}
+                <span className="font-mango text-3xl sm:text-5xl font-black leading-none uppercase select-none">
+                  {char}
+                </span>
+                
+                {/* Visual texture overlay */}
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[radial-gradient(rgba(0,0,0,0.8)_1.5px,transparent_1.5px)] bg-[size:5px_5px]" />
               </div>
             );
           })
@@ -135,13 +143,23 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
-  const [hoveredCells, setHoveredCells] = useState<Record<string, boolean>>({});
+  const [hoveredCell, setHoveredCell] = useState<string | null>(null);
 
-  const gridConfig = [
-    [true, false, true, true, true, true],
-    [true, false, true, false, true, true],
-    [true, true, true, false, true, true],
-    [false, false, true, true, true, false]
+  // 6 columns x 4 rows characters spelling SYSTEM ERROR
+  const charGrid = [
+    ["S", "Y", "S", "T", "E", "M"],
+    [" ", "E", "R", "R", "O", "R"],
+    [" ", "L", "I", "N", "K", " "],
+    ["✦", "✦", "✦", "✦", "✦", "✦"]
+  ];
+
+  const colors = [
+    "#EF4444", // Red
+    "#F59E0B", // Orange
+    "#EC4899", // Pink
+    "#10B981", // Green
+    "#3B82F6", // Blue
+    "#8B5CF6", // Purple
   ];
 
   return (
@@ -178,30 +196,30 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
       </p>
 
       {/* Sliced Warhol Grid puzzle */}
-      <div className="grid grid-cols-6 gap-2 sm:gap-2.5 p-3 sm:p-4 rounded-2xl bg-neutral-950/80 border border-neutral-900 shadow-3xl z-10 mb-8 max-w-md w-full aspect-[3/2]">
-        {gridConfig.flatMap((row, rIdx) =>
-          row.map((isVisible, cIdx) => {
+      <div className="grid grid-cols-6 gap-2 sm:gap-2.5 p-3 sm:p-4 rounded-2xl bg-neutral-950/80 border border-neutral-900 shadow-3xl z-10 mb-8 max-w-md w-full aspect-[3/2] select-none">
+        {charGrid.flatMap((row, rIdx) =>
+          row.map((char, cIdx) => {
             const cellKey = `${rIdx}-${cIdx}`;
-            const isHovered = hoveredCells[cellKey];
-            const showImage = isVisible || isHovered;
+            const isHovered = hoveredCell === cellKey;
+            const baseColor = colors[(rIdx + cIdx) % colors.length];
 
             return (
               <div
                 key={cellKey}
-                onMouseEnter={() => setHoveredCells(prev => ({ ...prev, [cellKey]: true }))}
-                className="relative aspect-square w-full rounded bg-[#0b0c10] border border-neutral-900/60 overflow-hidden cursor-crosshair transition-all duration-300 hover:scale-[1.04] hover:shadow-[0_0_15px_rgba(239,68,68,0.35)]"
+                onMouseEnter={() => setHoveredCell(cellKey)}
+                onMouseLeave={() => setHoveredCell(null)}
+                className="relative aspect-square w-full rounded overflow-hidden flex items-center justify-center border border-black/25 transition-all duration-300 hover:scale-[1.06] hover:rotate-[2deg] hover:shadow-[0_0_15px_rgba(239,68,68,0.35)] cursor-crosshair"
                 style={{
-                  backgroundImage: showImage ? "url('/andy_warhol_404.png')" : "none",
-                  backgroundSize: "600% 400%",
-                  backgroundPosition: `${(cIdx / 5) * 100}% ${(rIdx / 3) * 100}%`,
-                  opacity: showImage ? 1 : 0.05,
-                  transition: "opacity 0.6s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out",
+                  backgroundColor: isHovered ? "#FFFFFF" : baseColor,
+                  color: isHovered ? baseColor : "#000000",
                 }}
               >
-                {/* Glowing borders on discovered tiles */}
-                {isHovered && !isVisible && (
-                  <div className="absolute inset-0 border border-red-500/40 animate-pulse pointer-events-none" />
-                )}
+                <span className="font-mango text-3xl sm:text-5xl font-black leading-none uppercase select-none">
+                  {char}
+                </span>
+                
+                {/* Visual texture overlay */}
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none bg-[radial-gradient(rgba(0,0,0,0.8)_1.5px,transparent_1.5px)] bg-[size:5px_5px]" />
               </div>
             );
           })

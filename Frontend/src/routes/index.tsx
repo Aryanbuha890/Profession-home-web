@@ -12,12 +12,20 @@ import {
   Bot,
   ChevronLeft,
   ChevronRight,
+  GraduationCap,
+  FlaskConical,
+  Rocket,
+  Award,
+  CheckCircle2,
+  FileText,
+  LineChart,
 } from "lucide-react";
 import { Nav } from "@/components/landing/Nav";
-import { Trust, Footer, HowItWorks, Ecosystem, Features, Pricing } from "@/components/landing/Sections";
+import { Trust, Footer, HowItWorks, Ecosystem, Features, FeaturesCarousel, Pricing, FAQ, ContactCTA } from "@/components/landing/Sections";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { ScrollReveal } from "../components/ScrollReveal";
+import ScrollStack, { ScrollStackItem } from "../components/ui/ScrollStack";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,12 +57,14 @@ function Landing() {
       <Hero />
       <DashboardSection />
       <Trust />
-      <JourneySection />
       <ScrollRevealSection />
       <HowItWorks />
       <Ecosystem />
       <Features />
+      <FeaturesCarousel />
       <Pricing />
+      <FAQ />
+      <ContactCTA />
       <Footer />
     </div>
   );
@@ -73,7 +83,24 @@ function Hero() {
 
   const word1 = "PROFESSIONAL".split("");
   const word2 = "HOME".split("");
-  const images = ["/1.png", "/2.png", "/3.png", "/4.png", "/5.png"];
+  const images = [
+    "/pexels-ai25studioai-5466251.jpg",
+    "/pexels-jakubzerdzicki-30260904.jpg",
+    "/pexels-karola-g-8539456.jpg",
+    "/pexels-katerina-holmes-5905529.jpg",
+    "/pexels-konat-umut-budak-765467672-37296311.jpg",
+    "/pexels-larissafarber-7593250.jpg",
+    "/pexels-n-voitkevich-6532364.jpg",
+    "/pexels-peaky-31177212.jpg",
+    "/pexels-rdne-7843009.jpg",
+    "/pexels-samuel-francis-830136920-37916490.jpg",
+    "/pexels-shubhamdhage-37911158.jpg",
+    "/pexels-shvets-production-7562363.jpg",
+    "/pexels-shvetsa-5324972.jpg",
+    "/pexels-silverkblack-36697950.jpg",
+    "/pexels-tima-miroshnichenko-6914003.jpg",
+    "/pexels-tima-miroshnichenko-9574458.jpg"
+  ];
 
   return (
     <section
@@ -124,7 +151,7 @@ function Hero() {
                       }`}
                     style={{
                       backgroundImage: isHovered ? `url(${imgUrl})` : "none",
-                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
                     }}
                   >
                     {char}
@@ -155,7 +182,7 @@ function Hero() {
                       }`}
                     style={{
                       backgroundImage: isHovered ? `url(${imgUrl})` : "none",
-                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "none",
+                      WebkitTextStroke: !isHovered ? "1.5px rgba(255,255,255,0.12)" : "0px transparent",
                     }}
                   >
                     {char}
@@ -206,106 +233,138 @@ function Hero() {
   );
 }
 
-function FloatingDashboard() {
+interface DashboardMockupCardProps {
+  roleName: string;
+  accentColor: string;
+  accentColorClass: string;
+  accentBgClass: string;
+  successScore: number;
+  successStatus: string;
+  progressMetrics: { label: string; value: string; percentage: number; fromColor: string; toColor: string }[];
+  chartTitle: string;
+  chartValue: string;
+  chartChange: string;
+  chartAreaGradId: string;
+  chartLineGradId: string;
+  chartLinePath: string;
+  chartAreaPath: string;
+  chartTooltipTime: string;
+  chartTooltipValue: string;
+  chartTooltipChange: string;
+  sparklines: { label: string; value: string; change: string; color: string; sparkPoints: number[] }[];
+  liveEvents: { time: string; message: string; color: string; tag: string }[];
+  sidebarItems: { icon: any; label: string; active?: boolean }[];
+  floatingChips: { title: string; subtitle: string; icon: any; gradFrom: string; gradTo: string; xPosClass: string; yPosClass: string }[];
+  copilotStatus: string;
+}
+
+function DashboardMockupCard({
+  roleName,
+  accentColor,
+  accentColorClass,
+  successScore,
+  successStatus,
+  progressMetrics,
+  chartTitle,
+  chartValue,
+  chartChange,
+  chartAreaGradId,
+  chartLineGradId,
+  chartLinePath,
+  chartAreaPath,
+  chartTooltipTime,
+  chartTooltipValue,
+  chartTooltipChange,
+  sparklines,
+  liveEvents,
+  sidebarItems,
+  floatingChips,
+  copilotStatus,
+}: DashboardMockupCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.8 }}
-      className="relative mx-auto mt-12 max-w-5xl"
-    >
+    <div className="relative mx-auto max-w-5xl w-full">
       {/* Glow aura */}
-      <div className="absolute -inset-x-16 -inset-y-10 -z-10 rounded-[44px] bg-gradient-to-b from-violet-500/20 via-blue-500/10 to-transparent blur-3xl" />
+      <div 
+        className="absolute -inset-x-16 -inset-y-10 -z-10 rounded-[44px] blur-3xl opacity-35 animate-pulse"
+        style={{
+          background: `radial-gradient(circle, ${accentColor}33 0%, transparent 70%)`
+        }}
+      />
 
       {/* Outer gradient bordered window */}
       <div
         className="rounded-[20px] p-[1px]"
         style={{
-          background:
-            "linear-gradient(140deg, rgba(255,255,255,0.35), rgba(139,92,246,0.4) 30%, rgba(37,99,235,0.3) 60%, rgba(255,255,255,0.06) 100%)",
+          background: `linear-gradient(140deg, rgba(255,255,255,0.2) 0%, ${accentColor}40 30%, rgba(255,255,255,0.05) 100%)`,
         }}
       >
-        <div className="overflow-hidden rounded-[19px] bg-[#0A0E1F]/95 backdrop-blur-2xl shadow-[0_60px_120px_-30px_rgba(0,0,0,0.85)]">
+        <div 
+          className="overflow-hidden rounded-[19px] bg-[#070913]/95 backdrop-blur-2xl"
+          style={{
+            boxShadow: `0 45px 100px -25px rgba(0,0,0,0.95), 0 0 50px -10px ${accentColor}55`
+          }}
+        >
           {/* Top window browser bar */}
-          <div className="flex items-center gap-2 border-b border-white/5 bg-gradient-to-b from-[#0B1024] to-[#070A17] px-4 py-2.5">
-            <span className="h-3 w-3 rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <span className="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <span className="h-3 w-3 rounded-full bg-[#28C840] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
-            <div className="ml-3 hidden items-center gap-1 text-[10px] font-mono text-white/35 lg:flex">
-              <span className="text-white/55">professionalhome</span>
-              <span className="text-white/25">/</span>
-              <span className="text-white/55">command</span>
-              <span className="text-white/25">/</span>
-              <span className="text-white/80">overview</span>
+          <div className="flex items-center gap-2 border-b border-white/5 bg-gradient-to-b from-[#090b16] to-[#05060f] px-4 py-2.5">
+            <div className="flex items-center gap-1.5 w-[20%]">
+              <span className="h-3 w-3 rounded-full bg-[#FF5F57] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
+              <span className="h-3 w-3 rounded-full bg-[#FEBC2E] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
+              <span className="h-3 w-3 rounded-full bg-[#28C840] shadow-[inset_0_-1px_0_rgba(0,0,0,0.3)]" />
             </div>
 
-            <div className="mx-auto flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-white/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            <div className="mx-auto flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] font-mono text-white/50 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/50" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
               </span>
-              professionalhome.ai/command
-              <span className="ml-1 text-white/25">·</span>
-              <span className="text-white/40">user-portal</span>
+              professionalhome.ai/command?role={roleName}
             </div>
 
-            <div className="ml-auto flex items-center gap-2 text-[10px] font-mono text-white/40">
-              <span className="hidden items-center gap-1 rounded-md border border-white/10 bg-white/[0.03] px-1.5 py-0.5 md:inline-flex">
-                <span>⌘</span>
-                <span>K</span>
-              </span>
+            <div className="ml-auto flex items-center gap-2 text-[10px] font-mono text-white/40 w-[20%] justify-end">
               <span className="hidden items-center gap-1 md:inline-flex">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
                 LIVE
               </span>
-              <div className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 text-[9px] font-bold text-white shadow-[0_0_0_2px_rgba(255,255,255,0.06)]">
-                AM
-              </div>
             </div>
           </div>
 
           {/* Main workspace frame */}
           <div className="grid grid-cols-12 gap-px bg-white/5">
             {/* Sidebar */}
-            <aside className="col-span-2 hidden flex-col gap-1 bg-[#0A0E1F] p-3 lg:flex">
-              {[
-                { i: Cpu, l: "Overview", a: true },
-                { i: Brain, l: "AI Assessment" },
-                { i: Users, l: "Expert Network" },
-                { i: TrendingUp, l: "Execution Map" },
-                { i: Compass, l: "Opportunities" },
-              ].map((it, i) => {
-                const Ic = it.i;
+            <aside className="col-span-2 hidden flex-col gap-1.5 bg-[#05060F] p-3 lg:flex">
+              {sidebarItems.map((it, i) => {
+                const Ic = it.icon;
                 return (
                   <div
                     key={i}
-                    className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-[11px] font-medium transition-colors cursor-pointer ${it.a
+                    className={`flex items-center gap-2 rounded-md px-2.5 py-2 text-[11px] font-medium transition-colors cursor-pointer ${
+                      it.active
                         ? "bg-white/10 text-white"
-                        : "text-white/50 hover:text-white/80 hover:bg-white/5"
-                      }`}
+                        : "text-white/45 hover:text-white/80 hover:bg-white/5"
+                    }`}
                   >
-                    <Ic className="h-3.5 w-3.5" />
-                    {it.l}
+                    <Ic className="h-3.5 w-3.5" style={{ color: it.active ? accentColor : "currentColor" }} />
+                    {it.label}
                   </div>
                 );
               })}
             </aside>
 
             {/* Content panel */}
-            <div className="col-span-12 grid grid-cols-12 gap-3 bg-[#0A0E1F] p-4 lg:col-span-10">
+            <div className="col-span-12 grid grid-cols-12 gap-3 bg-[#070913] p-4 lg:col-span-10">
               {/* Success Score Gauge */}
-              <div className="col-span-12 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-4 sm:col-span-4 flex flex-col justify-between">
-                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/40">
+              <div className="col-span-12 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] p-4 sm:col-span-4 flex flex-col justify-between shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/45">
                   <span>Success Score</span>
-                  <span className="text-emerald-300">Healthy</span>
+                  <span style={{ color: accentColor }}>{successStatus}</span>
                 </div>
 
                 <div className="mt-3 flex items-center gap-4">
-                  <div className="relative h-20 w-20">
+                  <div className="relative h-20 w-20 shrink-0">
                     <svg viewBox="0 0 36 36" className="h-20 w-20 -rotate-90">
                       <defs>
-                        <linearGradient id="score-g" x1="0" x2="1" y1="0" y2="1">
-                          <stop offset="0%" stopColor="#34D399" />
+                        <linearGradient id={`score-grad-${roleName}`} x1="0" x2="1" y1="0" y2="1">
+                          <stop offset="0%" stopColor={accentColor} />
                           <stop offset="100%" stopColor="#22D3EE" />
                         </linearGradient>
                       </defs>
@@ -322,44 +381,40 @@ function FloatingDashboard() {
                         cy="18"
                         r="15.5"
                         fill="none"
-                        stroke="url(#score-g)"
+                        stroke={`url(#score-grad-${roleName})`}
                         strokeWidth="3"
                         strokeLinecap="round"
                         strokeDasharray="97"
                         initial={{ strokeDashoffset: 97 }}
-                        animate={{ strokeDashoffset: 97 - 97 * 0.86 }}
+                        animate={{ strokeDashoffset: 97 - (97 * successScore) / 100 }}
                         transition={{ duration: 1.6, delay: 0.6 }}
                       />
                     </svg>
                     <div className="absolute inset-0 grid place-items-center">
                       <div className="text-center">
-                        <div className="font-display text-xl font-bold text-white">86</div>
+                        <div className="font-display text-xl font-bold text-white">{successScore}</div>
                         <div className="text-[8px] font-mono uppercase text-white/40">/100</div>
                       </div>
                     </div>
                   </div>
                   <div className="flex-1 space-y-1.5">
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Skills</span>
-                      <span className="font-mono text-emerald-300">92%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[92%] rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Research</span>
-                      <span className="font-mono text-cyan-300">74%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[74%] rounded-full bg-gradient-to-r from-cyan-400 to-violet-400" />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-white/60">
-                      <span>Outcomes</span>
-                      <span className="font-mono text-blue-300">88%</span>
-                    </div>
-                    <div className="h-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full w-[88%] rounded-full bg-gradient-to-r from-blue-400 to-violet-400" />
-                    </div>
+                    {progressMetrics.map((pm, i) => (
+                      <div key={i} className="space-y-0.5">
+                        <div className="flex items-center justify-between text-[10px] text-white/60">
+                          <span>{pm.label}</span>
+                          <span className="font-mono" style={{ color: pm.toColor }}>{pm.value}</span>
+                        </div>
+                        <div className="h-1 overflow-hidden rounded-full bg-white/5">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${pm.percentage}%`,
+                              background: `linear-gradient(to right, ${pm.fromColor}, ${pm.toColor})`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -369,10 +424,10 @@ function FloatingDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-[10px] font-mono uppercase tracking-widest text-white/40">
-                      User Growth Velocity · 24h
+                      {chartTitle} · 24h
                     </div>
                     <div className="mt-1 font-display text-2xl font-semibold text-white">
-                      12,408 <span className="text-xs font-medium text-emerald-300">↑ 8.4%</span>
+                      {chartValue} <span className="text-xs font-medium text-emerald-300">{chartChange}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-0.5 text-[10px] font-mono text-white/50">
@@ -385,15 +440,15 @@ function FloatingDashboard() {
                 <div className="relative mt-3">
                   <svg viewBox="0 0 400 120" preserveAspectRatio="none" className="h-32 w-full">
                     <defs>
-                      <linearGradient id="ar1" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.55" />
-                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                      <linearGradient id={chartAreaGradId} x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stopColor={accentColor} stopOpacity="0.55" />
+                        <stop offset="100%" stopColor={accentColor} stopOpacity="0" />
                       </linearGradient>
-                      <linearGradient id="line1" x1="0" x2="1" y1="0" y2="0">
-                        <stop offset="0%" stopColor="#A78BFA" />
+                      <linearGradient id={chartLineGradId} x1="0" x2="1" y1="0" y2="0">
+                        <stop offset="0%" stopColor={accentColor} />
                         <stop offset="100%" stopColor="#22D3EE" />
                       </linearGradient>
-                      <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+                      <filter id={`glow-${roleName}`} x="-20%" y="-20%" width="140%" height="140%">
                         <feGaussianBlur stdDeviation="2.5" result="b" />
                         <feMerge>
                           <feMergeNode in="b" />
@@ -431,18 +486,18 @@ function FloatingDashboard() {
                       </text>
                     ))}
                     <motion.path
-                      d="M0,80 C30,72 50,60 80,58 C110,56 130,30 170,35 C210,40 230,70 270,62 C310,55 340,22 400,28 L400,110 L0,110 Z"
-                      fill="url(#ar1)"
+                      d={chartAreaPath}
+                      fill={`url(#${chartAreaGradId})`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 1.2, delay: 0.4 }}
                     />
                     <motion.path
-                      d="M0,80 C30,72 50,60 80,58 C110,56 130,30 170,35 C210,40 230,70 270,62 C310,55 340,22 400,28"
+                      d={chartLinePath}
                       fill="none"
-                      stroke="url(#line1)"
+                      stroke={`url(#${chartLineGradId})`}
                       strokeWidth="2"
-                      filter="url(#glow1)"
+                      filter={`url(#glow-${roleName})`}
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
                       transition={{ duration: 1.6 }}
@@ -453,18 +508,18 @@ function FloatingDashboard() {
                       x2="270"
                       y1="0"
                       y2="110"
-                      stroke="rgba(167,139,250,0.35)"
+                      stroke={`${accentColor}55`}
                       strokeDasharray="2 3"
                     />
                     <circle
                       cx="270"
                       cy="62"
                       r="5"
-                      fill="#A78BFA"
+                      fill={accentColor}
                       stroke="#0A0E1F"
                       strokeWidth="2.5"
                     />
-                    <circle cx="270" cy="62" r="9" fill="none" stroke="rgba(167,139,250,0.35)" />
+                    <circle cx="270" cy="62" r="9" fill="none" stroke={`${accentColor}55`} />
                     {/* labels */}
                     {["00:00", "06:00", "12:00", "18:00", "24:00"].map((lbl, idx) => (
                       <text
@@ -486,49 +541,20 @@ function FloatingDashboard() {
                     style={{ left: "calc(67.5% - 56px)", top: "8%" }}
                   >
                     <div className="rounded-lg border border-white/10 bg-[#0B1024]/90 px-2.5 py-1.5 text-[10px] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl">
-                      <div className="font-mono text-white/40">18:00</div>
-                      <div className="font-display text-sm font-semibold text-white">11,842</div>
-                      <div className="text-[9px] text-emerald-300">+6.2% vs avg</div>
+                      <div className="font-mono text-white/40">{chartTooltipTime}</div>
+                      <div className="font-display text-sm font-semibold text-white">{chartTooltipValue}</div>
+                      <div className="text-[9px]" style={{ color: accentColor }}>{chartTooltipChange}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Sparkline cards */}
-              {[
-                {
-                  l: "Active Goals",
-                  v: "7",
-                  c: "#60A5FA",
-                  d: "+3 target",
-                  spark: [6, 8, 7, 10, 9, 12, 11, 14],
-                },
-                {
-                  l: "Verified Outcomes",
-                  v: "14",
-                  c: "#A78BFA",
-                  d: "+8.4%",
-                  spark: [4, 6, 5, 8, 7, 9, 11, 13],
-                },
-                {
-                  l: "Active Mentors",
-                  v: "3",
-                  c: "#67E8F9",
-                  d: "-2",
-                  spark: [9, 8, 10, 7, 6, 5, 4, 3],
-                },
-                {
-                  l: "Match Accuracy",
-                  v: "98%",
-                  c: "#34D399",
-                  d: "stable",
-                  spark: [10, 11, 10, 12, 11, 12, 11, 12],
-                },
-              ].map((k, i) => {
-                const max = Math.max(...k.spark);
-                const pts = k.spark
+              {sparklines.map((k, i) => {
+                const max = Math.max(...k.sparkPoints);
+                const pts = k.sparkPoints
                   .map(
-                    (val, idx) => `${(idx / (k.spark.length - 1)) * 100},${30 - (val / max) * 24}`,
+                    (val, idx) => `${(idx / (k.sparkPoints.length - 1)) * 100},${30 - (val / (max || 1)) * 24}`,
                   )
                   .join(" ");
                 return (
@@ -538,16 +564,16 @@ function FloatingDashboard() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[9px] font-mono text-white/45 uppercase tracking-wider">
-                        {k.l}
+                        {k.label}
                       </span>
                       <span
                         className="rounded-full px-1.5 py-0.5 text-[9px] font-mono"
-                        style={{ background: `${k.c}1a`, color: k.c }}
+                        style={{ background: `${k.color}1a`, color: k.color }}
                       >
-                        {k.d}
+                        {k.change}
                       </span>
                     </div>
-                    <div className="mt-2 font-display text-xl font-semibold text-white">{k.v}</div>
+                    <div className="mt-2 font-display text-xl font-semibold text-white">{k.value}</div>
                     <svg
                       viewBox="0 0 100 30"
                       preserveAspectRatio="none"
@@ -556,13 +582,13 @@ function FloatingDashboard() {
                       <polyline
                         points={pts}
                         fill="none"
-                        stroke={k.c}
+                        stroke={k.color}
                         strokeWidth="1.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         opacity="0.9"
                       />
-                      <polyline points={`${pts} 100,30 0,30`} fill={k.c} opacity="0.12" />
+                      <polyline points={`${pts} 100,30 0,30`} fill={k.color} opacity="0.12" />
                     </svg>
                   </div>
                 );
@@ -581,23 +607,19 @@ function FloatingDashboard() {
                 </div>
 
                 <ul className="mt-3 grid gap-1.5 text-[11px] sm:grid-cols-3">
-                  {[
-                    ["14:32", "New Opportunity: Microsoft Fellowship", "#67E8F9", "matched"],
-                    ["14:28", "Milestone: Quantitative Methods 86%", "#EF4444", "alert"],
-                    ["14:15", "Response: Dr. Helena Chen sent abstract", "#34D399", "ok"],
-                  ].map(([t, msg, c, tag]) => (
+                  {liveEvents.map((evt, idx) => (
                     <li
-                      key={t}
+                      key={idx}
                       className="flex items-center gap-2 rounded-md border border-white/5 bg-white/[0.02] px-2 py-1.5"
                     >
-                      <span className="font-mono text-white/40">{t}</span>
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: c }} />
-                      <span className="flex-1 truncate text-white/80">{msg}</span>
+                      <span className="font-mono text-white/40">{evt.time}</span>
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ background: evt.color }} />
+                      <span className="flex-1 truncate text-white/80">{evt.message}</span>
                       <span
                         className="rounded-full px-1.5 py-0.5 text-[9px] font-mono uppercase"
-                        style={{ background: `${c}22`, color: c }}
+                        style={{ background: `${evt.color}22`, color: evt.color }}
                       >
-                        {tag}
+                        {evt.tag}
                       </span>
                     </li>
                   ))}
@@ -608,189 +630,224 @@ function FloatingDashboard() {
         </div>
       </div>
 
-      {/* Floating interactive chips */}
-      <motion.div
-        initial={{ opacity: 0, x: -20, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 0.9 }}
-        className="absolute -left-6 top-24 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex"
-      >
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400">
-          <Eye className="h-3.5 w-3.5 text-white" />
-        </div>
-        <div>
-          <div className="font-semibold">AI Copilot · Streaming</div>
-          <div className="text-[10px] text-white/50">Marie Curie application checking</div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 20, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 1.1 }}
-        className="absolute -right-6 bottom-20 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex"
-      >
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500">
-          <Cpu className="h-3.5 w-3.5 text-white" />
-        </div>
-        <div>
-          <div className="font-semibold">Velocity · 60 FPS</div>
-          <div className="text-[10px] text-white/50">Diagnostic engine running</div>
-        </div>
-      </motion.div>
+      {/* Floating chips */}
+      {floatingChips.map((chip, idx) => {
+        const ChipIcon = chip.icon;
+        return (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 + idx * 0.15 }}
+            className={`absolute z-20 hidden items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.06] px-3 py-2.5 text-xs text-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-2xl lg:flex ${chip.xPosClass} ${chip.yPosClass}`}
+          >
+            <div className={`grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br ${chip.gradFrom} ${chip.gradTo}`}>
+              <ChipIcon className="h-3.5 w-3.5 text-white" />
+            </div>
+            <div>
+              <div className="font-semibold">{chip.title}</div>
+              <div className="text-[10px] text-white/50">{chip.subtitle}</div>
+            </div>
+          </motion.div>
+        );
+      })}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
         transition={{ delay: 1.3 }}
         className="absolute -bottom-5 left-1/2 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[11px] text-white backdrop-blur-2xl md:inline-flex"
       >
         <Sparkles className="h-3.5 w-3.5 text-violet-300 animate-pulse" />
-        Copilot: "Analyzing Marie Curie application draft, found 3 recommendations."
+        {copilotStatus}
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
+
+const studentOSProps: DashboardMockupCardProps = {
+  roleName: "student",
+  accentColor: "#8B5CF6",
+  accentColorClass: "text-[#8B5CF6]",
+  accentBgClass: "bg-[#8B5CF6]",
+  successScore: 94,
+  successStatus: "Academic Velocity: Exceptional",
+  progressMetrics: [
+    { label: "Skills Profile", value: "96%", percentage: 96, fromColor: "#8B5CF6", toColor: "#A78BFA" },
+    { label: "Vetted Mentors", value: "4 Active", percentage: 80, fromColor: "#3B82F6", toColor: "#60A5FA" },
+    { label: "Placement Success", value: "94%", percentage: 94, fromColor: "#10B981", toColor: "#34D399" },
+  ],
+  chartTitle: "Academic Velocity Trend",
+  chartValue: "96.4 pts",
+  chartChange: "↑ 12.8% vs base",
+  chartAreaGradId: "student-area-grad",
+  chartLineGradId: "student-line-grad",
+  chartLinePath: "M0,90 C40,82 80,68 120,52 C160,36 200,22 240,18 C280,14 320,10 400,5",
+  chartAreaPath: "M0,90 C40,82 80,68 120,52 C160,36 200,22 240,18 C280,14 320,10 400,5 L400,110 L0,110 Z",
+  chartTooltipTime: "Semester 2",
+  chartTooltipValue: "96.4 pts",
+  chartTooltipChange: "Top 2% of cohort",
+  sparklines: [
+    { label: "Active Goals", value: "7", change: "+3 target", color: "#8B5CF6", sparkPoints: [4, 6, 5, 8, 7, 9, 11, 13] },
+    { label: "Diagnostic Rank", value: "98th", change: "Top 5%", color: "#3B82F6", sparkPoints: [90, 92, 91, 95, 94, 96, 97, 98] },
+    { label: "Weekly Hours", value: "32.5h", change: "+4.2h", color: "#10B981", sparkPoints: [28, 30, 29, 34, 32, 31, 33, 32.5] },
+    { label: "Expert Calls", value: "4", change: "100%", color: "#F59E0B", sparkPoints: [1, 2, 2, 3, 3, 4, 4, 4] },
+  ],
+  liveEvents: [
+    { time: "14:32", message: "Matched with McKinsey Advisor", color: "#8B5CF6", tag: "match" },
+    { time: "14:28", message: "AI Diagnostic Analysis Completed", color: "#3B82F6", tag: "completed" },
+    { time: "14:15", message: "Completed: Resume Deep-Scan review", color: "#10B981", tag: "ok" },
+  ],
+  sidebarItems: [
+    { icon: GraduationCap, label: "Academics", active: true },
+    { icon: Brain, label: "AI Diagnostic" },
+    { icon: Users, label: "Expert Mentors" },
+    { icon: TrendingUp, label: "Career Path" },
+    { icon: Compass, label: "Placements" },
+  ],
+  floatingChips: [
+    { title: "Advisor Matched", subtitle: "McKinsey Engagement Lead", icon: Sparkles, gradFrom: "from-purple-500", gradTo: "to-indigo-500", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "Resume Score: 92", subtitle: "Ready for submission", icon: Award, gradFrom: "from-blue-500", gradTo: "to-cyan-400", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Matching with McKinsey Advisor, found 2 preparation roadmaps."',
+};
+
+const researcherOSProps: DashboardMockupCardProps = {
+  roleName: "researcher",
+  accentColor: "#0EA5E9",
+  accentColorClass: "text-[#0EA5E9]",
+  accentBgClass: "bg-[#0EA5E9]",
+  successScore: 88,
+  successStatus: "Citations & Impact: High",
+  progressMetrics: [
+    { label: "Citations", value: "312", percentage: 85, fromColor: "#38BDF8", toColor: "#0EA5E9" },
+    { label: "Collaborations", value: "8 Active", percentage: 75, fromColor: "#A78BFA", toColor: "#8B5CF6" },
+    { label: "Publication Index", value: "88%", percentage: 88, fromColor: "#10B981", toColor: "#34D399" },
+  ],
+  chartTitle: "Citation Index Growth",
+  chartValue: "312 cites",
+  chartChange: "↑ 24% YoY",
+  chartAreaGradId: "researcher-area-grad",
+  chartLineGradId: "researcher-line-grad",
+  chartLinePath: "M0,85 C40,78 80,74 120,62 C160,50 200,45 240,38 C280,30 320,20 400,10",
+  chartAreaPath: "M0,85 C40,78 80,74 120,62 C160,50 200,45 240,38 C280,30 320,20 400,10 L400,110 L0,110 Z",
+  chartTooltipTime: "Q2 2026",
+  chartTooltipValue: "312 cites",
+  chartTooltipChange: "h-index: 14 (+2)",
+  sparklines: [
+    { label: "Active Papers", value: "5", change: "+2 draft", color: "#0EA5E9", sparkPoints: [2, 3, 3, 4, 3, 5, 4, 5] },
+    { label: "Grant Submissions", value: "3", change: "1 approved", color: "#10B981", sparkPoints: [1, 1, 2, 2, 2, 3, 3, 3] },
+    { label: "Co-Authors", value: "12", change: "+4 new", color: "#8B5CF6", sparkPoints: [6, 8, 8, 9, 10, 10, 11, 12] },
+    { label: "Review Requests", value: "8", change: "completed", color: "#F59E0B", sparkPoints: [3, 4, 5, 5, 6, 7, 7, 8] },
+  ],
+  liveEvents: [
+    { time: "16:45", message: "Co-author match: Dr. Helena Chen", color: "#0EA5E9", tag: "match" },
+    { time: "16:10", message: "Grant Funding Approved: NSF Call", color: "#10B981", tag: "grant" },
+    { time: "15:30", message: "Manuscript review request: IEEE Trans", color: "#8B5CF6", tag: "review" },
+  ],
+  sidebarItems: [
+    { icon: FlaskConical, label: "Research Lab", active: true },
+    { icon: FileText, label: "Manuscripts" },
+    { icon: Users, label: "Co-Authors" },
+    { icon: Award, label: "Grants & Funding" },
+    { icon: Compass, label: "Conferences" },
+  ],
+  floatingChips: [
+    { title: "Co-Author Found", subtitle: "Dr. Helena Chen (MIT)", icon: Users, gradFrom: "from-sky-500", gradTo: "to-blue-600", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "NSF Grant Approved", subtitle: "$450k funding unlocked", icon: Award, gradFrom: "from-emerald-500", gradTo: "to-teal-400", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Analyzing Marie Curie draft, found 3 citations to add."',
+};
+
+const startupOSProps: DashboardMockupCardProps = {
+  roleName: "startup",
+  accentColor: "#10B981",
+  accentColorClass: "text-[#10B981]",
+  accentBgClass: "bg-[#10B981]",
+  successScore: 92,
+  successStatus: "Growth Velocity: Hyper",
+  progressMetrics: [
+    { label: "Seed Capital", value: "$2.1M", percentage: 84, fromColor: "#34D399", toColor: "#10B981" },
+    { label: "Advisor Board", value: "4 Active", percentage: 100, fromColor: "#3B82F6", toColor: "#60A5FA" },
+    { label: "Growth Velocity", value: "+42% MoM", percentage: 92, fromColor: "#A78BFA", toColor: "#8B5CF6" },
+  ],
+  chartTitle: "MRR Growth Curve",
+  chartValue: "$124K MRR",
+  chartChange: "↑ 42% MoM",
+  chartAreaGradId: "startup-area-grad",
+  chartLineGradId: "startup-line-grad",
+  chartLinePath: "M0,95 C40,93 80,90 120,85 C160,78 200,68 240,54 C280,36 320,18 400,2",
+  chartAreaPath: "M0,95 C40,93 80,90 120,85 C160,78 200,68 240,54 C280,36 320,18 400,2 L400,110 L0,110 Z",
+  chartTooltipTime: "Month 12",
+  chartTooltipValue: "$124,080 MRR",
+  chartTooltipChange: "4.2x LTV/CAC",
+  sparklines: [
+    { label: "Active Pilots", value: "8", change: "+3 live", color: "#10B981", sparkPoints: [2, 3, 3, 5, 4, 6, 7, 8] },
+    { label: "Burn Rate", value: "$45k/mo", change: "stable", color: "#EF4444", sparkPoints: [40, 42, 45, 44, 45, 45, 45, 45] },
+    { label: "Net Promoter", value: "76", change: "+2 pts", color: "#0EA5E9", sparkPoints: [68, 70, 72, 70, 74, 75, 74, 76] },
+    { label: "Pitch Meetings", value: "14", change: "+8 booked", color: "#8B5CF6", sparkPoints: [2, 4, 5, 8, 7, 10, 12, 14] },
+  ],
+  liveEvents: [
+    { time: "18:02", message: "Investor Meeting: Sequoia Capital", color: "#10B981", tag: "meeting" },
+    { time: "17:40", message: "Prototype validation complete: 94% score", color: "#3B82F6", tag: "milestone" },
+    { time: "16:20", message: "Enterprise Pilot signed: Acme Corp", color: "#8B5CF6", tag: "sales" },
+  ],
+  sidebarItems: [
+    { icon: Rocket, label: "Startup OS", active: true },
+    { icon: LineChart, label: "Metrics & KPIs" },
+    { icon: Users, label: "Cap Table" },
+    { icon: FileText, label: "Data Room" },
+    { icon: Compass, label: "Investor Pipeline" },
+  ],
+  floatingChips: [
+    { title: "Sequoia Call Booked", subtitle: "Partner Pitch Scheduled", icon: Rocket, gradFrom: "from-emerald-500", gradTo: "to-emerald-600", xPosClass: "-left-6", yPosClass: "top-24" },
+    { title: "$2.1M Seed Closed", subtitle: "Tier-1 lead VCs onboard", icon: Award, gradFrom: "from-violet-500", gradTo: "to-purple-600", xPosClass: "-right-6", yPosClass: "bottom-20" },
+  ],
+  copilotStatus: 'Copilot: "Reviewing Seed Pitch deck, updated financial model."',
+};
 
 function DashboardSection() {
   return (
-    <section className="relative overflow-hidden pt-16 pb-16 bg-[#05060F]">
-      <div className="mx-auto max-w-6xl px-6">
-        <FloatingDashboard />
-      </div>
-    </section>
-  );
-}
-
-// Apple-style horizontal scroll shelf Journey section
-function JourneySection() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const journeyCards = [
-    {
-      badge: "STAGE 01",
-      title: "AI Assessment",
-      subtitle: "Map your situation, domain competencies, and target career goals.",
-      price: "AI Diagnostic Analysis",
-      img: "/1.png",
-    },
-    {
-      badge: "STAGE 02",
-      title: "Expert Matching",
-      subtitle: "Personalized matching with verified academic and industry experts.",
-      price: "Expert Consultations",
-      img: "/2.png",
-    },
-    {
-      badge: "STAGE 03",
-      title: "Roadmap Creation",
-      subtitle: "Generate dynamic task checklists, resource plans, and project phases.",
-      price: "Actionable Roadmaps",
-      img: "/3.png",
-    },
-    {
-      badge: "STAGE 04",
-      title: "Execution Tracking",
-      subtitle: "Track weekly deliverables and manage projects with Kanban tools.",
-      price: "Milestone Tracking",
-      img: "/4.png",
-    },
-    {
-      badge: "STAGE 05",
-      title: "Outcome Achievement",
-      subtitle: "Log placements, verify publications, track grants and funding.",
-      price: "Outcome Analytics",
-      img: "/5.png",
-    },
-  ];
-
-  const scroll = (direction: "left" | "right") => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const scrollAmount = 360; // Card width + gap
-    container.scrollBy({
-      left: direction === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  return (
-    <section className="relative py-24 bg-[#05060F] overflow-hidden">
-      {/* subtle glowing background effects */}
-      <div className="pointer-events-none absolute top-1/2 left-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(139,92,246,0.08),transparent)] blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 right-1/4 h-[350px] w-[350px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(34,211,238,0.06),transparent)] blur-3xl" />
-
-      <div className="mx-auto max-w-6xl px-6 relative z-10">
-        {/* Section heading with Navigation Arrows */}
-        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-white sm:text-5xl max-w-3xl">
-            <ScrollReveal>The latest. Explore the stages of professional growth.</ScrollReveal>
+    <section className="relative overflow-hidden py-24 bg-[#05060F] border-b border-white/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-16 text-center max-w-2xl mx-auto">
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-violet-400">Command Center</span>
+          <h2 className="mt-3 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+            One platform. <span className="text-white/50">Custom operating systems.</span>
           </h2>
-          {/* Navigation Arrows */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => scroll("left")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
-              aria-label="Scroll left"
-            >
-              <ChevronLeft className="h-5 w-5 text-white/80" />
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.08] hover:border-violet-500/30 transition-all duration-300 active:scale-95 cursor-pointer shadow-md"
-              aria-label="Scroll right"
-            >
-              <ChevronRight className="h-5 w-5 text-white/80" />
-            </button>
-          </div>
+          <p className="mt-4 text-xs sm:text-sm text-neutral-400 leading-relaxed">
+            Scroll down to see the custom operating systems for Students, Researchers, and Founders stack seamlessly.
+          </p>
         </div>
 
-        {/* Horizontal scroll snap shelf */}
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0 scroll-smooth"
+        <ScrollStack 
+          useWindowScroll={true} 
+          itemDistance={120} 
+          baseScale={0.86} 
+          itemScale={0.03}
+          itemStackDistance={35}
+          rotationAmount={0}
+          blurAmount={1.5}
+          stackPosition="12%"
         >
-          {journeyCards.map((card, idx) => (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.15 }}
-              transition={{ duration: 0.6, delay: idx * 0.08, type: "spring", stiffness: 80, damping: 15 }}
-              className="flex-shrink-0 w-[285px] sm:w-[320px] md:w-[340px] snap-start rounded-[24px] border border-white/10 bg-[#0c0d16]/90 overflow-hidden transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(124,58,237,0.25)] hover:border-violet-500/30 cursor-default flex flex-col h-[500px] shadow-2xl"
-            >
-              {/* Card text content */}
-              <div className="px-6 pt-6 pb-2">
-                {card.badge && (
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-violet-400 mb-1.5">
-                    {card.badge}
-                  </span>
-                )}
-                <h3 className="text-xl font-bold tracking-[0.08em] leading-tight text-white font-mango uppercase">
-                  {card.title}
-                </h3>
-                <p className="text-[12.5px] mt-1.5 leading-snug text-white/60 min-h-[38px]">
-                  {card.subtitle}
-                </p>
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-white/90 mt-2 hover:text-violet-300 transition-colors">
-                  {card.price} <ArrowRight className="w-3 h-3 text-white/40 group-hover:text-violet-300" />
-                </span>
-              </div>
-
-              {/* Card product image */}
-              <div className="flex-1 flex items-center justify-center px-4 pb-5 mt-2 relative overflow-hidden bg-black/40">
-                <img
-                  src={card.img}
-                  alt={card.title}
-                  className="w-full h-full object-cover object-top rounded-2xl border border-white/5 shadow-sm transition-transform duration-700"
-                />
-              </div>
-            </motion.div>
-          ))}
-        </div>
+          <ScrollStackItem>
+            <DashboardMockupCard {...studentOSProps} />
+          </ScrollStackItem>
+          <ScrollStackItem>
+            <DashboardMockupCard {...researcherOSProps} />
+          </ScrollStackItem>
+          <ScrollStackItem>
+            <DashboardMockupCard {...startupOSProps} />
+          </ScrollStackItem>
+        </ScrollStack>
       </div>
     </section>
   );
 }
+
+
 
 interface RevealWordProps {
   word: string;
@@ -885,7 +942,7 @@ function ScrollRevealSection() {
 
   const { scrollYProgress } = useScroll({
     target: textRef,
-    offset: ["start 0.85", "end 0.45"],
+    offset: ["start 0.85", "start 0.4"],
   });
 
   return (

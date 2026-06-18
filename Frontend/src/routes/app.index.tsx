@@ -543,19 +543,22 @@ function CelebrationModal({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {[...Array(30)].map((_, i) => (
+          {[...Array(30)].map((_, i) => {
+              const vw = typeof window !== "undefined" ? window.innerWidth : 1920;
+              const vh = typeof window !== "undefined" ? window.innerHeight : 1080;
+              return (
               <motion.div
                 key={i}
                 initial={{
-                  x: Math.random() * window.innerWidth,
+                  x: Math.random() * vw,
                   y: -50,
                   rotate: 0,
                   scale: Math.random() * 0.5 + 0.5,
                 }}
                 animate={{
-                  y: window.innerHeight + 50,
+                  y: vh + 50,
                   rotate: Math.random() * 360,
-                  x: `calc(${Math.random() * window.innerWidth}px + ${Math.sin(i) * 50}px)`,
+                  x: `calc(${Math.random() * vw}px + ${Math.sin(i) * 50}px)`,
                 }}
                 transition={{
                   duration: Math.random() * 3 + 2,
@@ -569,7 +572,8 @@ function CelebrationModal({
                   ],
                 }}
               />
-            ))}
+              );
+            })}
           </div>
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -1423,6 +1427,7 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
     },
   ]);
 
+
   const [streakCount, setStreakCount] = useState(12);
   const [claimedStreakToday, setClaimedStreakToday] = useState(false);
   const [techSkill, setTechSkill] = useState(78); // Quantitative methods
@@ -1432,10 +1437,93 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
   const [assessmentStep, setAssessmentStep] = useState(2); // Starts on Step 2 "Skills" as requested
   const [selectedRoadmapPhase, setSelectedRoadmapPhase] = useState(2); // Starts with Phase 2 "In Progress" selected
 
+  // Coins wallet for Reward Center
+  const [coins, setCoins] = useState(450);
+
+  // User customizeable widgets states
+  const [educationDegree, setEducationDegree] = useState("B.Tech Computer Science");
+  const [educationYear, setEducationYear] = useState("3rd Year");
+  const [userCareerGoal, setUserCareerGoal] = useState("AI Developer / Systems Architect");
+  const [userMissingSkills, setUserMissingSkills] = useState("Docker, Redis, System Design, Advanced PyTorch");
+  const [isEditingGoalModal, setIsEditingGoalModal] = useState(false);
+  const [tempDegree, setTempDegree] = useState(educationDegree);
+  const [tempYear, setTempYear] = useState(educationYear);
+  const [tempGoal, setTempGoal] = useState(userCareerGoal);
+  const [tempSkills, setTempSkills] = useState(userMissingSkills);
+
+
+  // Mentor Booking states
+  const [bookedSessions, setBookedSessions] = useState<any[]>([]);
+  const [selectedMentorForBooking, setSelectedMentorForBooking] = useState<any | null>(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [redeemCode, setRedeemCode] = useState("");
+  const [bookingSlot, setBookingSlot] = useState("");
+  const [bookingError, setBookingError] = useState("");
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+
+  // Career Arena Decide states
+  const [isDecideModalOpen, setIsDecideModalOpen] = useState(false);
+  const [decidePathChoice, setDecidePathChoice] = useState<"research" | "startup" | null>(null);
+  const [decideLoading, setDecideLoading] = useState(false);
+  const [decideResult, setDecideResult] = useState<string | null>(null);
+
+  // AI Assessment sliders/weights states
+  const [academicRating, setAcademicRating] = useState(85);
+  const [techRating, setTechRating] = useState(78);
+  const [commsRating, setCommsRating] = useState(65);
+  const [researchRating, setResearchRating] = useState(72);
+  const [careerRating, setCareerRating] = useState(60);
+  const [leadershipRating, setLeadershipRating] = useState(55);
+  const [networkingRating, setNetworkingRating] = useState(50);
+
+  // Sync techSkill, researchSkill, commsSkill with sliders
   useEffect(() => {
-    const avg = Math.round((techSkill + designSkill + commsSkill + researchSkill) / 4);
-    setSuccessScore(avg + 6);
-  }, [techSkill, designSkill, commsSkill, researchSkill]);
+    setTechRating(techSkill);
+  }, [techSkill]);
+
+  useEffect(() => {
+    setResearchRating(researchSkill);
+  }, [researchSkill]);
+
+  useEffect(() => {
+    setCommsRating(commsSkill);
+  }, [commsSkill]);
+
+  // Live updated score derived from weights:
+  // Academic 20%, Technical 15%, Comms 15%, Research 15%, Career Ready 15%, Leadership 10%, Networking 10%
+  const studentHealthScore = Math.round(
+    academicRating * 0.20 +
+    techRating * 0.15 +
+    commsRating * 0.15 +
+    researchRating * 0.15 +
+    careerRating * 0.15 +
+    leadershipRating * 0.10 +
+    networkingRating * 0.10
+  );
+
+  useEffect(() => {
+    setSuccessScore(studentHealthScore);
+  }, [studentHealthScore]);
+
+  // Roadmap task checkbox states
+  const [roadmapTasks, setRoadmapTasks] = useState({
+    phase1_basics: true,
+    phase1_courses: true,
+    phase1_resources: false,
+    phase2_tech: true,
+    phase2_soft: false,
+    phase2_comm: false,
+    phase3_beginner: true,
+    phase3_intermediate: false,
+    phase3_advanced: false,
+  });
+
+  // Skill Builder Sub-tab
+  const [skillsSubTab, setSkillsSubTab] = useState<"gaps" | "paths" | "courses" | "practice" | "progress">("gaps");
+
+  // Community Events Registered
+  const [registeredEvents, setRegisteredEvents] = useState<number[]>([]);
+
 
   const [projectSearchQuery, setProjectSearchQuery] = useState("");
   const [selectedDetailProject, setSelectedDetailProject] = useState<any | null>(null);
@@ -1701,14 +1789,17 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="flex flex-col justify-between relative overflow-hidden">
+          {/* 7-WIDGET DASHBOARD SYSTEM */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            
+            {/* Widget 1: Career Success Score */}
+            <Card className="flex flex-col justify-between relative overflow-hidden xl:col-span-2">
               <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                <span>Career Success Score</span>
-                <span className="text-sky-400 font-semibold">Excellent</span>
+                <span>1. Career Success Score</span>
+                <span className="text-sky-400 font-semibold font-mono">Live Sync</span>
               </div>
-              <div className="mt-4 flex items-center gap-4">
-                <div className="relative h-16 w-16 shrink-0">
+              <div className="mt-4 flex flex-col sm:flex-row items-center gap-6">
+                <div className="relative h-20 w-20 shrink-0">
                   <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
                     <defs>
                       <linearGradient id="score-grad" x1="0" x2="1" y1="0" y2="1">
@@ -1731,24 +1822,24 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-base font-black text-white leading-none">{successScore}</span>
-                    <span className="text-[7px] text-muted-foreground uppercase mt-0.5">/100</span>
+                    <span className="text-xl font-black text-white leading-none">{successScore}</span>
+                    <span className="text-[7.5px] text-muted-foreground uppercase mt-0.5">/100</span>
                   </div>
                 </div>
-                <div className="flex-1 space-y-1">
+                <div className="flex-1 w-full space-y-2.5">
                   {[
-                    { label: "Technical Skills", pct: techSkill, color: "from-sky-400 to-indigo-500" },
-                    { label: "Comms & Soft", pct: commsSkill, color: "from-indigo-400 to-purple-500" },
-                    { label: "Credentials", pct: researchSkill, color: "from-violet-400 to-fuchsia-500" },
+                    { label: "Technical Skills", pct: techRating, color: "from-sky-400 to-indigo-500" },
+                    { label: "Comms & Soft", pct: commsRating, color: "from-indigo-400 to-purple-500" },
+                    { label: "Academic Standings", pct: academicRating, color: "from-violet-400 to-fuchsia-500" },
                   ].map((sub) => (
-                    <div key={sub.label} className="flex flex-col gap-0.5">
-                      <div className="flex items-center justify-between text-[8px] text-muted-foreground leading-none">
+                    <div key={sub.label} className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between text-[9px] text-muted-foreground leading-none">
                         <span>{sub.label}</span>
                         <span className="font-mono text-white/80">{sub.pct}%</span>
                       </div>
-                      <div className="h-0.5 w-full bg-white/5 rounded-full overflow-hidden">
+                      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                         <div
-                          className={`h-full bg-gradient-to-r ${sub.color} rounded-full`}
+                          className={`h-full bg-gradient-to-r ${sub.color} rounded-full transition-all duration-300`}
                           style={{ width: `${sub.pct}%` }}
                         />
                       </div>
@@ -1758,72 +1849,266 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
               </div>
             </Card>
 
-            <Card className="flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Motivator Streak</span>
-                <span className="rounded bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[9px] px-1.5 py-0.5 font-semibold flex items-center gap-1 font-mono">
-                  🔥 Active
-                </span>
+            {/* Widget 2: Current Education Status */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>2. Education Status</span>
+                <button 
+                  onClick={() => {
+                    setTempDegree(educationDegree);
+                    setTempYear(educationYear);
+                    setTempGoal(userCareerGoal);
+                    setTempSkills(userMissingSkills);
+                    setIsEditingGoalModal(true);
+                  }}
+                  className="text-[9px] text-sky-400 hover:text-sky-300 font-bold bg-transparent border-none cursor-pointer flex items-center gap-0.5"
+                >
+                  Edit
+                </button>
               </div>
-              <div className="mt-2.5 flex items-baseline gap-1">
-                <span className="text-3xl font-black text-white tracking-tight">{streakCount}</span>
-                <span className="text-xs text-orange-400 font-bold">Days Daily Streak</span>
+              <div className="mt-3">
+                <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Primary Track</div>
+                <div className="text-sm font-black text-white mt-1 leading-snug">{educationDegree}</div>
+                <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded bg-sky-400/10 border border-sky-400/20 text-sky-400 text-[9px] font-mono font-bold">
+                  🎓 {educationYear}
+                </div>
               </div>
-              <button
-                onClick={() => {
-                  if (!claimedStreakToday) {
-                    setStreakCount((s) => s + 1);
-                    setClaimedStreakToday(true);
-                  }
-                }}
-                disabled={claimedStreakToday}
-                className={`mt-3 w-full py-1.5 rounded-xl text-[10px] font-bold transition flex items-center justify-center gap-1.5 ${claimedStreakToday
-                    ? "bg-white/5 border border-white/5 text-muted-foreground cursor-not-allowed"
-                    : "bg-orange-500/25 border border-orange-500/20 text-orange-400 hover:bg-orange-500/35 cursor-pointer"
-                  }`}
-              >
-                <Flame className="h-3 w-3" />
-                {claimedStreakToday ? "Streak Claimed Today" : "Claim Daily Streak +15 XP"}
-              </button>
-            </Card>
-
-            <Card className="flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Match Opportunities</span>
-                <span className="rounded bg-sky-500/15 border border-sky-500/20 text-sky-400 text-[9px] px-1.5 py-0.5 font-medium font-mono">
-                  3 AI matches
-                </span>
-              </div>
-              <div className="mt-2.5 flex items-baseline gap-1">
-                <span className="text-3xl font-black text-white tracking-tight">22</span>
-                <span className="text-[10px] text-muted-foreground font-mono">applications tracked</span>
-              </div>
-              <div className="mt-2 flex flex-wrap gap-1">
-                <span className="text-[9px] bg-sky-500/10 border border-sky-500/20 rounded px-1.5 py-0.5 text-sky-400 font-semibold font-mono">
-                  OpenAI: 98%
-                </span>
-                <span className="text-[9px] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 text-white/70">
-                  Anthropic: 92%
-                </span>
+              <div className="mt-3 pt-2.5 border-t border-white/5 text-[9px] text-muted-foreground leading-snug">
+                Ecosystem verified diagnostic logs sync active.
               </div>
             </Card>
 
-            <Card className="flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Next Milestone Reward</span>
-                <span className="rounded bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[9px] px-1.5 py-0.5 font-medium font-mono">
-                  Level 5
-                </span>
+            {/* Widget 3: Career Goal */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>3. Career Goal</span>
+                <button 
+                  onClick={() => {
+                    setTempDegree(educationDegree);
+                    setTempYear(educationYear);
+                    setTempGoal(userCareerGoal);
+                    setTempSkills(userMissingSkills);
+                    setIsEditingGoalModal(true);
+                  }}
+                  className="text-[9px] text-sky-400 hover:text-sky-300 font-bold bg-transparent border-none cursor-pointer flex items-center gap-0.5"
+                >
+                  Change
+                </button>
               </div>
-              <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-xs font-semibold text-white truncate">Mock Technical Interview Pass</span>
+              <div className="mt-3">
+                <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Target Objective</div>
+                <div className="text-sm font-black text-white mt-1 leading-snug line-clamp-2">{userCareerGoal}</div>
+                <div className="inline-flex items-center gap-1 mt-2.5 text-[9px] text-emerald-400 font-bold font-mono">
+                  <span>🎯 88% Market Alignment</span>
+                </div>
               </div>
-              <div className="mt-3 text-[9px] text-indigo-300 flex items-center gap-1 font-medium bg-indigo-500/10 border border-indigo-500/20 rounded-xl px-2.5 py-1.5 w-full justify-center">
-                <Ticket className="h-3 w-3 shrink-0" />
-                <span className="truncate">Claim at 1,000 XP threshold</span>
+              <div className="mt-2 text-[9px] text-muted-foreground/60">
+                Updated matching algorithms in September.
               </div>
             </Card>
+
+            {/* Widget 4: Missing Skills */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>4. Missing Skills</span>
+                <span className="rounded bg-rose-500/10 border border-rose-500/25 text-rose-400 text-[8px] px-1.5 py-0.5 font-bold uppercase font-mono">Gaps</span>
+              </div>
+              <div className="mt-3 space-y-2">
+                <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Core Gap Checklist</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {userMissingSkills.split(",").map((s) => (
+                    <span 
+                      key={s} 
+                      className="text-[9.5px] font-mono px-2 py-0.5 rounded border border-rose-500/15 bg-rose-500/5 text-rose-300 select-none"
+                    >
+                      {s.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 pt-2 border-t border-white/5 text-[9px] text-muted-foreground/50">
+                Close gaps in Skill Builder.
+              </div>
+            </Card>
+
+            {/* Widget 5: Recommended Next Step */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>5. Recommended Step</span>
+                <span className="text-emerald-400 font-bold font-mono text-[9px]">High Priority</span>
+              </div>
+              <div className="mt-3">
+                <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Next Milestone Task</div>
+                {bookedSessions.length > 0 ? (
+                  <div className="mt-1">
+                    <div className="text-[11px] text-emerald-400 font-bold">Session with {bookedSessions[0].mentorName}</div>
+                    <div className="text-[9px] text-slate-300 font-mono mt-0.5">📅 {bookedSessions[0].slot}</div>
+                  </div>
+                ) : (
+                  <div className="text-xs font-bold text-white mt-1 leading-snug">
+                    Schedule 1-on-1 discovery with faang expert Marco Rossi.
+                  </div>
+                )}
+              </div>
+              {bookedSessions.length > 0 ? (
+                <div className="mt-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center text-[9px] rounded-lg font-bold">
+                  ✓ Session Confirmed
+                </div>
+              ) : (
+                <button 
+                  onClick={() => {
+                    const searchParams = new URLSearchParams(window.location.search);
+                    searchParams.set("tab", "mentors");
+                    window.history.pushState({}, "", `?${searchParams.toString()}`);
+                    window.dispatchEvent(new Event("popstate"));
+                    // Let's do a hard navigates trigger or just update url parameter tab which tanstack router binds to
+                    window.location.href = "/app?tab=mentors";
+                  }}
+                  className="mt-3 w-full py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/35 border border-sky-500/30 text-sky-300 text-[10px] font-bold text-center cursor-pointer transition"
+                >
+                  Book Session Now
+                </button>
+              )}
+            </Card>
+
+            {/* Widget 6: XP Points & Wallet */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>6. XP Wallet</span>
+                <span className="text-amber-400 font-mono text-[9px]">Level {level}</span>
+              </div>
+              <div className="mt-3">
+                <div className="flex justify-between text-[10px] font-mono mb-1 text-slate-300">
+                  <span>{xp}/1000 XP</span>
+                  <span className="text-amber-400 font-bold">🪙 {coins} Coins</span>
+                </div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full transition-all duration-300"
+                    style={{ width: `${(xp / 1000) * 100}%` }}
+                  />
+                </div>
+                <div className="mt-2.5 flex justify-between gap-1 text-[8.5px] text-muted-foreground font-mono">
+                  <span>+15% active streak multi</span>
+                  <span>Goal: L5 Unlocks</span>
+                </div>
+              </div>
+              <div className="mt-3 flex gap-1.5">
+                <button
+                  onClick={() => setXp((prev) => prev + 100)}
+                  className="flex-1 py-1 rounded bg-white/[0.04] border border-white/5 text-[9px] font-bold text-white hover:bg-white/[0.08]"
+                >
+                  +100 XP Spark
+                </button>
+                <button
+                  onClick={() => setCoins((prev) => prev + 50)}
+                  className="flex-1 py-1 rounded bg-amber-500/10 border border-amber-500/25 text-[9px] font-bold text-amber-400 hover:bg-amber-500/20"
+                >
+                  +50 Coins
+                </button>
+              </div>
+            </Card>
+
+            {/* Widget 7: Recent Achievements */}
+            <Card className="flex flex-col justify-between relative overflow-hidden">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                <span>7. Achievements Vault</span>
+                <span className="text-[9px] text-emerald-400 font-bold">Verified</span>
+              </div>
+              <div className="mt-3 space-y-1.5">
+                {[
+                  { name: "Streak Warrior", icon: "🔥", date: "June 16" },
+                  { name: "First Commit", icon: "🚀", date: "June 14" },
+                  { name: "AI Pioneer", icon: "🤖", date: "June 12" },
+                ].map((ac) => (
+                  <div key={ac.name} className="flex items-center justify-between text-[10px] p-1.5 rounded bg-white/[0.01] border border-white/5">
+                    <span className="flex items-center gap-1.5 text-white/90">
+                      <span>{ac.icon}</span>
+                      <span className="truncate">{ac.name}</span>
+                    </span>
+                    <span className="text-[8px] text-muted-foreground font-mono">{ac.date}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 text-[8px] text-muted-foreground/40 text-center font-mono">
+                Showing 3 of 14 vault achievements
+              </div>
+            </Card>
+
           </div>
+
+          {/* User Customize Modal */}
+          {isEditingGoalModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+              <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl">
+                <button
+                  onClick={() => setIsEditingGoalModal(false)}
+                  className="absolute top-4 right-4 h-8 w-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <h3 className="text-lg font-bold font-display text-white mb-4">Edit Profile Widgets</h3>
+                <div className="space-y-4">
+                  <div className="grid gap-1.5">
+                    <label className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Degree track / Major</label>
+                    <input 
+                      type="text" 
+                      value={tempDegree} 
+                      onChange={(e) => setTempDegree(e.target.value)} 
+                      className="bg-slate-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-sky-400"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Academic Year</label>
+                    <input 
+                      type="text" 
+                      value={tempYear} 
+                      onChange={(e) => setTempYear(e.target.value)} 
+                      className="bg-slate-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-sky-400"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Career Goal Target</label>
+                    <input 
+                      type="text" 
+                      value={tempGoal} 
+                      onChange={(e) => setTempGoal(e.target.value)} 
+                      className="bg-slate-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-sky-400"
+                    />
+                  </div>
+                  <div className="grid gap-1.5">
+                    <label className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Missing Skills (comma separated)</label>
+                    <input 
+                      type="text" 
+                      value={tempSkills} 
+                      onChange={(e) => setTempSkills(e.target.value)} 
+                      className="bg-slate-950 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white outline-none focus:border-sky-400"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2.5 pt-4">
+                    <button
+                      onClick={() => setIsEditingGoalModal(false)}
+                      className="px-4 py-2 text-xs font-semibold rounded-xl border border-white/10 text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        setEducationDegree(tempDegree);
+                        setEducationYear(tempYear);
+                        setUserCareerGoal(tempGoal);
+                        setUserMissingSkills(tempSkills);
+                        setIsEditingGoalModal(false);
+                      }}
+                      className="px-4 py-2 text-xs font-bold text-slate-955 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-xl"
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mt-6">
             <h3 className="text-base font-black text-white tracking-tight uppercase mb-3.5 font-display">
@@ -1912,344 +2197,318 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
         </Page>
       )}
 
-      {/* TAB: ARENA */}
       {currentTab === "arena" && (
-        <Page title="Career Growth Arena" subtitle="Navigate your developmental districts in the career city map.">
+        <Page title="Career Growth Arena" subtitle="Expert discussions, path decisions, and developmental districts.">
           {/* HUD Header */}
           <div className="grid gap-4 md:grid-cols-3 mb-6 mt-2">
             <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
               <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
               <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold">Arena Status</span>
               <div className="text-2xl font-black text-white mt-1">Level 4 Candidate</div>
-              <div className="text-xs text-muted-foreground mt-1">Active Districts: Skills & Project</div>
+              <div className="text-xs text-muted-foreground mt-1">Active District Path: Systems & Product Dev</div>
             </div>
             <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
               <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
-              <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold">Overall Preparedness</span>
+              <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold">Domain Preparedness</span>
               <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
-                68% <span className="text-xs text-emerald-400 font-normal font-mono">+4% this week</span>
+                {studentHealthScore}% <span className="text-xs text-emerald-400 font-normal font-mono">+6% from weights</span>
               </div>
               <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden mt-2">
-                <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-400 rounded-full" style={{ width: '68%' }} />
+                <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-400 rounded-full" style={{ width: `${studentHealthScore}%` }} />
               </div>
             </div>
-            {/* Pro Upgrade Callout Banner */}
+            {/* Decide Action Card */}
             <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 backdrop-blur-xl group hover:border-amber-500/40 transition duration-300">
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
               <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold flex items-center gap-1">
-                <Sparkles className="h-3 w-3 animate-pulse" /> Pro Upgrade
+                <Sparkles className="h-3 w-3 animate-pulse" /> 🎯 Path Decisions
               </span>
-              <div className="text-sm font-bold text-white mt-1 leading-snug">Unlock Interview & Career Districts</div>
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-[10px] text-muted-foreground">Access unlimited simulations & placement matches</span>
-                <button className="px-2.5 py-1 text-[10px] font-bold text-slate-900 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg shadow-md hover:scale-105 transition-all cursor-pointer border-none">
-                  Upgrade
+              <div className="text-sm font-bold text-white mt-1 leading-snug">Expert Decision Matrix</div>
+              <div className="flex justify-between items-center mt-2.5">
+                <span className="text-[10px] text-muted-foreground">Diagnose research vs startup trajectory</span>
+                <button 
+                  onClick={() => {
+                    setDecidePathChoice(null);
+                    setDecideResult(null);
+                    setIsDecideModalOpen(true);
+                  }}
+                  className="px-3 py-1.5 text-[10px] font-bold text-slate-955 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg shadow-md hover:scale-105 transition-all cursor-pointer border-none font-display"
+                >
+                  Decide Now
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Career City Map (Interactive Path) */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-6 mb-6">
-            <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
-            <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">
-              Career City Map / Roadmap Path
-            </h3>
+          <div className="grid gap-6 lg:grid-cols-3">
+            
+            {/* Left 2 Columns: Career Map & Districts */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Interactive City Map */}
+              <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-6">
+                <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+                <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">
+                  Career City Map / Roadmap Path
+                </h3>
 
-            {/* Node Pipeline container */}
-            <div className="relative flex flex-col md:flex-row justify-between items-center gap-8 md:gap-4 py-4 px-2">
+                <div className="relative flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-4 py-4 px-2">
+                  <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-white/5 -translate-y-1/2 hidden sm:block z-0">
+                    <div
+                      className="h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500 transition-all duration-500"
+                      style={{ width: '55%' }}
+                    />
+                  </div>
 
-              {/* Connecting Line (Desktop) */}
-              <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-white/5 -translate-y-1/2 hidden md:block z-0">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500 transition-all duration-500"
-                  style={{ width: '55%' }}
-                />
+                  {[
+                    { id: "foundation", name: "Foundation", status: "Completed", icon: GraduationCap },
+                    { id: "skills", name: "Skills", status: "In Progress", icon: Brain },
+                    { id: "project", name: "Project", status: "In Progress", icon: Compass },
+                    { id: "interview", name: "Interview", status: "Locked", icon: Users },
+                    { id: "career", name: "Career", status: "Locked", icon: Briefcase },
+                  ].map((node) => {
+                    const Icon = node.icon;
+                    const isCompleted = node.status === "Completed";
+                    const isInProgress = node.status === "In Progress";
+                    const isLocked = node.status === "Locked";
+
+                    return (
+                      <div key={node.id} className="relative flex flex-col items-center group z-10 select-none">
+                        <div className={`relative flex items-center justify-center w-12 h-12 rounded-full border bg-slate-900 transition-all duration-300 
+                          ${isCompleted ? "border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : ""}
+                          ${isInProgress ? "border-sky-500 animate-pulse shadow-[0_0_15px_rgba(56,189,248,0.3)]" : ""}
+                          ${isLocked ? "border-white/10 text-muted-foreground opacity-60" : ""}
+                        `}>
+                          {isCompleted && (
+                            <div className="absolute -top-1 -right-1 bg-emerald-500 text-slate-955 rounded-full p-0.5 z-20">
+                              <Check className="h-2.5 w-2.5 stroke-[3]" />
+                            </div>
+                          )}
+                          <Icon className={`h-5 w-5 ${isCompleted ? "text-emerald-400" : isInProgress ? "text-sky-400" : "text-white/30"}`} />
+                        </div>
+                        <span className="text-[10px] font-mono mt-2 font-bold text-white">{node.name}</span>
+                        <span className={`text-[8px] font-semibold uppercase ${isCompleted ? "text-emerald-400/80" : isInProgress ? "text-sky-400/80" : "text-muted-foreground/60"}`}>{node.status}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {[
-                { id: "foundation", name: "Foundation", status: "Completed", icon: GraduationCap, color: "emerald" },
-                { id: "skills", name: "Skills", status: "In Progress", icon: Brain, color: "sky" },
-                { id: "project", name: "Project", status: "In Progress", icon: Compass, color: "indigo" },
-                { id: "interview", name: "Interview", status: "Locked", icon: Users, color: "violet" },
-                { id: "career", name: "Career", status: "Locked", icon: Briefcase, color: "rose" },
-              ].map((node) => {
-                const Icon = node.icon;
-                const isCompleted = node.status === "Completed";
-                const isInProgress = node.status === "In Progress";
-                const isLocked = node.status === "Locked";
-
-                return (
-                  <button
-                    key={node.id}
-                    onClick={() => {
-                      const element = document.getElementById(`district-${node.id}`);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        // Add a temporary highlight glow animation class
-                        element.classList.add('ring-4', 'ring-sky-400/35', 'border-sky-400/60');
-                        setTimeout(() => {
-                          element.classList.remove('ring-4', 'ring-sky-400/35', 'border-sky-400/60');
-                        }, 2000);
-                      }
-                    }}
-                    className="relative flex flex-col items-center group z-10 cursor-pointer focus:outline-none bg-transparent border-none"
-                  >
-                    {/* Ring Outer */}
-                    <div className={`relative flex items-center justify-center w-12 h-12 rounded-full border bg-slate-900 transition-all duration-300 
-                      ${isCompleted ? "border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : ""}
-                      ${isInProgress ? "border-sky-500 animate-pulse shadow-[0_0_15px_rgba(56,189,248,0.3)]" : ""}
-                      ${isLocked ? "border-white/10 text-muted-foreground opacity-60" : ""}
-                      group-hover:scale-110 group-hover:border-sky-400/80
-                    `}>
-                      {isCompleted && (
-                        <div className="absolute -top-1 -right-1 bg-emerald-500 text-slate-900 rounded-full p-0.5 z-20">
-                          <Check className="h-2.5 w-2.5 stroke-[3]" />
-                        </div>
-                      )}
-                      {isInProgress && (
-                        <div className="absolute -top-1 -right-1 bg-sky-500 rounded-full w-2.5 h-2.5 animate-ping z-20" />
-                      )}
-
-                      {/* Icon */}
-                      <Icon className={`h-5 w-5 
-                        ${isCompleted ? "text-emerald-400" : ""}
-                        ${isInProgress ? "text-sky-400" : ""}
-                        ${isLocked ? "text-white/30" : ""}
-                      `} />
-                    </div>
-
-                    {/* Node Text */}
-                    <span className="text-[10px] font-mono mt-2 font-bold text-white group-hover:text-sky-400 transition-colors">
-                      {node.name}
-                    </span>
-                    <span className={`text-[8px] font-semibold uppercase 
-                      ${isCompleted ? "text-emerald-400/80" : ""}
-                      ${isInProgress ? "text-sky-400/80" : ""}
-                      ${isLocked ? "text-muted-foreground/60" : ""}
-                    `}>
-                      {node.status}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* District Grid */}
-          <div className="grid gap-6 md:grid-cols-5 mt-4">
-            {[
-              {
-                id: "foundation",
-                name: "Foundation District",
-                desc: "Establish your core domain knowledge, master fundamentals, and define targets.",
-                progress: 92,
-                status: "Completed",
-                icon: GraduationCap,
-                gradient: "from-emerald-400 to-teal-500",
-                textColor: "text-emerald-400",
-                tasks: [
-                  { title: "Define target profiles & goals", done: true },
-                  { title: "CS / domain core diagnostics", done: true },
-                  { title: "Sign career strategy roadmap", done: false },
-                ]
-              },
-              {
-                id: "skills",
-                name: "Skills District",
-                desc: "Dive deep into technologies, build algorithmic strength, and learn advanced toolsets.",
-                progress: 78,
-                status: "In Progress",
-                icon: Brain,
-                gradient: "from-sky-400 to-blue-500",
-                textColor: "text-sky-400",
-                tasks: [
-                  { title: "Learn React & TypeScript", done: true },
-                  { title: "Solve 50+ medium LeetCodes", done: true },
-                  { title: "Master system & DB basics", done: false },
-                ]
-              },
-              {
-                id: "project",
-                name: "Project District",
-                desc: "Build real-world proof of capability. Complete repositories, deploy systems, and write tests.",
-                progress: 60,
-                status: "In Progress",
-                icon: Compass,
-                gradient: "from-indigo-400 to-purple-500",
-                textColor: "text-indigo-400",
-                tasks: [
-                  { title: "Build & launch fullstack SaaS", done: true },
-                  { title: "Set up CI/CD pipeline setup", done: false },
-                  { title: "Write E2E and integration tests", done: false },
-                ]
-              },
-              {
-                id: "interview",
-                name: "Interview District",
-                desc: "Polish behavioral matrices, practice mock system designs, and rehearse whiteboard code.",
-                progress: 10,
-                status: "Locked",
-                icon: Users,
-                gradient: "from-purple-400 to-fuchsia-500",
-                textColor: "text-purple-400",
-                tasks: [
-                  { title: "Behavioral framework matrices", done: false },
-                  { title: "Mock system design interview", done: false },
-                  { title: "Live whiteboard rehearsals", done: false },
-                ]
-              },
-              {
-                id: "career",
-                name: "Career District",
-                desc: "Deploy customized match models, schedule interviews, and negotiate placements.",
-                progress: 0,
-                status: "Locked",
-                icon: Briefcase,
-                gradient: "from-fuchsia-400 to-rose-500",
-                textColor: "text-rose-400",
-                tasks: [
-                  { title: "Optimize LinkedIn & resume", done: false },
-                  { title: "Deploy matchmaking models", done: false },
-                  { title: "Placement offer negotiation", done: false },
-                ]
-              },
-            ].map((d) => {
-              const IconComp = d.icon;
-              const isLocked = d.status === "Locked";
-              const isCompleted = d.status === "Completed";
-
-              return (
-                <div
-                  key={d.id}
-                  id={`district-${d.id}`}
-                  className={`flex flex-col justify-between p-5 rounded-2xl border transition-all duration-500 relative group overflow-hidden bg-slate-950/40 backdrop-blur-md ${isLocked
-                      ? "border-white/5 opacity-60 hover:opacity-85"
-                      : isCompleted
-                        ? "border-emerald-500/20 hover:border-emerald-500/40 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]"
-                        : "border-sky-500/20 hover:border-sky-500/40 hover:shadow-[0_0_20px_rgba(56,189,248,0.1)] ring-1 ring-sky-500/10"
-                    }`}
-                >
-                  {/* Decorative background glow */}
-                  <div className={`absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br ${d.gradient} opacity-[0.03] group-hover:opacity-[0.08] blur-xl pointer-events-none transition-all duration-500`} />
-
-                  {/* Card top border line */}
-                  {!isLocked && (
-                    <span className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${d.gradient}`} />
-                  )}
-
-                  <div>
-                    {/* Header: Icon & Status */}
-                    <div className="flex justify-between items-center">
-                      <div className={`p-2.5 rounded-xl border bg-white/[0.02] transition-colors duration-300 ${isLocked
-                          ? "border-white/5 text-muted-foreground/60"
-                          : isCompleted
-                            ? "border-emerald-500/25 text-emerald-400 bg-emerald-500/[0.02]"
-                            : "border-sky-500/25 text-sky-400 bg-sky-500/[0.02]"
-                        }`}>
-                        <IconComp className="h-5 w-5" />
+              {/* Districts List */}
+              <div className="space-y-4">
+                {[
+                  { name: "Foundation District", desc: "Define target profiles, master core diagnostics, and establish roadmaps.", status: "Completed", progress: 100, color: "emerald" },
+                  { name: "Skills District", desc: "Gain advanced programming and system scaling tool competencies.", status: "In Progress", progress: techRating, color: "sky" },
+                  { name: "Project District", desc: "Launch functional workspaces, deploy full-stack codebases, and compile tests.", status: "In Progress", progress: 60, color: "indigo" },
+                ].map((d) => (
+                  <div key={d.name} className={`p-5 rounded-2xl border bg-slate-955/40 backdrop-blur-md relative overflow-hidden border-white/5`}>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="text-sm font-black text-white">{d.name}</h4>
+                        <p className="text-xs text-muted-foreground mt-1 max-w-md">{d.desc}</p>
                       </div>
-
-                      <div className="flex items-center gap-1.5">
-                        {isLocked && <Lock className="h-3 w-3 text-muted-foreground/50" />}
-                        <span className={`text-[9px] font-mono font-bold uppercase tracking-wider ${isLocked
-                            ? "text-muted-foreground/60"
-                            : isCompleted
-                              ? "text-emerald-400"
-                              : "text-sky-400 animate-pulse"
-                          }`}>
-                          {d.status}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Title & Description */}
-                    <h4 className="text-base font-black text-white mt-4 tracking-tight leading-snug font-display">
-                      {d.name}
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed min-h-[32px]">
-                      {d.desc}
-                    </p>
-
-                    {/* Sub-Milestones Task List */}
-                    <div className="mt-4 pt-3 border-t border-white/5 space-y-2">
-                      <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
-                        District Milestones
-                      </div>
-                      {d.tasks.map((task, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-[10px] leading-relaxed">
-                          {isLocked ? (
-                            <div className="mt-0.5 rounded border border-white/10 w-3 h-3 flex items-center justify-center bg-white/[0.01]">
-                              <Lock className="h-1.5 w-1.5 text-muted-foreground/30" />
-                            </div>
-                          ) : task.done ? (
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          ) : (
-                            <div className="mt-0.5 rounded border border-white/20 w-3 h-3 flex-shrink-0" />
-                          )}
-                          <span className={`${isLocked
-                              ? "text-muted-foreground/40 line-through select-none"
-                              : task.done
-                                ? "text-muted-foreground/80 line-through"
-                                : "text-white/80 font-medium"
-                            }`}>
-                            {task.title}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Progress Section */}
-                  <div className="mt-5 pt-3 border-t border-white/5">
-                    <div className="flex justify-between text-[10px] font-mono mb-1.5 leading-none">
-                      <span className="text-muted-foreground">District Progress</span>
-                      <span className={`font-bold ${isLocked ? "text-muted-foreground/60" : d.textColor}`}>
-                        {d.progress}%
+                      <span className={`px-2 py-0.5 rounded text-[8px] font-mono font-bold uppercase ${d.status === "Completed" ? "bg-emerald-500/10 text-emerald-400" : "bg-sky-500/10 text-sky-400"}`}>
+                        {d.status}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full bg-gradient-to-r ${d.gradient} rounded-full transition-all duration-500`}
-                        style={{ width: `${d.progress}%` }}
-                      />
+                    <div className="mt-4">
+                      <div className="flex justify-between text-[9px] font-mono mb-1 text-slate-400">
+                        <span>District Completion</span>
+                        <span>{d.progress}%</span>
+                      </div>
+                      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div className={`h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full`} style={{ width: `${d.progress}%` }} />
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Lock Overlay on Hover */}
-                  {isLocked && (
-                    <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-center items-center p-4 text-center">
-                      <Lock className="h-8 w-8 text-amber-400 mb-2 animate-bounce" />
-                      <div className="text-xs font-bold text-white uppercase font-mono tracking-wider">District Locked</div>
-                      <p className="text-[10px] text-muted-foreground mt-1 max-w-[140px]">
-                        Complete the preceding districts and upgrade to Pro to unlock.
+            </div>
+
+            {/* Right Column: Expert Discussion Feed */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md flex flex-col justify-between">
+              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
+              <div>
+                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-1 font-display">
+                  <Users className="h-4.5 w-4.5 text-sky-400" /> Expert Discussion Feed
+                </h3>
+                <p className="text-[10px] text-muted-foreground">Real-time evaluations by the Academic & Industry Advisory Board.</p>
+
+                <div className="mt-5 space-y-3.5">
+                  {[
+                    { author: "Dr. Helena Chen", role: "AI Research Lead · MIT", comment: "Aryan's work on 'Nexus OS' has strong logic parameters. However, we need to see structured API endpoints to evaluate web readiness.", time: "2 hours ago", avatar: "HC" },
+                    { author: "Marco Rossi", role: "SDE Director · ex-Meta", comment: "The algorithmic LeetCode index is solid (70%), but let's schedule a whiteboard simulation to check diagnostic communications.", time: "4 hours ago", avatar: "MR" },
+                    { author: "Priya Raghavan", role: "PM · ex-Razorpay", comment: "Strong SaaS portfolio projects on Vimarsh Connect. I suggest adding custom Redis caching layer diagnostics to secure advanced metrics.", time: "1 day ago", avatar: "PR" }
+                  ].map((msg, idx) => (
+                    <div key={idx} className="p-3 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-6 h-6 rounded-md bg-sky-400/10 border border-sky-400/20 text-sky-400 text-[10px] font-mono font-bold flex items-center justify-center shrink-0">
+                          {msg.avatar}
+                        </div>
+                        <div>
+                          <div className="text-[10.5px] font-bold text-white leading-tight">{msg.author}</div>
+                          <div className="text-[8px] text-muted-foreground font-mono leading-none">{msg.role}</div>
+                        </div>
+                        <span className="ml-auto text-[8px] text-muted-foreground font-mono">{msg.time}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-300 leading-normal font-sans">
+                        "{msg.comment}"
                       </p>
-                      <button className="mt-3 px-3 py-1.5 text-[9px] font-bold text-slate-900 bg-amber-400 hover:bg-amber-300 rounded-lg cursor-pointer transition border-none">
-                        Upgrade to Unlock
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t border-white/5 text-[9px] text-muted-foreground/40 font-mono text-center">
+                Refreshed live as profile parameters change.
+              </div>
+            </div>
+
+          </div>
+
+          {/* DECIDE MODAL */}
+          {isDecideModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setIsDecideModalOpen(false)}
+                  className="absolute top-4 right-4 h-8 w-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[9px] font-mono text-amber-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-amber-500/25 bg-amber-500/5">
+                    Decide Matrix
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold font-display text-white mb-1">Ecosystem Career Decision Platform</h3>
+                <p className="text-xs text-muted-foreground mb-6">Choose a directional trajectory to align your diagnostic metrics.</p>
+
+                {decideLoading ? (
+                  <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <Loader2 className="h-10 w-10 text-sky-400 animate-spin" />
+                    <span className="text-xs text-sky-300 font-mono text-center">AI compiling score metrics, verifying commit lists, mapping gaps...</span>
+                  </div>
+                ) : decideResult ? (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-slate-200">
+                      <div className="flex items-center gap-2 text-xs font-bold text-sky-400 mb-2 font-mono">
+                        <span>✓ DIAGNOSTIC VERDICT COMPILED</span>
+                      </div>
+                      <p className="text-xs leading-relaxed font-sans">{decideResult}</p>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <button
+                        onClick={() => {
+                          setIsDecideModalOpen(false);
+                          // Option to change goal based on choice
+                          if (decidePathChoice === "research") {
+                            setUserCareerGoal("Deep Tech Research Scientist (AI/ML)");
+                            setUserMissingSkills("Scientific Writing, PyTorch Optimizations, Thesis Drafting");
+                          } else {
+                            setUserCareerGoal("High-Growth SaaS Founding Engineer");
+                            setUserMissingSkills("Docker, Redis Caching, System Architecture");
+                          }
+                        }}
+                        className="px-5 py-2 text-xs font-bold text-slate-955 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-xl"
+                      >
+                        Accept Recommendation & Update OS Goal
                       </button>
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <button
+                        onClick={() => setDecidePathChoice("research")}
+                        className={`p-4 text-left rounded-2xl border transition-all cursor-pointer bg-transparent ${decidePathChoice === "research"
+                            ? "border-sky-500 bg-sky-500/5 shadow-md shadow-sky-500/5"
+                            : "border-white/5 hover:border-white/10 bg-white/[0.01]"
+                          }`}
+                      >
+                        <div className="text-sm font-bold text-white flex items-center gap-1.5">
+                          🔬 Deep Tech Research
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                          Align values with papers publishing, university labs collaborations, and mathematical algorithm designs.
+                        </p>
+                      </button>
+
+                      <button
+                        onClick={() => setDecidePathChoice("startup")}
+                        className={`p-4 text-left rounded-2xl border transition-all cursor-pointer bg-transparent ${decidePathChoice === "startup"
+                            ? "border-sky-500 bg-sky-500/5 shadow-md shadow-sky-500/5"
+                            : "border-white/5 hover:border-white/10 bg-white/[0.01]"
+                          }`}
+                      >
+                        <div className="text-sm font-bold text-white flex items-center gap-1.5">
+                          ⚡ Founding SaaS Engineer
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
+                          Align metrics with microservice deployments, databases scale, fullstack codebases, and startup launches.
+                        </p>
+                      </button>
+                    </div>
+
+                    <div className="flex justify-end gap-2.5 pt-4 border-t border-white/5 mt-6">
+                      <button
+                        onClick={() => setIsDecideModalOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold rounded-xl border border-white/10 text-white bg-transparent"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        disabled={!decidePathChoice}
+                        onClick={() => {
+                          setDecideLoading(true);
+                          setTimeout(() => {
+                            setDecideLoading(false);
+                            if (decidePathChoice === "research") {
+                              const compatibility = Math.round(researchRating * 0.7 + academicRating * 0.3);
+                              setDecideResult(
+                                `Compatibility with Deep Research: ${compatibility}%. AI Diagnosis shows exceptional Academic standing (${academicRating}%) and Research metrics (${researchRating}%). Recommendation: Focus on publishing your Nexus OS microkernel architecture. Missing items: Research Publication Badge in vault.`
+                              );
+                            } else {
+                              const compatibility = Math.round(techRating * 0.6 + leadershipRating * 0.2 + networkingRating * 0.2);
+                              setDecideResult(
+                                `Compatibility with Founding SaaS SDE: ${compatibility}%. Systems/Tech scores are high (${techRating}%), but operations and networking skills need scaling. Recommendation: Focus on closing gap skills (Docker, Redis) and book a mentoring slot with Marco Rossi.`
+                              );
+                            }
+                          }, 1500);
+                        }}
+                        className="px-5 py-2 text-xs font-bold text-slate-955 bg-gradient-to-r from-sky-400 to-indigo-500 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                      >
+                        Diagnose Trajectory
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </div>
+          )}
         </Page>
       )}
 
-      {/* TAB: CHALLENGES */}
       {currentTab === "challenges" && (
-        <Page title="Arena Challenges" subtitle="Tackle daily career tasks, build consistency, and stack XP.">
+        <Page title="Arena Challenges" subtitle="Tackle daily/monthly tasks, build consistency, and stack badges.">
           {/* HUD Header */}
           <div className="grid gap-4 md:grid-cols-3 mb-6 mt-2">
             <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
               <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/10 rounded-full blur-xl pointer-events-none" />
               <span className="text-[10px] uppercase font-mono tracking-wider text-orange-400 font-bold flex items-center gap-1">
-                <Flame className="h-3 w-3 animate-pulse" /> Consistency Streak
+                <Flame className="h-3 w-3 animate-pulse" /> consistency streak
               </span>
               <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
-                5 Days <span className="text-xs text-muted-foreground font-normal">Best: 18 days</span>
+                {streakCount} Days <span className="text-xs text-muted-foreground font-normal">Best: 18 days</span>
               </div>
-              <div className="text-[10px] text-orange-400/80 font-mono mt-1">On Fire! 1.2x streak multiplier active</div>
+              <div className="text-[10px] text-orange-400/80 font-mono mt-1">On Fire! 1.2x multiplier active</div>
             </div>
 
             <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/50 p-4 backdrop-blur-xl">
@@ -2258,608 +2517,300 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
                 <Zap className="h-3 w-3" /> Experience Points (XP)
               </span>
               <div className="text-2xl font-black text-white mt-1 flex items-baseline gap-2">
-                2,450 XP <span className="text-xs text-sky-400 font-normal font-mono">+250 today</span>
+                {xp} XP <span className="text-xs text-sky-400 font-normal font-mono">Level {level}</span>
               </div>
               <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-2">
-                <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full" style={{ width: '75%' }} />
+                <div className="h-full bg-gradient-to-r from-sky-400 to-indigo-500 rounded-full" style={{ width: `${(xp/1000)*100}%` }} />
               </div>
             </div>
 
-            {/* Pro Upgrade Callout Banner */}
-            <div className="relative overflow-hidden rounded-2xl border border-amber-500/25 bg-amber-500/5 p-4 backdrop-blur-xl group hover:border-amber-500/40 transition duration-300">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
-              <span className="text-[10px] uppercase font-mono tracking-wider text-amber-400 font-bold flex items-center gap-1">
-                <Sparkles className="h-3 w-3 animate-pulse" /> Streak Freeze & Double XP
+            <div className="relative overflow-hidden rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4 backdrop-blur-xl group hover:border-emerald-500/40 transition duration-300">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none" />
+              <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-400 font-bold flex items-center gap-1">
+                <Award className="h-3 w-3 animate-pulse" /> Consistency Reward
               </span>
-              <div className="text-sm font-bold text-white mt-1 leading-snug">Lock in your progress with Pro</div>
+              <div className="text-sm font-bold text-white mt-1 leading-snug">Voucher Progress (12/15 days)</div>
               <div className="flex justify-between items-center mt-2">
-                <span className="text-[10px] text-muted-foreground">Keep streak alive even if you skip a day</span>
-                <button className="px-2.5 py-1 text-[10px] font-bold text-slate-900 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-lg shadow-md hover:scale-105 transition-all cursor-pointer border-none">
-                  Upgrade
-                </button>
+                <span className="text-[10px] text-muted-foreground">3 days left for Resume Review Pass</span>
+                <span className="text-[9px] text-emerald-400 font-bold font-mono">80%</span>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3 mt-4">
-            {/* Calendar & Quests grid */}
-            <div className="md:col-span-2 space-y-6">
-
-              {/* Weekly Streak Calendar Card */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md">
-                <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-orange-500/5 blur-xl pointer-events-none" />
-                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-4 font-display">
-                  <Flame className="h-4.5 w-4.5 text-orange-400 animate-bounce" /> Weekly Streak Calendar
-                </h3>
-
-                <div className="grid grid-cols-7 gap-3 text-center">
-                  {[
-                    { d: "Mon", done: true, date: "Jun 8" },
-                    { d: "Tue", done: true, date: "Jun 9" },
-                    { d: "Wed", done: true, date: "Jun 10" },
-                    { d: "Thu", done: true, date: "Jun 11" },
-                    { d: "Fri", done: true, today: true, date: "Jun 12" },
-                    { d: "Sat", done: false, date: "Jun 13" },
-                    { d: "Sun", done: false, date: "Jun 14" },
-                  ].map((day) => (
-                    <div
-                      key={day.d}
-                      className={`relative rounded-xl border p-3 flex flex-col items-center justify-between transition-all duration-300 min-h-[96px] ${day.today
-                          ? "border-orange-500 bg-orange-500/5 shadow-[0_0_15px_rgba(249,115,22,0.15)] ring-1 ring-orange-500/20"
-                          : day.done
-                            ? "border-emerald-500/20 bg-emerald-500/[0.01]"
-                            : "border-white/5 bg-white/[0.005] opacity-50"
-                        }`}
-                    >
-                      <div>
-                        <div className="text-[10px] text-muted-foreground font-mono font-semibold">{day.d}</div>
-                        <div className="text-[8px] text-muted-foreground/60 font-mono mt-0.5">{day.date}</div>
-                      </div>
-
-                      <div className="my-2 flex items-center justify-center">
-                        {day.done ? (
-                          <Flame className={`h-6 w-6 text-orange-500 ${day.today ? "animate-pulse filter drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" : ""}`} />
-                        ) : (
-                          <div className="w-5 h-5 rounded-full border border-dashed border-white/20 bg-slate-900/60" />
-                        )}
-                      </div>
-
-                      {day.today ? (
-                        <span className="text-[7.5px] text-orange-400 font-extrabold uppercase font-mono tracking-wider">
-                          Today
-                        </span>
-                      ) : day.done ? (
-                        <span className="text-[7.5px] text-emerald-400 font-bold uppercase font-mono">
-                          Done
-                        </span>
-                      ) : (
-                        <span className="text-[7.5px] text-muted-foreground/60 font-mono">
-                          Idle
-                        </span>
-                      )}
-                    </div>
-                  ))}
+          {/* CHALLENGE CATEGORIES LIST */}
+          <div className="space-y-4">
+            {[
+              { id: "daily", name: "Daily Challenge", desc: "Short daily coding puzzles to build cognitive consistency.", locked: true, unlockReq: "Requires consistency streak > 15 days" },
+              { id: "weekly", name: "Weekly Challenge", desc: "Medium difficulty assignments, focused on algorithm logic diagnostics.", locked: true, unlockReq: "Requires Level 5 candidate metrics" },
+              {
+                id: "monthly",
+                name: "Monthly Challenge",
+                desc: "Large architectural objectives to build premium portfolios.",
+                locked: false,
+                challenges: [
+                  { title: "SaaS Capstone Deployment", instruction: "Deploy a full-stack platform w/ continuous unit testing and DB replication setups.", rewards: ["800 XP", "Capstone Master Badge", "Verified Certificate"], code: "CAP-OCT" }
+                ]
+              },
+              {
+                id: "skills",
+                name: "Skill Challenges",
+                desc: "Targeted technological challenges to verify domain skills.",
+                locked: false,
+                challenges: [
+                  { title: "Systems Core Optimize", instruction: "Solve lock-free IPC channels microkernel diagnostics.", rewards: ["450 XP", "Systems Architect Badge"], code: "SYS-OPT" },
+                  { title: "Database Scaling Deep-Dive", instruction: "Design partitioned cache indexes for high traffic loads.", rewards: ["400 XP", "DB Professional Certification"], code: "DB-SCALE" }
+                ]
+              },
+              { id: "research", name: "Research Challenges", desc: "Deconstruct research papers, formulate hypotheses, and submit drafts.", locked: true, unlockReq: "Requires verified academic domain credentials" },
+              { id: "startup", name: "Startup Challenges", desc: "Build pitches, validate TAM estimates, and formulate financial runway templates.", locked: true, unlockReq: "Requires Startup founder OS level 2 status" },
+              { id: "hackathons", name: "Ecosystem Hackathons", desc: "Participate in global developer sprints to solve real-world industry tasks.", locked: true, unlockReq: "Requires registration code from company advisors" }
+            ].map((section) => (
+              <div 
+                key={section.id} 
+                className={`p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden bg-slate-950/40 backdrop-blur-md ${
+                  section.locked ? "border-white/5 opacity-55 hover:opacity-75" : "border-white/10 hover:border-white/20"
+                }`}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-sm font-black text-white flex items-center gap-2">
+                      {section.locked ? <Lock className="h-3.5 w-3.5 text-muted-foreground" /> : <Unlock className="h-3.5 w-3.5 text-emerald-400" />}
+                      {section.name}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1 max-w-xl">{section.desc}</p>
+                  </div>
+                  {section.locked && (
+                    <span className="px-2 py-0.5 rounded border border-amber-500/20 bg-amber-500/5 text-amber-400 text-[8px] font-mono font-bold uppercase tracking-wider">
+                      LOCKED
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              {/* Daily Quests Card */}
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md">
-                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-4 font-display">
-                  <Trophy className="h-4.5 w-4.5 text-sky-400" /> Daily Arena Quests
-                </h3>
-
-                <div className="space-y-3">
-                  {[
-                    { id: 1, title: "Solve 1 Medium Algorithmic Challenge", xp: "+50 XP", done: false, action: "Go Solve", icon: Brain },
-                    { id: 2, title: "Review 3 Portfolio Projects of Classmates", xp: "+30 XP", done: true, action: "Viewed", icon: Users },
-                    { id: 3, title: "Update 1 Node on Career Growth Arena", xp: "+20 XP", done: false, action: "Go Navigate", icon: Compass },
-                  ].map((quest) => {
-                    const QuestIcon = quest.icon;
-                    return (
-                      <div
-                        key={quest.id}
-                        className={`flex items-center justify-between p-3 rounded-xl border transition-all ${quest.done
-                            ? "border-white/5 bg-white/[0.01] opacity-70"
-                            : "border-white/10 bg-slate-900/40 hover:border-white/15"
-                          }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-lg ${quest.done ? "bg-white/5 text-muted-foreground" : "bg-sky-500/10 text-sky-400"}`}>
-                            <QuestIcon className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <div className={`text-xs font-semibold ${quest.done ? "text-muted-foreground line-through" : "text-white"}`}>
-                              {quest.title}
-                            </div>
-                            <div className="text-[9px] font-mono text-sky-400 font-bold mt-0.5">{quest.xp}</div>
-                          </div>
+                {/* Sub challenges display */}
+                {!section.locked && section.challenges && (
+                  <div className="mt-4 pt-4 border-t border-white/5 grid gap-4 md:grid-cols-2">
+                    {section.challenges.map((c) => (
+                      <div key={c.title} className="p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:border-white/10 transition-all flex flex-col justify-between">
+                        <div>
+                          <h4 className="text-xs font-bold text-white uppercase tracking-tight">{c.title}</h4>
+                          <p className="text-[10px] text-slate-300 mt-1 leading-normal font-sans">{c.instruction}</p>
                         </div>
-
-                        {quest.done ? (
-                          <span className="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[9px] font-mono font-bold flex items-center gap-1">
-                            <Check className="h-3 w-3 stroke-[3]" /> Completed
-                          </span>
-                        ) : (
-                          <button className="px-2.5 py-1 text-[9px] font-bold text-sky-400 border border-sky-400/30 hover:border-sky-400 hover:bg-sky-400/5 rounded-lg transition-all cursor-pointer bg-transparent">
-                            {quest.action}
+                        <div className="mt-4 pt-3 border-t border-white/5">
+                          <div className="text-[9px] font-mono text-slate-400">REWARDS:</div>
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            {c.rewards.map((r) => (
+                              <span key={r} className="text-[9px] font-mono px-2 py-0.5 rounded border border-sky-400/20 bg-sky-400/5 text-sky-400 font-bold">
+                                {r}
+                              </span>
+                            ))}
+                          </div>
+                          <button 
+                            onClick={() => alert(`Starting quest code ${c.code}. Good luck!`)}
+                            className="mt-3.5 w-full py-1.5 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 text-sky-400 text-[9.5px] font-bold transition cursor-pointer"
+                          >
+                            Launch Challenge
                           </button>
-                        )}
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-            </div>
-
-            {/* Consistency Rewards (Ticket style) */}
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 backdrop-blur-md flex flex-col justify-between">
-              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-amber-500/5 blur-xl pointer-events-none" />
-              <div>
-                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-1 font-display">
-                  <Ticket className="h-4.5 w-4.5 text-sky-400" /> Consistency Rewards
-                </h3>
-                <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                  Maintain a 15-day streak to claim a premium <strong>Resume Review Voucher</strong>.
-                </p>
-
-                {/* Premium Boarding-Pass Style Ticket Visual */}
-                <div className="relative mt-6 rounded-xl border border-dashed border-amber-500/30 bg-amber-500/[0.02] p-4 overflow-hidden group hover:border-amber-500/50 transition-all duration-300">
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
-
-                  {/* Left Side Perforation Circle */}
-                  <div className="absolute top-1/2 -left-2 w-4 h-4 bg-slate-950 border-r border-dashed border-amber-500/30 rounded-full -translate-y-1/2 z-10" />
-                  {/* Right Side Perforation Circle */}
-                  <div className="absolute top-1/2 -right-2 w-4 h-4 bg-slate-950 border-l border-dashed border-amber-500/30 rounded-full -translate-y-1/2 z-10" />
-
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <span className="text-[8px] font-mono text-amber-500 font-bold uppercase tracking-widest">Premium Voucher</span>
-                      <h4 className="text-xs font-black text-white mt-1 uppercase font-display">RESUME AUDIT PRO</h4>
-                      <p className="text-[9px] text-muted-foreground mt-0.5">Verified Placement Coach Review</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[8px] font-mono text-muted-foreground uppercase">Value</div>
-                      <div className="text-xs font-bold text-amber-400 font-mono">$150</div>
-                    </div>
+                    ))}
                   </div>
+                )}
 
-                  <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[8.5px] font-mono">
-                    <span className="text-muted-foreground">ID: #RES-STK-12</span>
-                    <span className="text-amber-500/80 font-bold">12 / 15 DAYS COMPLETED</span>
+                {section.locked && (
+                  <div className="mt-2 text-[9px] font-mono text-amber-500/80 flex items-center gap-1">
+                    <span>⚠ Unlock:</span>
+                    <span>{section.unlockReq}</span>
                   </div>
-                </div>
-
+                )}
               </div>
-
-              {/* Progress and claim action */}
-              <div className="mt-6 pt-4 border-t border-white/5 space-y-3">
-                <div className="flex justify-between text-[10px] font-mono leading-none">
-                  <span className="text-muted-foreground">Streak Progress (12/15)</span>
-                  <span className="text-sky-400 font-bold">80%</span>
-                </div>
-                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-orange-400 to-amber-500 rounded-full transition-all duration-500" style={{ width: "80%" }} />
-                </div>
-
-                <button
-                  disabled
-                  className="w-full py-2 rounded-xl border border-white/5 bg-white/[0.02] text-muted-foreground/50 text-[10px] font-mono font-bold flex items-center justify-center gap-1.5 cursor-not-allowed uppercase"
-                >
-                  <Lock className="h-3 w-3" /> Unlocks at 15 Days
-                </button>
-              </div>
-            </div>
-
+            ))}
           </div>
         </Page>
       )}
 
       {currentTab === "assessment" && (
-        <Page title="AI Assessment" subtitle="Deep multi-domain analysis of your goals, skills, and risks.">
-
-          {/* Main 3-Column Dashboard Grid */}
+        <Page title="AI Diagnostic Assessment" subtitle="Deep multi-domain analysis of your academic and technical readiness.">
+          
           <div className="grid gap-6 lg:grid-cols-12 mt-4 items-stretch">
-
-            {/* Column 1: Vertical Stepper Sidebar (col-span-3) */}
-            <div className="lg:col-span-3 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/40 backdrop-blur-md relative overflow-hidden">
+            
+            {/* Left Column: Weighted Category Controls (col-span-6) */}
+            <div className="lg:col-span-6 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/40 backdrop-blur-md relative overflow-hidden">
               <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
-
+              
               <div>
-                {/* Step HUD Card at top */}
-                <div className="mb-6 p-4 rounded-xl border border-white/5 bg-white/[0.02] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-sky-400 animate-pulse" />
-                    <div>
-                      <div className="text-[10px] font-mono text-sky-400 uppercase font-bold">Time Estimate</div>
-                      <div className="text-[11px] font-bold text-white">~6 min remaining</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-[9px] font-mono text-muted-foreground uppercase">Progress</div>
-                    <div className="text-[11px] font-mono font-bold text-white">Step 2 of 7</div>
-                  </div>
-                </div>
+                <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-2 font-display">
+                  <Activity className="h-4.5 w-4.5 text-sky-400" /> Category Weights & Parameters
+                </h3>
+                <p className="text-xs text-muted-foreground mb-4">Simulate scores to calculate your live normalized Student Health index.</p>
 
-                {/* Vertical Stepper List */}
-                <div className="relative space-y-4 pl-3">
-                  {/* Line connector background */}
-                  <div className="absolute left-6 top-3 bottom-3 w-0.5 bg-white/5 -translate-x-1/2 z-0" />
-
+                <div className="space-y-4">
                   {[
-                    { step: 1, name: "Current Situation", status: "Completed" },
-                    { step: 2, name: "Skills", status: "Active" },
-                    { step: 3, name: "Experience", status: "Upcoming" },
-                    { step: 4, name: "Goals", status: "Upcoming" },
-                    { step: 5, name: "Challenges", status: "Upcoming" },
-                    { step: 6, name: "Timeline", status: "Upcoming" },
-                    { step: 7, name: "Budget", status: "Upcoming" },
-                  ].map((s) => {
-                    const isActive = assessmentStep === s.step;
-                    const isCompleted = assessmentStep > s.step;
-
-                    return (
-                      <button
-                        key={s.step}
-                        onClick={() => setAssessmentStep(s.step)}
-                        className="relative flex items-center gap-3 w-full text-left py-1 group focus:outline-none bg-transparent border-none cursor-pointer z-10"
-                      >
-                        {/* Circle Node */}
-                        <div className={`w-6.5 h-6.5 rounded-full border flex items-center justify-center text-[10px] font-bold font-mono transition-all duration-300 ${isActive
-                            ? "border-sky-500 bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.25)] ring-2 ring-sky-500/15"
-                            : isCompleted
-                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
-                              : "border-white/10 bg-slate-950 text-muted-foreground/40 group-hover:border-white/20"
-                          }`}>
-                          {isCompleted ? <Check className="h-3 w-3 stroke-[3]" /> : s.step}
-                        </div>
-
-                        <div>
-                          <div className={`text-[11px] font-bold transition-all duration-300 ${isActive
-                              ? "text-sky-400"
-                              : isCompleted
-                                ? "text-white/80"
-                                : "text-muted-foreground/60 group-hover:text-muted-foreground/80"
-                            }`}>
-                            {s.name}
-                          </div>
-                          <span className={`text-[8px] font-semibold uppercase tracking-wider ${isActive
-                              ? "text-sky-400/80 animate-pulse"
-                              : isCompleted
-                                ? "text-emerald-400/80"
-                                : "text-muted-foreground/30"
-                            }`}>
-                            {isActive ? "Active" : isCompleted ? "Completed" : "Locked"}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+                    { key: "academic", label: "Academic Performance", weight: "20%", val: academicRating, setVal: setAcademicRating, color: "accent-sky-400" },
+                    { key: "tech", label: "Technical Skills", weight: "15%", val: techRating, setVal: setTechRating, color: "accent-indigo-400" },
+                    { key: "comms", label: "Communication Skills", weight: "15%", val: commsRating, setVal: setCommsRating, color: "accent-violet-400" },
+                    { key: "research", label: "Research Skills", weight: "15%", val: researchRating, setVal: setResearchRating, color: "accent-fuchsia-400" },
+                    { key: "career", label: "Career Readiness", weight: "15%", val: careerRating, setVal: setCareerRating, color: "accent-rose-400" },
+                    { key: "leadership", label: "Leadership", weight: "10%", val: leadershipRating, setVal: setLeadershipRating, color: "accent-amber-400" },
+                    { key: "networking", label: "Networking", weight: "10%", val: networkingRating, setVal: setNetworkingRating, color: "accent-emerald-400" },
+                  ].map((cat) => (
+                    <div key={cat.key} className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
+                      <div className="flex justify-between items-center text-xs font-semibold mb-1">
+                        <span className="text-white/95">{cat.label} <span className="text-[10px] text-slate-400 font-normal">({cat.weight} weight)</span></span>
+                        <span className="font-mono text-sky-400 font-bold">{cat.val}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="10"
+                        max="100"
+                        value={cat.val}
+                        onChange={(e) => cat.setVal(Number(e.target.value))}
+                        className={`w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer ${cat.color}`}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Sidebar bottom indicator */}
-              <div className="mt-8 pt-4 border-t border-white/5 text-[9px] font-mono text-muted-foreground/40 text-center">
-                AI Engine: GPT-4o Normalized
+              <div className="mt-6 pt-3 border-t border-white/5 text-[9px] font-mono text-muted-foreground/40 text-center">
+                Diagnostics system calibrated for standard Bangalore Tier-1 engineering criteria.
               </div>
             </div>
 
-            {/* Column 2: The Stepper Question Form (col-span-5) */}
-            <div className="lg:col-span-5 flex flex-col justify-between p-6 rounded-2xl border border-white/10 bg-slate-955/50 backdrop-blur-md relative overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-indigo-500/5 blur-xl pointer-events-none" />
-
-              <div className="flex flex-col h-full justify-between">
-
-                {/* Active Step Content */}
-                <div className="min-h-[280px]">
-                  {assessmentStep === 1 && (
-                    <div className="space-y-4 animate-fadeIn">
-                      <div>
-                        <h4 className="text-base font-black text-white font-display">Current Situation</h4>
-                        <p className="text-xs text-muted-foreground mt-1">Please describe your current academic or professional context.</p>
-                      </div>
-                      <div className="space-y-4 mt-6">
-                        <div className="grid gap-2">
-                          <label className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">Primary Sector / Domain</label>
-                          <select className="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-sky-400 transition">
-                            <option>Computer Science & Software Engineering</option>
-                            <option>Biotechnology & Life Sciences</option>
-                            <option>Finance & Quantitative Economics</option>
-                            <option>Creative Design & Product Strategy</option>
-                          </select>
-                        </div>
-                        <div className="grid gap-2">
-                          <label className="text-[9px] font-mono text-muted-foreground uppercase tracking-wider font-semibold">Target Level</label>
-                          <select className="bg-slate-900 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-sky-400 transition">
-                            <option>Undergraduate Fellow</option>
-                            <option>Graduate Researcher</option>
-                            <option>SaaS Technical Founder</option>
-                            <option>Principal Engineering Lead</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {assessmentStep === 2 && (
-                    <div className="space-y-4 animate-fadeIn">
-                      <div>
-                        <h4 className="text-base font-black text-white font-display">Tell us about your skills</h4>
-                        <p className="text-xs text-muted-foreground mt-1">Rate your proficiency. The AI will normalize against your domain peers.</p>
-                      </div>
-
-                      <div className="space-y-5 mt-6">
-                        {/* Quantitative methods Slider */}
-                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
-                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
-                            <span>Quantitative methods</span>
-                            <span className="font-mono text-sky-400 font-bold">{techSkill}%</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="10"
-                            max="100"
-                            value={techSkill}
-                            onChange={(e) => setTechSkill(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                          />
-                        </div>
-
-                        {/* Scientific writing Slider */}
-                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
-                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
-                            <span>Scientific writing</span>
-                            <span className="font-mono text-sky-400 font-bold">{researchSkill}%</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="10"
-                            max="100"
-                            value={researchSkill}
-                            onChange={(e) => setResearchSkill(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                          />
-                        </div>
-
-                        {/* Team leadership Slider */}
-                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
-                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
-                            <span>Team leadership</span>
-                            <span className="font-mono text-sky-400 font-bold">{commsSkill}%</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="10"
-                            max="100"
-                            value={commsSkill}
-                            onChange={(e) => setCommsSkill(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                          />
-                        </div>
-
-                        {/* Fundraising / pitching Slider */}
-                        <div className="p-3 rounded-xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition">
-                          <div className="flex justify-between text-[11px] font-semibold text-white/95 mb-2.5">
-                            <span>Fundraising / pitching</span>
-                            <span className="font-mono text-sky-400 font-bold">{designSkill}%</span>
-                          </div>
-                          <input
-                            type="range"
-                            min="10"
-                            max="100"
-                            value={designSkill}
-                            onChange={(e) => setDesignSkill(Number(e.target.value))}
-                            className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-sky-400"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {assessmentStep === 3 && (
-                    <div className="space-y-4 animate-fadeIn">
-                      <div>
-                        <h4 className="text-base font-black text-white font-display">Verify Practical Experience</h4>
-                        <p className="text-xs text-muted-foreground mt-1 font-normal">Select items that are verified in your achievements vault.</p>
-                      </div>
-                      <div className="space-y-3 mt-6">
-                        {["Scientific Journals / Papers Published", "Granted Patents or Registrations", "Verified Technical Github Repositories", "Fellowships or Professional Certifications"].map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-slate-900/30 hover:border-white/10 cursor-pointer transition">
-                            <input type="checkbox" defaultChecked={idx % 2 === 0} className="rounded accent-sky-400 h-4 w-4 cursor-pointer" />
-                            <span className="text-xs text-white/90 font-medium">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {assessmentStep > 3 && (
-                    <div className="space-y-4 animate-fadeIn text-center py-12">
-                      <Lock className="h-12 w-12 text-amber-500 mx-auto animate-pulse mb-3" />
-                      <h4 className="text-base font-black text-white font-display">District Step Locked</h4>
-                      <p className="text-xs text-muted-foreground max-w-xs mx-auto mt-1 leading-relaxed">
-                        This step requires domain alignment files. Standard profile audits are completed up to Step 3. Please upgrade to Pro to submit full diagnostic checklists.
-                      </p>
-                      <button className="mt-5 px-5 py-2 text-xs font-bold text-slate-955 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-xl cursor-pointer hover:scale-105 transition border-none shadow-md shadow-amber-500/10">
-                        Upgrade Diagnostic Plan
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Form Nav Buttons */}
-                <div className="flex justify-between items-center pt-4 border-t border-white/5 mt-auto">
-                  <button
-                    disabled={assessmentStep <= 1}
-                    onClick={() => setAssessmentStep(prev => Math.max(1, prev - 1))}
-                    className="px-4 py-2 rounded-xl border border-white/10 hover:border-white/25 text-xs text-white bg-transparent transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed font-semibold"
-                  >
-                    Back
-                  </button>
-                  <button
-                    disabled={assessmentStep >= 7}
-                    onClick={() => setAssessmentStep(prev => Math.min(7, prev + 1))}
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Continue
-                  </button>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Column 3: Live Preview HUD Dashboard (col-span-4) */}
-            <div className="lg:col-span-4 flex flex-col justify-between p-6 rounded-2xl border border-white/10 bg-slate-955/60 backdrop-blur-md relative overflow-hidden">
+            {/* Right Column: AI Diagnostics Output Summary (col-span-6) */}
+            <div className="lg:col-span-6 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-md relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl pointer-events-none" />
 
-              <div>
-                <span className="text-[9px] font-mono text-indigo-400 font-bold uppercase tracking-widest px-2 py-0.5 rounded border border-indigo-500/20 bg-indigo-500/5 self-start">
-                  Live preview
-                </span>
-
-                {/* Radial predicted success probability */}
-                <div className="mt-6 flex flex-col items-center text-center">
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider font-semibold mb-2">
-                    Predicted success probability
+              <div className="space-y-5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-indigo-400 font-bold uppercase tracking-widest px-2.5 py-0.5 rounded border border-indigo-500/20 bg-indigo-500/5">
+                    DIAGNOSTICS SUMMARY
                   </span>
+                  <span className="text-xs text-muted-foreground font-mono">Normalized Index</span>
+                </div>
 
-                  {/* Dial SVG */}
-                  <div className="relative w-28 h-28 flex items-center justify-center">
+                {/* Score Dial */}
+                <div className="flex items-center gap-5 bg-white/[0.01] border border-white/5 rounded-2xl p-4">
+                  <div className="relative h-20 w-20 shrink-0">
                     <svg className="w-full h-full transform -rotate-90">
+                      <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.03)" strokeWidth="4" fill="transparent" />
                       <circle
-                        cx="56"
-                        cy="56"
-                        r="48"
-                        stroke="rgba(255,255,255,0.03)"
-                        strokeWidth="5"
+                        cx="40"
+                        cy="40"
+                        r="34"
+                        stroke="url(#assessScoreGrad)"
+                        strokeWidth="4.5"
                         fill="transparent"
-                      />
-                      <circle
-                        cx="56"
-                        cy="56"
-                        r="48"
-                        stroke="url(#successGradient)"
-                        strokeWidth="5.5"
-                        fill="transparent"
-                        strokeDasharray="301.6"
-                        strokeDashoffset={301.6 - (301.6 * Math.min(100, Math.round((techSkill * 0.4 + researchSkill * 0.2 + commsSkill * 0.2 + designSkill * 0.2) + 25))) / 100}
+                        strokeDasharray="213.6"
+                        strokeDashoffset={213.6 - (213.6 * studentHealthScore) / 100}
                         strokeLinecap="round"
                         className="transition-all duration-500"
                       />
                       <defs>
-                        <linearGradient id="successGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient id="assessScoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                           <stop offset="0%" stopColor="#38bdf8" />
                           <stop offset="100%" stopColor="#818cf8" />
                         </linearGradient>
                       </defs>
                     </svg>
-
                     <div className="absolute inset-0 flex flex-col items-center justify-center leading-none">
-                      <span className="text-2xl font-black text-white">
-                        {Math.min(100, Math.round((techSkill * 0.4 + researchSkill * 0.2 + commsSkill * 0.2 + designSkill * 0.2) + 25))}%
-                      </span>
-                      <span className="text-[7.5px] text-muted-foreground uppercase mt-1 font-semibold font-mono">Normalized</span>
+                      <span className="text-lg font-black text-white">{studentHealthScore}</span>
+                      <span className="text-[7px] text-muted-foreground uppercase mt-0.5 font-semibold font-mono">HEALTH</span>
                     </div>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-white font-display">Student Health Score</h4>
+                    <p className="text-[10.5px] text-muted-foreground mt-1 leading-normal font-sans">
+                      Calculated from weights. Standard baseline target is 75%.
+                    </p>
                   </div>
                 </div>
 
-                {/* Sub-Metrics Section */}
-                <div className="mt-6 space-y-3 pt-4 border-t border-white/5">
-                  {/* Strengths */}
-                  <div>
-                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
-                      <span className="text-muted-foreground">Strengths</span>
-                      <span className="text-emerald-400 font-bold">
-                        {Math.min(100, Math.round(techSkill * 0.8 + researchSkill * 0.3))}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-emerald-400 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, Math.round(techSkill * 0.8 + researchSkill * 0.3))}%` }}
-                      />
-                    </div>
+                {/* Diagnosis Text */}
+                <div className="p-3 rounded-xl bg-slate-900/50 border border-white/5">
+                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Diagnosis Report</div>
+                  <p className="text-xs text-white/95 mt-1 leading-relaxed font-sans">
+                    {studentHealthScore >= 80 
+                      ? "Excellent overall readiness. High systems-architecture capabilities matched with solid academic backgrounds. High placement probability." 
+                      : studentHealthScore >= 65 
+                        ? "Competent domain baseline. Minor weaknesses detected in organizational communication and networking indices. Moderate placement probability."
+                        : "Critical bottlenecks identified. Focus immediately on technical certifications and complete weekly checklist actions to secure streak bonuses."
+                    }
+                  </p>
+                </div>
+
+                {/* Strengths & Weaknesses Cards */}
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="p-3 rounded-xl border border-emerald-500/10 bg-emerald-500/[0.02]">
+                    <div className="text-[9px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Verified Strengths</div>
+                    <ul className="mt-2 space-y-1 text-[10px] text-slate-300 font-sans">
+                      {academicRating >= 75 && <li>• Academic track stability</li>}
+                      {techRating >= 75 && <li>• Quantitative code logic</li>}
+                      {commsRating >= 75 && <li>• Presentation diagnostics</li>}
+                      {researchRating >= 75 && <li>• Scientific publication writing</li>}
+                      {careerRating >= 75 && <li>• Resume ATS compatibility</li>}
+                      {leadershipRating >= 75 && <li>• Group task co-ordination</li>}
+                      {networkingRating >= 75 && <li>• Advisor board connections</li>}
+                      {Math.max(academicRating, techRating, commsRating, researchRating, careerRating, leadershipRating, networkingRating) < 75 && (
+                        <li>• Basic skill consistency</li>
+                      )}
+                    </ul>
                   </div>
 
-                  {/* Opportunities */}
-                  <div>
-                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
-                      <span className="text-muted-foreground">Opportunities</span>
-                      <span className="text-sky-400 font-bold">
-                        {Math.min(100, Math.round(commsSkill * 0.7 + designSkill * 0.5))}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-sky-400 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, Math.round(commsSkill * 0.7 + designSkill * 0.5))}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Risks */}
-                  <div>
-                    <div className="flex justify-between text-[9px] font-mono mb-1 leading-none">
-                      <span className="text-muted-foreground">Risks</span>
-                      <span className="text-rose-400 font-bold">
-                        {Math.max(0, Math.round(100 - (techSkill * 0.5 + commsSkill * 0.5)))}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-rose-400 rounded-full transition-all duration-500"
-                        style={{ width: `${Math.max(0, Math.round(100 - (techSkill * 0.5 + commsSkill * 0.5)))}%` }}
-                      />
-                    </div>
+                  <div className="p-3 rounded-xl border border-rose-500/10 bg-rose-500/[0.02]">
+                    <div className="text-[9px] font-mono text-rose-400 font-bold uppercase tracking-wider">Identified Gaps</div>
+                    <ul className="mt-2 space-y-1 text-[10px] text-slate-300 font-sans">
+                      {academicRating < 65 && <li>• Course completion index</li>}
+                      {techRating < 65 && <li>• Systems deployment gaps</li>}
+                      {commsRating < 65 && <li>• Whiteboard panel simulations</li>}
+                      {researchRating < 65 && <li>• Citation baseline numbers</li>}
+                      {careerRating < 65 && <li>• Placement readiness checklist</li>}
+                      {leadershipRating < 65 && <li>• Operations & project kanban</li>}
+                      {networkingRating < 65 && <li>• Active expert session books</li>}
+                      {Math.min(academicRating, techRating, commsRating, researchRating, careerRating, leadershipRating, networkingRating) >= 65 && (
+                        <li>• No critical bottlenecks</li>
+                      )}
+                    </ul>
                   </div>
                 </div>
 
-                {/* AI Observations bullet list */}
-                <div className="mt-6 pt-4 border-t border-white/5 space-y-2">
-                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
-                    Real-time AI Insights
+                {/* Actionable Improvement Plan */}
+                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.01]">
+                  <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Actionable Improvement Plan</div>
+                  <div className="mt-2.5 space-y-2 text-[10px] text-slate-200 font-sans">
+                    {techRating < 75 && (
+                      <div className="flex items-start gap-2">
+                        <span className="text-sky-400 mt-0.5">•</span>
+                        <span>Complete the monthly 'SaaS Capstone Deployment' challenge to close engineering gaps.</span>
+                      </div>
+                    )}
+                    {commsRating < 75 && (
+                      <div className="flex items-start gap-2">
+                        <span className="text-sky-400 mt-0.5">•</span>
+                        <span>Book an interview prep slot with expert Marco Rossi to review behavioral matrices.</span>
+                      </div>
+                    )}
+                    {networkingRating < 75 && (
+                      <div className="flex items-start gap-2">
+                        <span className="text-sky-400 mt-0.5">•</span>
+                        <span>Register and attend the upcoming community 'Pitch Mock Session' event.</span>
+                      </div>
+                    )}
+                    {techRating >= 75 && commsRating >= 75 && networkingRating >= 75 && (
+                      <div className="flex items-start gap-2">
+                        <span className="text-emerald-400 mt-0.5">✓</span>
+                        <span>Your improvement checks are clean. Prepare for direct placement matchmaking.</span>
+                      </div>
+                    )}
                   </div>
-                  <ul className="space-y-2 text-[10px] text-white/85 leading-relaxed">
-                    <li className="flex items-start gap-1.5">
-                      <span className="text-indigo-400 mt-0.5">•</span>
-                      <span>
-                        {techSkill > 70
-                          ? "Strong publication trajectory and technical logic capacity"
-                          : "Moderate quantitative trajectory, standard logic markers"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <span className="text-indigo-400 mt-0.5">•</span>
-                      <span>
-                        {designSkill > 45
-                          ? "High niche opportunity inside underserved domain segments"
-                          : "Underserved niche opportunity (high demand metrics detected)"}
-                      </span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <span className="text-indigo-400 mt-0.5">•</span>
-                      <span>
-                        {commsSkill > 50
-                          ? "Mentor coverage fully adequate for alignment search"
-                          : "Recommended scheduling in Advisors Hub to close leadership gaps"}
-                      </span>
-                    </li>
-                  </ul>
                 </div>
-              </div>
 
-              {/* Action trigger button */}
-              <div className="mt-6 pt-4 border-t border-white/5">
-                <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 flex items-center justify-center gap-1.5 hover:opacity-95 transition cursor-pointer border-none shadow-lg shadow-sky-500/10">
-                  <Download className="h-3.5 w-3.5" /> Generate Deep AI Assessment PDF
-                </button>
               </div>
 
             </div>
 
           </div>
 
-          {/* LeetCode Code Sandbox Verifier (Rendered at the bottom) */}
+          {/* LeetCode Code Sandbox Verifier */}
           <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-slate-955/40 p-5 backdrop-blur-md">
             <h3 className="text-sm font-bold text-white tracking-tight uppercase flex items-center gap-1.5 mb-2 font-display">
               <ShieldCheck className="h-4.5 w-4.5 text-emerald-400 animate-pulse" /> LeetCode Code Sandbox Verifier
@@ -2876,349 +2827,291 @@ function StudentDashboard({ currentTab }: { currentTab: string }) {
             <div className="mt-3 flex gap-2">
               <button
                 onClick={runCodeVerification}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-950 hover:opacity-90 transition cursor-pointer border-none"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-955 hover:opacity-90 transition cursor-pointer border-none"
               >
                 Verify Solution
               </button>
               {verificationResult === "running" && <span className="text-xs text-sky-400 font-mono self-center">Running...</span>}
-              {verificationResult === "success" && <span className="text-xs text-emerald-400 font-mono self-center">✓ Verified!</span>}
+              {verificationResult === "success" && <span className="text-xs text-emerald-400 font-mono self-center">✓ Verified! (+50 XP granted)</span>}
+              {verificationResult === "failed" && <span className="text-xs text-rose-400 font-mono self-center">✗ Solution Failed compile test</span>}
             </div>
           </div>
-
         </Page>
       )}
 
-      {/* TAB: ROADMAP */}
-      {currentTab === "roadmap" && (
-        <Page title="Career Roadmap" subtitle="Navigate your 5-phase career roadmap blueprint.">
+      {currentTab === "roadmap" && (() => {
+        const p1Progress = Math.round(((roadmapTasks.phase1_basics ? 1 : 0) + (roadmapTasks.phase1_courses ? 1 : 0) + (roadmapTasks.phase1_resources ? 1 : 0)) / 3 * 100);
+        const p2Progress = Math.round(((roadmapTasks.phase2_tech ? 1 : 0) + (roadmapTasks.phase2_soft ? 1 : 0) + (roadmapTasks.phase2_comm ? 1 : 0)) / 3 * 100);
+        const p3Progress = Math.round(((roadmapTasks.phase3_beginner ? 1 : 0) + (roadmapTasks.phase3_intermediate ? 1 : 0) + (roadmapTasks.phase3_advanced ? 1 : 0)) / 3 * 100);
+        const overallProgress = Math.round((p1Progress + p2Progress + p3Progress) / 3);
 
-          {/* Objective Goal Header HUD */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-5 mb-6">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold flex items-center gap-1">
-                  <Sparkles className="h-3 w-3 animate-pulse" /> Active Career Objective
-                </span>
-                <h3 className="text-base font-black text-white mt-1 leading-snug font-display">
-                  Goal: Land summer internship at a top product company
-                </h3>
-              </div>
-              <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
-                <div className="h-8 w-8 rounded-full border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold font-mono text-xs">
-                  40%
-                </div>
+        const phases = [
+          {
+            phase: 1,
+            title: "Foundation",
+            desc: "Learn core basics, complete standard courses, and read verified academic/industry resources.",
+            progress: p1Progress,
+            status: p1Progress === 100 ? "Completed" : "In Progress",
+            gradient: "from-emerald-400 to-teal-500",
+            icon: GraduationCap,
+            tasks: [
+              { key: "phase1_basics", title: "Learn Basics" },
+              { key: "phase1_courses", title: "Complete Courses" },
+              { key: "phase1_resources", title: "Read Resources" },
+            ]
+          },
+          {
+            phase: 2,
+            title: "Skill Development",
+            desc: "Close diagnostic gaps in technical programming, soft skills, and peer presentation communication.",
+            progress: p2Progress,
+            status: p2Progress === 100 ? "Completed" : p1Progress === 100 ? "In Progress" : "Locked",
+            gradient: "from-sky-400 to-blue-500",
+            icon: Brain,
+            tasks: [
+              { key: "phase2_tech", title: "Technical Skills" },
+              { key: "phase2_soft", title: "Soft Skills" },
+              { key: "phase2_comm", title: "Communication" },
+            ]
+          },
+          {
+            phase: 3,
+            title: "Projects",
+            desc: "Launch functional fullstack codebases, deploying beginner, intermediate, and advanced capstones.",
+            progress: p3Progress,
+            status: p3Progress === 100 ? "Completed" : p2Progress === 100 ? "In Progress" : "Locked",
+            gradient: "from-indigo-400 to-purple-500",
+            icon: Compass,
+            tasks: [
+              { key: "phase3_beginner", title: "Beginner Projects" },
+              { key: "phase3_intermediate", title: "Intermediate Projects" },
+              { key: "phase3_advanced", title: "Advanced Projects" },
+            ]
+          }
+        ];
+
+        return (
+          <Page title="Career Roadmap" subtitle="Navigate your 3-phase career roadmap blueprint.">
+            
+            {/* Objective Goal Header HUD */}
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-slate-900/40 p-5 mb-6">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-sky-500/10 rounded-full blur-xl pointer-events-none" />
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <div className="text-[9px] font-mono text-muted-foreground uppercase">Overall Blueprint</div>
-                  <div className="text-[11px] font-bold text-white">2 of 5 Phases Complete</div>
+                  <span className="text-[10px] uppercase font-mono tracking-wider text-sky-400 font-bold flex items-center gap-1">
+                    <Sparkles className="h-3 w-3 animate-pulse" /> Active Career Objective
+                  </span>
+                  <h3 className="text-base font-black text-white mt-1 leading-snug font-display">
+                    Goal: {userCareerGoal}
+                  </h3>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 12-Column Blueprint Dashboard Grid */}
-          <div className="grid gap-6 lg:grid-cols-12 items-stretch">
-
-            {/* Left Column: Visual Napkin Flowchart (col-span-7) */}
-            <div className="lg:col-span-7 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-955/40 backdrop-blur-md relative overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
-
-              <div>
-                <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-6">
-                  Interactive Napkin Flowchart
-                </h3>
-
-                {/* Connected Timeline List */}
-                <div className="relative space-y-6 pl-4">
-                  {/* Vertical connector line */}
-                  <div className="absolute left-6 top-4 bottom-4 w-[2px] bg-white/5 -translate-x-1/2 z-0" />
-
-                  {[
-                    {
-                      phase: 1,
-                      title: "Basic Credential Building",
-                      time: "Months 1 - 2",
-                      desc: "Establish core portfolio, resume optimization, and diagnostic score baseline.",
-                      status: "Completed",
-                      color: "emerald",
-                      gradient: "from-emerald-400 to-teal-500",
-                      icon: Award
-                    },
-                    {
-                      phase: 2,
-                      title: "Project Workspaces Configuration",
-                      time: "Months 2 - 3",
-                      desc: "Deploy 3 fullstack SaaS apps and run test verification pipelines.",
-                      status: "In Progress",
-                      color: "sky",
-                      gradient: "from-sky-400 to-blue-500",
-                      icon: Compass
-                    },
-                    {
-                      phase: 3,
-                      title: "Core Competence Scaling",
-                      time: "Months 3 - 4",
-                      desc: "Solve 150+ medium LeetCodes and master system architecture design.",
-                      status: "Next Focus",
-                      color: "indigo",
-                      gradient: "from-indigo-400 to-purple-500",
-                      icon: Brain
-                    },
-                    {
-                      phase: 4,
-                      title: "Direct Incubation Drives",
-                      time: "Months 4 - 5",
-                      desc: "Deploy talent-to-company match model and enter mock interview rounds.",
-                      status: "Scheduled",
-                      color: "violet",
-                      gradient: "from-purple-400 to-fuchsia-500",
-                      icon: Users
-                    },
-                    {
-                      phase: 5,
-                      title: "Placement & Negotiation",
-                      time: "Months 5 - 6",
-                      desc: "Receive target match placements, schedule interviews, and negotiate offers.",
-                      status: "Locked",
-                      color: "rose",
-                      gradient: "from-fuchsia-400 to-rose-500",
-                      icon: Briefcase
-                    }
-                  ].map((p) => {
-                    const PhaseIcon = p.icon;
-                    const isActive = selectedRoadmapPhase === p.phase;
-                    const isCompleted = p.status === "Completed";
-                    const isInProgress = p.status === "In Progress";
-                    const isLocked = p.status === "Locked";
-
-                    return (
-                      <button
-                        key={p.phase}
-                        onClick={() => setSelectedRoadmapPhase(p.phase)}
-                        className={`relative flex items-start gap-4 p-4 rounded-xl border w-full text-left transition-all duration-300 group z-10 focus:outline-none bg-transparent cursor-pointer ${isActive
-                            ? "border-sky-500/40 bg-sky-500/[0.02] shadow-[0_0_15px_rgba(56,189,248,0.1)] ring-1 ring-sky-500/10"
-                            : isCompleted
-                              ? "border-emerald-500/10 hover:border-emerald-500/20 bg-emerald-500/[0.005]"
-                              : "border-white/5 bg-white/[0.002] hover:border-white/10"
-                          }`}
-                      >
-                        {/* Node Circle */}
-                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-mono font-bold shrink-0 transition-all duration-300 ${isActive
-                            ? "border-sky-500 bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.2)]"
-                            : isCompleted
-                              ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
-                              : "border-white/10 text-muted-foreground/40"
-                          }`}>
-                          {isCompleted ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : p.phase}
-                        </div>
-
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start">
-                            <h4 className={`text-xs font-black tracking-tight leading-none transition-all duration-300 ${isActive ? "text-sky-400" : "text-white"
-                              }`}>
-                              Phase {p.phase}: {p.title}
-                            </h4>
-                            <span className="text-[8px] font-mono text-muted-foreground/60 shrink-0 font-semibold">{p.time}</span>
-                          </div>
-
-                          <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed truncate group-hover:text-clip group-hover:whitespace-normal">
-                            {p.desc}
-                          </p>
-
-                          {/* Indicator badge */}
-                          <div className="flex items-center gap-1.5 mt-2">
-                            <span className={`w-1.5 h-1.5 rounded-full ${isCompleted
-                                ? "bg-emerald-400"
-                                : isInProgress
-                                  ? "bg-sky-400 animate-pulse"
-                                  : isLocked
-                                    ? "bg-muted-foreground/30"
-                                    : "bg-indigo-400"
-                              }`} />
-                            <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${isCompleted
-                                ? "text-emerald-400"
-                                : isInProgress
-                                  ? "text-sky-400"
-                                  : isLocked
-                                    ? "text-muted-foreground/50"
-                                    : "text-indigo-400"
-                              }`}>
-                              {p.status}
-                            </span>
-                          </div>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Dynamic Phase Details Drawer (col-span-5) */}
-            <div className="lg:col-span-5 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-md relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl pointer-events-none" />
-
-              {[
-                {
-                  phase: 1,
-                  title: "Credential Building",
-                  status: "Completed",
-                  desc: "Configure target roadmap criteria, perform basic resume checks, and hook up GitHub records.",
-                  details: "Your diagnostic baseline is set at 68%. Portfolio contains 2 active workspaces.",
-                  action: "Review Achievements",
-                  color: "emerald",
-                  tasks: [
-                    { title: "Complete diagnostic baseline scores", done: true },
-                    { title: "Verify resume credentials", done: true },
-                    { title: "Connect GitHub profile log repositories", done: true }
-                  ]
-                },
-                {
-                  phase: 2,
-                  title: "Workspaces Configuration",
-                  status: "In Progress",
-                  desc: "Deploy capstone software solutions and run continuous test coverage checks.",
-                  details: "Currently setting up automated unit check test configurations inside the SmartDoc AI project.",
-                  action: "Configure Workspace",
-                  color: "sky",
-                  tasks: [
-                    { title: "Deploy 3 active workspaces to Vercel", done: true },
-                    { title: "Configure Vitest unit testing suites", done: false },
-                    { title: "Run pipeline integration audits", done: false }
-                  ]
-                },
-                {
-                  phase: 3,
-                  title: "Core Competence Scaling",
-                  status: "Locked",
-                  desc: "Tackle logic audits, master data structure behaviors, and complete system design diagnostics.",
-                  details: "Locks automatically open when Phase 2 reaches 80% progress index metrics.",
-                  action: "Unlock Sandbox Verifier",
-                  color: "indigo",
-                  tasks: [
-                    { title: "Solve 150+ medium LeetCode logic audits", done: false },
-                    { title: "Complete system scaling architectures", done: false },
-                    { title: "Submit mock diagnostic verifications", done: false }
-                  ]
-                },
-                {
-                  phase: 4,
-                  title: "Direct Incubation Drives",
-                  status: "Locked",
-                  desc: "Submit credentials to verified coaches and perform match scanning assessments.",
-                  details: "Incubation matching pipelines open in September 2026.",
-                  action: "Book Advisory Slot",
-                  color: "violet",
-                  tasks: [
-                    { title: "Route credentials to committee advisors", done: false },
-                    { title: "Execute matching scanners metrics", done: false },
-                    { title: "Schedule advisor scheduling mocks", done: false }
-                  ]
-                },
-                {
-                  phase: 5,
-                  title: "Placement & Negotiation",
-                  status: "Locked",
-                  desc: "Select preferred talent-to-company routing and complete salary negotiations.",
-                  details: "Summer internship matching algorithms open upon completion of the incubation mock stages.",
-                  action: "Locked",
-                  color: "rose",
-                  tasks: [
-                    { title: "Approve active company placement routing", done: false },
-                    { title: "Execute whiteboard panel simulations", done: false },
-                    { title: "Negotiate salary & benefit contract terms", done: false }
-                  ]
-                }
-              ].filter(p => p.phase === selectedRoadmapPhase).map((p) => {
-                const isLocked = p.status === "Locked";
-                const isCompleted = p.status === "Completed";
-
-                return (
-                  <div key={p.phase} className="flex flex-col h-full justify-between animate-fadeIn">
-                    <div>
-                      {/* Header info */}
-                      <div className="flex justify-between items-center pb-4 border-b border-white/5">
-                        <div>
-                          <span className="text-[9px] font-mono text-muted-foreground uppercase">Selected District Phase</span>
-                          <h3 className="text-sm font-black text-white mt-0.5">
-                            Phase {p.phase}: {p.title}
-                          </h3>
-                        </div>
-                        <span className={`px-2 py-0.5 rounded border text-[9px] font-mono font-bold uppercase tracking-wider ${isCompleted
-                            ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
-                            : p.status === "In Progress"
-                              ? "border-sky-500/20 bg-sky-500/5 text-sky-400 animate-pulse"
-                              : "border-white/10 bg-white/5 text-muted-foreground/60"
-                          }`}>
-                          {p.status}
-                        </span>
-                      </div>
-
-                      {/* Phase description */}
-                      <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
-                        {p.desc}
-                      </p>
-
-                      {/* Sub tasks check checklist */}
-                      <div className="mt-6 space-y-3">
-                        <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
-                          Blueprint Checklist
-                        </div>
-                        {p.tasks.map((task, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5 text-[11px] leading-relaxed">
-                            {isLocked ? (
-                              <div className="mt-0.5 rounded border border-white/10 w-3.5 h-3.5 flex items-center justify-center bg-white/[0.01]">
-                                <Lock className="h-1.5 w-1.5 text-muted-foreground/30" />
-                              </div>
-                            ) : task.done ? (
-                              <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                            ) : (
-                              <div className="mt-0.5 rounded border border-white/20 w-3.5 h-3.5 flex-shrink-0" />
-                            )}
-                            <span className={`${isLocked
-                                ? "text-muted-foreground/40 line-through select-none"
-                                : task.done
-                                  ? "text-muted-foreground/80 line-through"
-                                  : "text-white/80 font-medium"
-                              }`}>
-                              {task.title}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Extra Audit text */}
-                      <div className="mt-6 p-3 rounded-xl border border-white/5 bg-white/[0.01]">
-                        <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
-                          Phase Status Report
-                        </div>
-                        <p className="text-[10px] text-white/70 mt-1 leading-normal">
-                          {p.details}
-                        </p>
-                      </div>
-
-                    </div>
-
-                    {/* Primary actions triggers */}
-                    <div className="mt-8 pt-4 border-t border-white/5">
-                      {isLocked ? (
-                        <button disabled className="w-full py-2.5 rounded-xl border border-white/5 bg-white/[0.02] text-muted-foreground/40 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-not-allowed uppercase">
-                          <Lock className="h-3.5 w-3.5" /> Complete Preceding Phases
-                        </button>
-                      ) : (
-                        <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-955 flex items-center justify-center gap-1.5 hover:opacity-95 transition cursor-pointer border-none shadow-lg shadow-sky-500/10">
-                          {p.action} <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
-                      )}
+                <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold font-mono text-xs">
+                    {overallProgress}%
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-mono text-muted-foreground uppercase">Overall Blueprint</div>
+                    <div className="text-[11px] font-bold text-white">
+                      {phases.filter(p => p.progress === 100).length} of 3 Phases Complete
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              </div>
             </div>
 
-          </div>
-        </Page>
-      )}
+            {/* Interactive Timeline Grid */}
+            <div className="grid gap-6 lg:grid-cols-12 items-stretch">
+              
+              {/* Left Column: Phases visual lists (col-span-7) */}
+              <div className="lg:col-span-7 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-955/40 backdrop-blur-md relative overflow-hidden">
+                <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-sky-500/5 blur-xl pointer-events-none" />
+
+                <div>
+                  <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-6">
+                    Interactive Roadmap Timeline
+                  </h3>
+
+                  <div className="relative space-y-6 pl-4">
+                    <div className="absolute left-6 top-4 bottom-4 w-[2px] bg-white/5 -translate-x-1/2 z-0" />
+
+                    {phases.map((p) => {
+                      const isActive = selectedRoadmapPhase === p.phase;
+                      const isCompleted = p.progress === 100;
+                      const isLocked = p.status === "Locked";
+                      const PhaseIcon = p.icon;
+
+                      return (
+                        <button
+                          key={p.phase}
+                          onClick={() => setSelectedRoadmapPhase(p.phase)}
+                          className={`relative flex items-start gap-4 p-4 rounded-xl border w-full text-left transition-all duration-300 group z-10 focus:outline-none bg-transparent cursor-pointer ${
+                            isActive
+                              ? "border-sky-500/40 bg-sky-500/[0.02] shadow-[0_0_15px_rgba(56,189,248,0.1)] ring-1 ring-sky-500/10"
+                              : isCompleted
+                                ? "border-emerald-500/10 hover:border-emerald-500/20 bg-emerald-500/[0.005]"
+                                : "border-white/5 bg-white/[0.002] hover:border-white/10"
+                          }`}
+                        >
+                          <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-mono font-bold shrink-0 transition-all duration-300 ${
+                            isActive
+                              ? "border-sky-500 bg-sky-500/10 text-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.2)]"
+                              : isCompleted
+                                ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                                : "border-white/10 text-muted-foreground/40"
+                          }`}>
+                            {isCompleted ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : p.phase}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <h4 className={`text-xs font-black tracking-tight leading-none transition-all duration-300 ${isActive ? "text-sky-400" : "text-white"}`}>
+                                Phase {p.phase}: {p.title}
+                              </h4>
+                              <span className="text-[8px] font-mono text-muted-foreground/60 shrink-0 font-semibold">{p.progress}% done</span>
+                            </div>
+
+                            <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed truncate group-hover:text-clip group-hover:whitespace-normal">
+                              {p.desc}
+                            </p>
+
+                            <div className="flex items-center gap-1.5 mt-2">
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                isCompleted
+                                  ? "bg-emerald-400"
+                                  : p.status === "In Progress"
+                                    ? "bg-sky-400 animate-pulse"
+                                    : "bg-muted-foreground/30"
+                              }`} />
+                              <span className={`text-[8px] font-mono font-bold uppercase tracking-wider ${
+                                isCompleted
+                                  ? "text-emerald-400"
+                                  : p.status === "In Progress"
+                                    ? "text-sky-400"
+                                    : "text-muted-foreground/50"
+                              }`}>
+                                {p.status}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Dynamic Phase Details Drawer (col-span-5) */}
+              <div className="lg:col-span-5 flex flex-col justify-between p-5 rounded-2xl border border-white/10 bg-slate-950/60 backdrop-blur-md relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-500/5 rounded-full blur-xl pointer-events-none" />
+
+                {phases.filter(p => p.phase === selectedRoadmapPhase).map((p) => {
+                  const isLocked = p.status === "Locked";
+                  const isCompleted = p.progress === 100;
+
+                  return (
+                    <div key={p.phase} className="flex flex-col h-full justify-between animate-fadeIn">
+                      <div>
+                        <div className="flex justify-between items-center pb-4 border-b border-white/5">
+                          <div>
+                            <span className="text-[9px] font-mono text-muted-foreground uppercase">Selected Phase Profile</span>
+                            <h3 className="text-sm font-black text-white mt-0.5">
+                              Phase {p.phase}: {p.title}
+                            </h3>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded border text-[9px] font-mono font-bold uppercase tracking-wider ${
+                            isCompleted
+                              ? "border-emerald-500/20 bg-emerald-500/5 text-emerald-400"
+                              : p.status === "In Progress"
+                                ? "border-sky-500/20 bg-sky-500/5 text-sky-400 animate-pulse"
+                                : "border-white/10 bg-white/5 text-muted-foreground/60"
+                          }`}>
+                            {p.status}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
+                          {p.desc}
+                        </p>
+
+                        {/* Interactive Task Checklist */}
+                        <div className="mt-6 space-y-3">
+                          <div className="text-[9px] font-mono text-muted-foreground/60 uppercase tracking-wider font-semibold">
+                            Phase Checklist (Interactive)
+                          </div>
+                          
+                          {p.tasks.map((task) => {
+                            const isChecked = (roadmapTasks as any)[task.key];
+                            return (
+                              <div key={task.key} className="flex items-center gap-2.5 text-[11px] leading-relaxed">
+                                {isLocked ? (
+                                  <div className="rounded border border-white/10 w-4 h-4 flex items-center justify-center bg-white/[0.01]">
+                                    <Lock className="h-2 w-2 text-muted-foreground/30" />
+                                  </div>
+                                ) : (
+                                  <input 
+                                    type="checkbox" 
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                      setRoadmapTasks(prev => ({
+                                        ...prev,
+                                        [task.key]: e.target.checked
+                                      }));
+                                    }}
+                                    className="rounded border border-white/20 w-4 h-4 accent-sky-400 bg-slate-900 cursor-pointer"
+                                  />
+                                )}
+                                <span className={`${
+                                  isLocked
+                                    ? "text-muted-foreground/40 line-through select-none"
+                                    : isChecked
+                                      ? "text-muted-foreground/80 line-through"
+                                      : "text-white/80 font-medium"
+                                }`}>
+                                  {task.title}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Phase Status Report */}
+                        <div className="mt-6 p-3 rounded-xl border border-white/5 bg-white/[0.01]">
+                          <div className="text-[9px] font-mono text-muted-foreground/60 uppercase">Ecosystem Report</div>
+                          <p className="text-[10px] text-white/70 mt-1 leading-normal font-sans">
+                            {isLocked 
+                              ? "Phase locked. Complete the preceding checks in previous districts to release diagnostics credentials."
+                              : isCompleted
+                                ? "Great job! This phase is completely verified. Domain scores have successfully normalized."
+                                : `Phase is active. Complete all checklists to scale domain preparedness to ${p.phase * 33}%.`
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Primary actions triggers */}
+                      <div className="mt-8 pt-4 border-t border-white/5 font-display">
+                        {isLocked ? (
+                          <button disabled className="w-full py-2.5 rounded-xl border border-white/5 bg-white/[0.02] text-muted-foreground/40 text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-not-allowed uppercase">
+                            <Lock className="h-3.5 w-3.5" /> Complete Preceding Phases
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={() => alert(`Redirecting to ${p.title} Workspace...`)}
+                            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-400 to-indigo-500 text-xs font-bold text-slate-955 flex items-center justify-center gap-1.5 hover:opacity-95 transition cursor-pointer border-none shadow-lg shadow-sky-500/10"
+                          >
+                            Explore {p.title} <ArrowRight className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          </Page>
+        );
+      })()}
 
       {/* TAB: SKILLS */}
       {currentTab === "skills" && (

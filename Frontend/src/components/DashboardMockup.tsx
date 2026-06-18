@@ -3,6 +3,7 @@ import {
   PanelLeft,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Monitor,
   RotateCw,
   Share,

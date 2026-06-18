@@ -9,6 +9,8 @@ interface NavbarProps {
 
 export function Navbar({ activeProduct, setActiveProduct }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Capture as plain string to avoid TS narrowing inside the ternary branches
+  const product: string = activeProduct;
 
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
@@ -48,7 +50,7 @@ export function Navbar({ activeProduct, setActiveProduct }: NavbarProps) {
                 <button
                   onClick={() => setActiveProduct("questly")}
                   className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                    activeProduct === "questly"
+                    product === "questly"
                       ? "bg-white text-gray-900 shadow-sm"
                       : "text-gray-500 hover:text-gray-800"
                   }`}
@@ -58,7 +60,7 @@ export function Navbar({ activeProduct, setActiveProduct }: NavbarProps) {
                 <button
                   onClick={() => setActiveProduct("nexora")}
                   className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
-                    activeProduct === "nexora"
+                    product === "nexora"
                       ? "bg-white text-gray-900 shadow-sm"
                       : "text-gray-500 hover:text-gray-800"
                   }`}
@@ -151,7 +153,7 @@ export function Navbar({ activeProduct, setActiveProduct }: NavbarProps) {
                 <button
                   onClick={() => setActiveProduct("questly")}
                   className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all ${
-                    activeProduct === "questly"
+                    product === "questly"
                       ? "bg-white dark:bg-white text-slate-900 shadow-sm"
                       : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                   }`}
@@ -161,7 +163,7 @@ export function Navbar({ activeProduct, setActiveProduct }: NavbarProps) {
                 <button
                   onClick={() => setActiveProduct("nexora")}
                   className={`px-3 py-1 rounded-full text-[11px] font-semibold transition-all ${
-                    activeProduct === "nexora"
+                    product === "nexora"
                       ? "bg-white dark:bg-white text-slate-900 shadow-sm"
                       : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
                   }`}
