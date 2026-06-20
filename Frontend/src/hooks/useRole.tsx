@@ -4,9 +4,6 @@ export type Role =
   | "student"
   | "researcher"
   | "founder"
-  | "investor"
-  | "university"
-  | "expert"
   | "admin";
 
 interface RoleContextType {

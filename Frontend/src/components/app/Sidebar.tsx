@@ -92,30 +92,6 @@ const roleConfigs: Record<
     accentColor: "#fb7185",
     gradient: "from-rose-400 to-orange-500",
   },
-  investor: {
-    name: "Deal Flow Center",
-    theme: "Investor Suite",
-    sub: "GP · 12 Portfolio Cos",
-    icon: Coins,
-    accentColor: "#34d399",
-    gradient: "from-emerald-400 to-teal-500",
-  },
-  university: {
-    name: "Innovation & Placements",
-    theme: "UniPortal",
-    sub: "Dean · Placement Office",
-    icon: Building,
-    accentColor: "#f472b6",
-    gradient: "from-pink-400 to-purple-500",
-  },
-  expert: {
-    name: "Mentor Command Center",
-    theme: "Expert OS",
-    sub: "Senior Advisor · Active",
-    icon: Users,
-    accentColor: "#fbbf24",
-    gradient: "from-amber-400 to-yellow-600",
-  },
   admin: {
     name: "Control Tower",
     theme: "System Admin",
@@ -211,58 +187,6 @@ export function AppSidebar() {
           { icon: Ticket, label: "Reward Center", to: "/app/startup/rewards" },
           { icon: Users, label: "Community", to: "/app/startup/community" },
           { icon: User, label: "Profile", to: "/app/profile" },
-        ];
-      case "investor":
-        return [
-          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
-          { icon: TrendingUp, label: "Deal Flow", to: "/app", search: { tab: "deal_flow" } },
-          { icon: Sparkles, label: "Startup Discovery", to: "/app", search: { tab: "startup_discovery" } },
-          { icon: Coins, label: "Investment Opportunities", to: "/app", search: { tab: "investments" } },
-          { icon: Bot, label: "AI Investment Analyst", to: "/app", search: { tab: "investor_copilot" } },
-          { icon: ShieldCheck, label: "Due Diligence Center", to: "/app", search: { tab: "due_diligence" } },
-          { icon: Calendar, label: "Founder Meetings", to: "/app", search: { tab: "founder_meetings" } },
-          { icon: Compass, label: "Portfolio Companies", to: "/app", search: { tab: "portfolio" } },
-          { icon: TrendingUp, label: "Investment Pipeline", to: "/app", search: { tab: "investment_pipeline" } },
-          { icon: Map, label: "Market Intelligence", to: "/app", search: { tab: "market_intel" } },
-          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
-          { icon: Ticket, label: "Reward Center", to: "/app", search: { tab: "rewards" } },
-          { icon: User, label: "Profile", to: "/app/profile" },
-          { icon: Settings, label: "Settings", to: "/app", search: { tab: "settings" } },
-        ];
-      case "university":
-        return [
-          { icon: LayoutDashboard, label: "Home", to: "/app/university", exact: true },
-          { icon: GraduationCap, label: "Students", to: "/app/university/students_list" },
-          { icon: Brain, label: "Researchers", to: "/app/university/researchers_list" },
-          { icon: Users, label: "Faculty Profiles", to: "/app/university/faculty" },
-          { icon: Briefcase, label: "Placement Drive", to: "/app/university/placements" },
-          { icon: Sparkles, label: "Innovation Hub", to: "/app/university/innovation_hub" },
-          { icon: Coins, label: "Grants & Funding", to: "/app/university/grants" },
-          { icon: Calendar, label: "Events Center", to: "/app/university/events" },
-          { icon: TrendingUp, label: "Analytics Center", to: "/app/university/analytics" },
-          { icon: ScrollText, label: "Report Center", to: "/app/university/reports" },
-          { icon: Bot, label: "AI University Copilot", to: "/app/university/uni_copilot" },
-          { icon: Settings, label: "Settings", to: "/app/university/settings" },
-        ];
-      case "expert":
-        return [
-          { icon: LayoutDashboard, label: "Home", to: "/app", search: { tab: "home" }, exact: true },
-          { icon: Users, label: "Clients", to: "/app", search: { tab: "clients" } },
-          { icon: Sparkles, label: "Discovery Sessions", to: "/app", search: { tab: "discovery_sessions" } },
-          { icon: Briefcase, label: "Consultations", to: "/app", search: { tab: "consultations" } },
-          { icon: Ticket, label: "Arena Rewards", to: "/app", search: { tab: "rewards" } },
-          { icon: Map, label: "Roadmaps", to: "/app", search: { tab: "roadmaps" } },
-          { icon: ListChecks, label: "Tasks", to: "/app", search: { tab: "tasks" } },
-          { icon: Calendar, label: "Meetings", to: "/app", search: { tab: "meetings" } },
-          { icon: Folder, label: "Workspace", to: "/app", search: { tab: "workspace" } },
-          { icon: FileText, label: "Documents", to: "/app", search: { tab: "documents" } },
-          { icon: Bot, label: "AI Expert Assistant", to: "/app", search: { tab: "expert_copilot" } },
-          { icon: Coins, label: "Revenue Center", to: "/app", search: { tab: "revenue" } },
-          { icon: Award, label: "Reviews & Reputation", to: "/app", search: { tab: "reviews" } },
-          { icon: TrendingUp, label: "Analytics", to: "/app", search: { tab: "analytics" } },
-          { icon: Users, label: "Community", to: "/app", search: { tab: "community" } },
-          { icon: User, label: "Profile", to: "/app/profile" },
-          { icon: Settings, label: "Settings", to: "/app", search: { tab: "settings" } },
         ];
       case "admin":
         return [
