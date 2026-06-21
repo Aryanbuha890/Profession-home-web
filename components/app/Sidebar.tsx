@@ -147,15 +147,10 @@ export function AppSidebar() {
           { icon: Trophy, label: "Challenges", to: "/app/student/challenges" },
           { icon: Brain, label: "AI Assessment", to: "/app/student/assessment" },
           { icon: Map, label: "Career Roadmap", to: "/app/student/roadmap" },
-          { icon: ListChecks, label: "Skill Builder", to: "/app/student/skills" },
           { icon: Folder, label: "Projects", to: "/app/student/projects" },
-          { icon: Briefcase, label: "Internships", to: "/app/student/internships" },
-          { icon: Briefcase, label: "Jobs", to: "/app/student/jobs" },
           { icon: Users, label: "Mentors", to: "/app/student/mentors" },
           { icon: Bot, label: "AI Copilot", to: "/app/student/copilot" },
           { icon: Award, label: "Achievement Vault", to: "/app/student/achievements" },
-          { icon: Ticket, label: "Reward Center", to: "/app/student/rewards" },
-          { icon: Users, label: "Community", to: "/app/student/community" },
           { icon: User, label: "Profile", to: "/app/profile" },
         ];
       case "researcher":
@@ -172,19 +167,12 @@ export function AppSidebar() {
       case "founder":
         return [
           { icon: LayoutDashboard, label: "Home", to: "/app/startup", exact: true },
-          { icon: Compass, label: "Startup Arena", to: "/app/startup/arena" },
           { icon: Brain, label: "Startup Assessment", to: "/app/startup/assessment" },
           { icon: Map, label: "Startup Roadmap", to: "/app/startup/roadmap" },
           { icon: ListChecks, label: "Tasks & Execution", to: "/app/startup/tasks" },
           { icon: Bot, label: "AI Co-Founder", to: "/app/startup/ai" },
           { icon: Users, label: "Mentors", to: "/app/startup/mentors" },
-          { icon: Users, label: "Investors", to: "/app/startup/investors" },
-          { icon: Coins, label: "Funding Center", to: "/app/startup/funding" },
-          { icon: FileText, label: "Pitch Decks", to: "/app/startup/pitch_decks" },
           { icon: FileSearch, label: "Documents", to: "/app/startup/docs" },
-          { icon: Users, label: "Team Workspace", to: "/app/startup/team" },
-          { icon: Briefcase, label: "Customers", to: "/app/startup/customers" },
-          { icon: TrendingUp, label: "Analytics", to: "/app/startup/analytics" },
           { icon: Award, label: "Achievement Vault", to: "/app/startup/achievements" },
           { icon: Ticket, label: "Reward Center", to: "/app/startup/rewards" },
           { icon: Users, label: "Community", to: "/app/startup/community" },
@@ -207,6 +195,7 @@ export function AppSidebar() {
           { icon: TrendingUp, label: "Analytics", to: "/app", search: { tab: "analytics" } },
           { icon: ShieldCheck, label: "Moderation", to: "/app", search: { tab: "moderation" } },
           { icon: ShieldCheck, label: "Support", to: "/app", search: { tab: "support" } },
+          { icon: User, label: "Profile", to: "/app/profile" },
         ];
       default:
         return [];

@@ -5,13 +5,15 @@ import { useStartupContext } from "../-context";
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  MessageSquare, 
-  UserPlus, 
-  Calendar, 
-  Trophy, 
-  ThumbsUp, 
-  CornerDownRight, 
+import { Page } from "@/components/app/Page";
+import { PageHero } from "@/components/research/premium";
+import {
+  MessageSquare,
+  UserPlus,
+  Calendar,
+  Trophy,
+  ThumbsUp,
+  CornerDownRight,
   Send,
   Flag,
   CheckCircle,
@@ -21,15 +23,15 @@ import {
   Zap,
   ArrowRight
 } from 'lucide-react';
-import { 
-  DISCUSSIONS, 
-  COFOUNDER_MATCHES, 
-  STARTUP_EVENTS, 
+import {
+  DISCUSSIONS,
+  COFOUNDER_MATCHES,
+  STARTUP_EVENTS,
   LEADERBOARD,
-  CommunityPost, 
-  MatchingProfile, 
-  StartupEvent, 
-  LeaderboardUser 
+  CommunityPost,
+  MatchingProfile,
+  StartupEvent,
+  LeaderboardUser
 } from '../-types';
 
 function CommunitySection() {
@@ -81,60 +83,52 @@ function CommunitySection() {
   };
 
   return (
-    <div id="community-section" className="space-y-8 max-w-6xl mx-auto h-[620px] md:h-[680px] flex flex-col justify-between">
-      
-      {/* Tab bar header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <div>
-          <h2 className="text-3xl font-display font-extrabold tracking-tight text-white">
-            Founder Ecosystem Community
-          </h2>
-          <p className="text-xs text-slate-400">
-            Collaborate in structured discussions, unlock co-founder matching portfolios, and track mixer events.
-          </p>
-        </div>
+    <Page title="Founder Ecosystem Community" subtitle="Collaborate in structured discussions, unlock co-founder matching portfolios, and track mixer events.">
+      <PageHero
+        badge="Founder OS"
+        title="Founder Ecosystem Community"
+        subtitle="Collaborate in structured discussions, unlock co-founder matching portfolios, and track mixer events."
+        accent="#fb7185"
+      />
+      <div id="community-section" className="space-y-8 max-w-6xl mx-auto flex flex-col justify-between pt-4">
 
         {/* View toggles */}
         <div className="bg-[#0B0F19] dark:bg-slate-905 p-1 rounded-xl flex border border-slate-205 dark:border-slate-800">
-          <button 
+          <button
             id="sub-discuss"
             onClick={() => setActiveSubTab('discuss')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${
-              activeSubTab === 'discuss' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${activeSubTab === 'discuss' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
+              }`}
           >
             <MessageSquare className="w-3.5 h-3.5" />
             Discussions
           </button>
-          
-          <button 
+
+          <button
             id="sub-cofounder"
             onClick={() => setActiveSubTab('cofounder')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${
-              activeSubTab === 'cofounder' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${activeSubTab === 'cofounder' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
+              }`}
           >
             <UserPlus className="w-3.5 h-3.5" />
             Co-Founder Matching
           </button>
 
-          <button 
+          <button
             id="sub-events"
             onClick={() => setActiveSubTab('events')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${
-              activeSubTab === 'events' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${activeSubTab === 'events' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
+              }`}
           >
             <Calendar className="w-3.5 h-3.5" />
             Events
           </button>
 
-          <button 
+          <button
             id="sub-leaderboard"
             onClick={() => setActiveSubTab('leaderboard')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${
-              activeSubTab === 'leaderboard' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
-            }`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 ${activeSubTab === 'leaderboard' ? 'bg-[#0F1528] shadow-sm font-bold text-slate-850 text-white' : 'text-slate-500'
+              }`}
           >
             <Trophy className="w-3.5 h-3.5" />
             Leaderboard
@@ -145,10 +139,10 @@ function CommunitySection() {
       {/* Main scrolling card area */}
       <div className="flex-1 overflow-y-auto py-4">
         <AnimatePresence mode="wait">
-          
+
           {activeSubTab === 'discuss' && (
             /* Discussions View */
-            <motion.div 
+            <motion.div
               key="discuss"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -168,7 +162,7 @@ function CommunitySection() {
 
               {/* Collapsible Thread form */}
               {showDiscussForm && (
-                <motion.div 
+                <motion.div
                   initial={{ height: 0 }}
                   animate={{ height: "auto" }}
                   className="bg-[#0F1528] border border-[#1F2947] p-5 rounded-2xl space-y-4"
@@ -202,10 +196,10 @@ function CommunitySection() {
               <div className="space-y-4 font-sans">
                 {posts.map((post) => (
                   <div key={post.id} className="bg-[#0F1528] border border-[#1F2947] p-5 rounded-2xl shadow-sm flex gap-4">
-                    
+
                     {/* Upvote side button code */}
                     <div className="flex flex-col items-center shrink-0">
-                      <button 
+                      <button
                         id={`upvote-btn-${post.id}`}
                         onClick={() => handleUpvote(post.id)}
                         className="p-2 border border-[#1F2947] bg-[#0B0F19] hover:bg-indigo-50 rounded-xl flex flex-col items-center gap-1 text-[11px] font-bold text-slate-600 transition-colors"
@@ -217,10 +211,10 @@ function CommunitySection() {
 
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center gap-2.5">
-                        <img 
+                        <img
                           referrerPolicy="no-referrer"
-                          src={post.avatar} 
-                          alt={post.author} 
+                          src={post.avatar}
+                          alt={post.author}
                           className="w-8 h-8 rounded-full object-cover border"
                         />
                         <div className="text-[10px] space-y-0.5">
@@ -247,7 +241,7 @@ function CommunitySection() {
 
           {activeSubTab === 'cofounder' && (
             /* Co-founder matching block */
-            <motion.div 
+            <motion.div
               key="cofounder"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -260,10 +254,10 @@ function CommunitySection() {
                   <div key={profile.id} className="bg-[#0F1528] border border-slate-205 border-[#1F2947] p-5 rounded-2xl flex flex-col justify-between shadow-sm space-y-4">
                     <div className="space-y-3 font-sans">
                       <div className="flex gap-3 items-center">
-                        <img 
+                        <img
                           referrerPolicy="no-referrer"
-                          src={profile.avatar} 
-                          alt={profile.name} 
+                          src={profile.avatar}
+                          alt={profile.name}
                           className="w-12 h-12 rounded-2xl object-cover border"
                         />
                         <div className="text-xs">
@@ -297,11 +291,10 @@ function CommunitySection() {
                       id={`cofounder-match-btn-${profile.id}`}
                       onClick={() => handleConnectCoFounder(profile.id)}
                       disabled={isSent}
-                      className={`w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs ${
-                        isSent 
+                      className={`w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs ${isSent
                           ? 'bg-emerald-500/15 text-emerald-600'
                           : 'bg-indigo-600 hover:bg-slate-900 text-white'
-                      }`}
+                        }`}
                     >
                       {isSent ? (
                         <>
@@ -323,7 +316,7 @@ function CommunitySection() {
 
           {activeSubTab === 'events' && (
             /* Events module list */
-            <motion.div 
+            <motion.div
               key="events"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -340,7 +333,7 @@ function CommunitySection() {
                         <span className="text-[10px] text-slate-450 font-mono">{ev.date} • {ev.time}</span>
                       </div>
                       <h4 className="text-xs font-extrabold text-slate-850 text-white leading-tight">{ev.title}</h4>
-                      
+
                       <div className="flex flex-wrap gap-2 text-[10px] text-slate-500 font-semibold pt-1">
                         <span>Hosts:</span>
                         {ev.speakers.map((s, idx) => (
@@ -354,11 +347,10 @@ function CommunitySection() {
                       <button
                         id={`rsvp-btn-${ev.id}`}
                         onClick={() => handleRSVP(ev.id)}
-                        className={`px-4 py-2 rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1 transition-all ${
-                          isRsvped 
+                        className={`px-4 py-2 rounded-xl text-xs font-semibold shadow-xs flex items-center gap-1 transition-all ${isRsvped
                             ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/20'
                             : 'bg-slate-900 border text-white dark:bg-white dark:text-slate-900 hover:bg-slate-850'
-                        }`}
+                          }`}
                       >
                         {isRsvped ? 'Attending ✓' : 'RSVP Free pass'}
                       </button>
@@ -371,7 +363,7 @@ function CommunitySection() {
 
           {activeSubTab === 'leaderboard' && (
             /* Founder leaderboard */
-            <motion.div 
+            <motion.div
               key="leaderboard"
               initial={{ opacity: 0, scale: 0.99 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -388,20 +380,19 @@ function CommunitySection() {
                   <div key={user.rank} className="p-4 flex items-center justify-between text-xs hover:bg-[#1F2947]/40">
                     <div className="flex items-center gap-4">
                       {/* Rank tag */}
-                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold ${
-                        user.rank === 1 ? 'bg-amber-400 text-white shadow' :
-                        user.rank === 2 ? 'bg-slate-300 text-slate-700' :
-                        'bg-[#0B0F19] dark:bg-slate-900 text-slate-400'
-                      }`}>
+                      <div className={`w-6 h-6 rounded-lg flex items-center justify-center font-mono font-bold ${user.rank === 1 ? 'bg-amber-400 text-white shadow' :
+                          user.rank === 2 ? 'bg-slate-300 text-slate-700' :
+                            'bg-[#0B0F19] dark:bg-slate-900 text-slate-400'
+                        }`}>
                         {user.rank}
                       </div>
 
                       {/* User metadata */}
                       <div className="flex items-center gap-3">
-                        <img 
+                        <img
                           referrerPolicy="no-referrer"
-                          src={user.avatar} 
-                          alt={user.name} 
+                          src={user.avatar}
+                          alt={user.name}
                           className="w-8 h-8 rounded-full object-cover border"
                         />
                         <div className="text-xs">
@@ -433,8 +424,7 @@ function CommunitySection() {
       <div className="bg-indigo-50/25 border border-indigo-100/40 p-4 rounded-2xl shrink-0 text-center text-[10px] text-slate-400 font-sans">
         Founder Ecosystem matching represents unstructured networks. Always verify and document intellectual alignments separately.
       </div>
-
-    </div>
+    </Page>
   );
 }
 

@@ -1,0 +1,11 @@
+export { AchievementVaultPage } from "./pages/AchievementVaultPage";
+export { CareerArenaPage } from "./pages/CareerArenaPage";
+export { AIAssessmentPage } from "./pages/AIAssessmentPage";
+export { ChallengesPage } from "./pages/ChallengesPage";
+export { AICopilotPage } from "./pages/AICopilotPage";
+export { HomePage } from "./pages/HomePage";
+export { MentorsPage } from "./pages/MentorsPage";
+export { ProjectsPage } from "./pages/ProjectsPage";
+export { RewardCenterPage } from "./pages/RewardCenterPage";
+export { CareerRoadmapPage } from "./pages/CareerRoadmapPage";
+export { SkillBuilderPage } from "./pages/SkillBuilderPage";

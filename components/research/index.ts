@@ -14,3 +14,7 @@ export { ResearchRoadmapPage } from "./pages/RoadmapPage";
 export { ResearchTasksPage } from "./pages/TasksPage";
 export { ResearchDocsPage } from "./pages/DocsPage";
 export { ResearchCommunityPage } from "./pages/CommunityPage";
+export { ResearchAssessmentPage } from "./pages/AssessmentPage";
+export { ResearchChallengesPage } from "./pages/ChallengesPage";
+export { ResearchMentorsPage } from "./pages/MentorsPage";
+export { ResearchRewardsPage } from "./pages/RewardsPage";
