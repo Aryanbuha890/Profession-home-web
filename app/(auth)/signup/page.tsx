@@ -1,26 +1,57 @@
 'use client';
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
-  Eye, EyeOff, Mail, User, AlertCircle
+  Eye, EyeOff, Mail, User, AlertCircle, ChevronDown, LayoutDashboard
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { DASHBOARD_OPTIONS } from "@/lib/auth/dashboard-routes";
+import { TEST_CREDENTIALS } from "@/lib/auth/test-credentials";
+import { persistAuthSession } from "@/lib/auth/session";
+import { resolvePostAuthRedirect } from "@/lib/auth/platform-entry";
+import type { Role } from "@/hooks/useRole";
 
 
 
-function SignupPage() {
+function SignupForm() {
   const navigate = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [dashboard, setDashboard] = useState<Role>("student");
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const selectedDashboard = DASHBOARD_OPTIONS.find((d) => d.value === dashboard);
+
+  const completeSignup = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role: dashboard }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Signup failed");
+      }
+      persistAuthSession(data.user);
+      navigate.push(resolvePostAuthRedirect(nextParam, data.user.role));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Signup failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,25 +74,19 @@ function SignupPage() {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ph_onboarding_completed", "false");
-      }
-      navigate.push("/dashboard");
-    }, 1400);
+    void completeSignup();
   };
 
   const handleSocialLogin = () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("ph_onboarding_completed", "false");
-      }
-      navigate.push("/dashboard");
-    }, 1000);
+    persistAuthSession({
+      id: "social-demo",
+      email: email || "demo@profhome.com",
+      name: name || "Demo User",
+      role: dashboard,
+    });
+    navigate.push(resolvePostAuthRedirect(nextParam, dashboard));
+    setLoading(false);
   };
 
   return (
@@ -145,6 +170,29 @@ function SignupPage() {
                 <span>{error}</span>
               </div>
             )}
+
+            {/* Dashboard Selector */}
+            <div className="space-y-1">
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Select Dashboard</label>
+              <div className="relative">
+                <LayoutDashboard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
+                <select
+                  value={dashboard}
+                  onChange={(e) => setDashboard(e.target.value as Role)}
+                  className="w-full appearance-none text-xs text-white bg-white/[0.02] border border-white/[0.08] hover:border-white/15 focus:border-violet-500/80 rounded-lg h-9 sm:h-10 pl-9 pr-10 focus:outline-none transition focus:ring-1 focus:ring-violet-500/80 cursor-pointer"
+                >
+                  {DASHBOARD_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-[#0a0b14] text-white">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
+              </div>
+              {selectedDashboard && (
+                <p className="text-[10px] text-slate-500 leading-relaxed pl-0.5">{selectedDashboard.description}</p>
+              )}
+            </div>
 
             {/* Name Input */}
             <div className="space-y-1">
@@ -322,10 +370,34 @@ function SignupPage() {
             </button>
           </div>
 
+          {/* Test accounts hint */}
+          <div className="rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-3 space-y-2">
+            <p className="text-[10px] font-semibold text-violet-300 uppercase tracking-wider">Test accounts (no Supabase required)</p>
+            <div className="space-y-1">
+              {TEST_CREDENTIALS.map((cred) => (
+                <button
+                  key={cred.email}
+                  type="button"
+                  onClick={() => {
+                    setEmail(cred.email);
+                    setPassword(cred.password);
+                  }}
+                  className="w-full text-left text-[10px] text-slate-400 hover:text-violet-300 transition px-1 py-0.5 rounded hover:bg-white/[0.03]"
+                >
+                  <span className="text-slate-300 font-medium">{cred.role}</span> — {cred.email}
+                </button>
+              ))}
+            </div>
+            <p className="text-[9px] text-slate-500">Password for all: <span className="font-mono text-slate-400">Test@123456</span></p>
+          </div>
+
           {/* Footer Link */}
           <div className="text-center text-xs text-slate-400">
             Already have an account?{" "}
-            <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold transition duration-200">
+            <Link
+              href={nextParam ? `/login?next=${encodeURIComponent(nextParam)}` : "/login"}
+              className="text-violet-400 hover:text-violet-300 font-semibold transition duration-200"
+            >
               Sign In
             </Link>
           </div>
@@ -334,6 +406,14 @@ function SignupPage() {
       </section>
 
     </div>
+  );
+}
+
+function SignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupForm />
+    </Suspense>
   );
 }
 

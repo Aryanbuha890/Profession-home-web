@@ -1,8 +1,10 @@
 @import "../styles/styles.css";
 
-@source ".";
+@source "../app";
 @source "../components";
 @source "../features";
+@source "../hooks";
+@source "../lib";
 
 html {
   -webkit-font-smoothing: antialiased;

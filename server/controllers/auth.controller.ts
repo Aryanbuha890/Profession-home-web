@@ -14,7 +14,12 @@ export const authController = {
   async signup(request: Request) {
     try {
       const body = await request.json();
-      const result = await authService.signup(body.name, body.email, body.role || "student");
+      const result = await authService.signup(
+        body.name,
+        body.email,
+        body.password,
+        body.role || "student"
+      );
       return NextResponse.json({ success: true, ...result });
     } catch (error: any) {
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { PlatformLaunchLink } from "@/components/landing/PlatformLaunchLink";
 import {
   Brain,
   Users,
@@ -907,8 +908,8 @@ export function Pricing() {
               viewport={{ once: false, amount: 0.15 }}
               transition={{ duration: 0.65, delay: idx * 0.08, ease: "easeOut" }}
             >
-              <Link
-                href="/dashboard?tab=home"
+              <PlatformLaunchLink
+                showArrow={false}
                 className="ticket-wrapper block text-left"
                 style={{
                   "--t-accent": p.accent,
@@ -980,7 +981,7 @@ export function Pricing() {
                     
                   </div>
                 </div>
-              </Link>
+              </PlatformLaunchLink>
             </motion.div>
           ))}
         </div>

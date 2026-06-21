@@ -1,17 +1,22 @@
 'use client';
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye, EyeOff, Mail, AlertCircle
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { TEST_CREDENTIALS } from "@/lib/auth/test-credentials";
+import { persistAuthSession } from "@/lib/auth/session";
+import { resolvePostAuthRedirect } from "@/lib/auth/platform-entry";
 
 
 
-function LoginPage() {
+function LoginForm() {
   const navigate = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +30,7 @@ function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSent, setForgotSent] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (!email || !password) {
@@ -33,10 +38,23 @@ function LoginPage() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Login failed");
+      }
+      persistAuthSession(data.user);
+      navigate.push(resolvePostAuthRedirect(nextParam, data.user.role));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
       setLoading(false);
-      navigate.push("/dashboard");
-    }, 1200);
+    }
   };
 
   const handleForgotSubmit = (e: React.FormEvent) => {
@@ -53,10 +71,14 @@ function LoginPage() {
 
   const handleSocialLogin = () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigate.push("/dashboard");
-    }, 1000);
+    persistAuthSession({
+      id: "social-demo",
+      email: email || "demo@profhome.com",
+      name: "Demo User",
+      role: "student",
+    });
+    navigate.push(resolvePostAuthRedirect(nextParam, "student"));
+    setLoading(false);
   };
 
   return (
@@ -283,10 +305,36 @@ function LoginPage() {
             </button>
           </div>
 
+          {/* Test Dashboard Logins */}
+          <div className="rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-3 space-y-2">
+            <p className="text-[10px] font-semibold text-violet-300 uppercase tracking-wider">Quick test logins</p>
+            <div className="grid grid-cols-2 gap-1.5">
+              {TEST_CREDENTIALS.map((cred) => (
+                <button
+                  key={cred.email}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => {
+                    setEmail(cred.email);
+                    setPassword(cred.password);
+                  }}
+                  className="text-left rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-violet-500/30 px-2.5 py-2 transition disabled:opacity-50"
+                >
+                  <span className="block text-[10px] font-semibold text-white capitalize">{cred.role} OS</span>
+                  <span className="block text-[9px] text-slate-500 truncate">{cred.email}</span>
+                </button>
+              ))}
+            </div>
+            <p className="text-[9px] text-slate-500">Password: <span className="font-mono text-slate-400">Test@123456</span></p>
+          </div>
+
           {/* Footer Link */}
           <div className="text-center text-xs text-slate-400">
             New to Nexis?{" "}
-            <Link href="/signup" className="text-violet-400 hover:text-violet-300 font-semibold transition duration-200">
+            <Link
+              href={nextParam ? `/signup?next=${encodeURIComponent(nextParam)}` : "/signup"}
+              className="text-violet-400 hover:text-violet-300 font-semibold transition duration-200"
+            >
               Create account
             </Link>
           </div>
@@ -378,6 +426,14 @@ function LoginPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
 

@@ -9,7 +9,11 @@
   font-display: swap;
 }
 
-@source "../src";
+@source "../app";
+@source "../components";
+@source "../features";
+@source "../hooks";
+@source "../lib";
 
 @custom-variant dark (&:is(.dark *));
 

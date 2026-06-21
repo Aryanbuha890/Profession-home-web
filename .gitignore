@@ -1,7 +1,15 @@
 # dependencies
-/node_modules
+node_modules/
+Frontend/
 /.pnp
 .pnp.js
+
+# build caches
+.output/
+.tanstack/
+.wrangler/
+dist/
+Frontend/dist/
 
 # testing
 /coverage

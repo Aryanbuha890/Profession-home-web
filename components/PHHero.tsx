@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
-import { ArrowRight, Play, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { Play, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { PHDashboardMockup } from "./PHDashboardMockup";
+import { PlatformLaunchLink } from "@/components/landing/PlatformLaunchLink";
 
 export function PHHero() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -124,14 +124,12 @@ export function PHHero() {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-9 flex flex-wrap items-center justify-center gap-3 shrink-0"
         >
-          <Link
-            href="/dashboard?tab=home"
+          <PlatformLaunchLink
+            shimmer
             className="group relative inline-flex h-12 items-center gap-2 overflow-hidden rounded-full bg-indigo-600 px-6 text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,70,229,0.4)] transition-all hover:shadow-[0_6px_20px_rgba(79,70,229,0.5)] hover:-translate-y-0.5"
           >
-            <span className="relative z-10">Launch Command Center</span>
-            <ArrowRight className="relative z-10 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-          </Link>
+            Launch Command Center
+          </PlatformLaunchLink>
           <button className="inline-flex h-12 items-center gap-2 rounded-full border border-slate-200 bg-white px-5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all cursor-pointer">
             <Play className="h-4 w-4 text-slate-400 fill-slate-400" /> Watch 90-sec Demo
           </button>
