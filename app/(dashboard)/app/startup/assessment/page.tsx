@@ -5,13 +5,13 @@ import { useStartupContext } from "../-context";
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ClipboardCheck, 
-  HelpCircle, 
-  ChevronRight, 
-  ChevronLeft, 
-  RefreshCw, 
-  ShieldCheck, 
+import {
+  ClipboardCheck,
+  HelpCircle,
+  ChevronRight,
+  ChevronLeft,
+  RefreshCw,
+  ShieldCheck,
   Sparkles,
   Info
 } from 'lucide-react';
@@ -33,7 +33,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
 
   const handleSelectOption = (score: number) => {
     setAnswers(prev => ({ ...prev, [activeQuestion.id]: score }));
-    
+
     // Auto advance with tiny lag for nice user response feel
     setTimeout(() => {
       if (currentIdx < totalQuestions - 1) {
@@ -207,7 +207,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
           </p>
         </div>
         {showResults && (
-          <button 
+          <button
             id="retake-assessment-btn"
             onClick={handleRetake}
             className="flex items-center gap-1.5 px-4 py-2 border border-[#1F2947] bg-[#0F1528] hover:bg-[#1F2947] transition-all rounded-xl text-xs font-semibold text-slate-300"
@@ -221,9 +221,9 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
       <AnimatePresence mode="wait">
         {!showResults ? (
           /* Assessment Questions Wizard */
-          <motion.div 
+          <motion.div
             key="wizard"
-            initial={{ opacity: 0, y: 15 }} 
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
             className="bg-[#0F1528] border border-[#1F2947] p-6 md:p-8 rounded-3xl shadow-sm space-y-6"
@@ -235,7 +235,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
                 <span className="font-bold">{progressPercent}% Completed</span>
               </div>
               <div className="w-full bg-[#1F2947] h-2 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="bg-indigo-600 h-full transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 ></div>
@@ -262,16 +262,14 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
                     key={idx}
                     id={`opt-${activeQuestion.id}-${idx}`}
                     onClick={() => handleSelectOption(option.score)}
-                    className={`w-full text-left p-4 rounded-2xl border text-sm transition-all flex items-center justify-between group ${
-                      isSelected 
-                        ? 'border-indigo-600 bg-indigo-500/20 font-semibold text-indigo-400' 
+                    className={`w-full text-left p-4 rounded-2xl border text-sm transition-all flex items-center justify-between group ${isSelected
+                        ? 'border-indigo-600 bg-indigo-500/20 font-semibold text-indigo-400'
                         : 'border-[#1F2947] hover:border-[#1F2947] dark:hover:border-slate-700 bg-[#0F1528]/60 text-slate-300 hover:translate-x-1'
-                    }`}
+                      }`}
                   >
                     <span>{option.label}</span>
-                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${
-                      isSelected ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-[#1F2947] group-hover:border-slate-400'
-                    }`}>
+                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 ml-3 transition-colors ${isSelected ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-[#1F2947] group-hover:border-slate-400'
+                      }`}>
                       {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full"></div>}
                     </div>
                   </button>
@@ -285,9 +283,8 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
                 id="assess-back-btn"
                 onClick={handleBack}
                 disabled={currentIdx === 0}
-                className={`flex items-center gap-1.5 px-4 py-2 border border-[#1F2947] border-[#1F2947] bg-[#0F1528] rounded-xl text-xs font-semibold ${
-                  currentIdx === 0 ? 'opacity-40 cursor-not-allowed text-slate-400' : 'text-slate-300 hover:bg-[#1F2947]'
-                }`}
+                className={`flex items-center gap-1.5 px-4 py-2 border border-[#1F2947] border-[#1F2947] bg-[#0F1528] rounded-xl text-xs font-semibold ${currentIdx === 0 ? 'opacity-40 cursor-not-allowed text-slate-400' : 'text-slate-300 hover:bg-[#1F2947]'
+                  }`}
               >
                 <ChevronLeft className="w-4 h-4" />
                 Previous Step
@@ -307,11 +304,10 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
                   id="assess-next-btn"
                   onClick={() => currentIdx < totalQuestions - 1 && setCurrentIdx(prev => prev + 1)}
                   disabled={answers[activeQuestion.id] === undefined}
-                  className={`flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                    answers[activeQuestion.id] === undefined 
-                      ? 'bg-[#1F2947] text-slate-400 cursor-not-allowed' 
+                  className={`flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs font-semibold transition-all ${answers[activeQuestion.id] === undefined
+                      ? 'bg-[#1F2947] text-slate-400 cursor-not-allowed'
                       : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md'
-                  }`}
+                    }`}
                 >
                   Next Question
                   <ChevronRight className="w-4 h-4" />
@@ -321,9 +317,9 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
           </motion.div>
         ) : (
           /* Diagnosis Results Dashboard */
-          <motion.div 
+          <motion.div
             key="results"
-            initial={{ opacity: 0, scale: 0.98 }} 
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             className="grid grid-cols-1 lg:grid-cols-12 gap-8"
           >
@@ -453,7 +449,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
             {/* Scorecard Category Bars */}
             <div className="lg:col-span-6 bg-[#0F1528] border border-[#1F2947] p-6 rounded-3xl shadow-sm space-y-6">
               <h4 className="font-display font-bold text-slate-200">Score Metrics Matrix</h4>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                 {categoriesList.map((item, idx) => (
                   <div key={idx} className="space-y-1.5 border-b border-slate-50 dark:border-slate-900 pb-3 last:border-0 last:pb-0">
@@ -462,7 +458,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
                       <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">{item.value}%</span>
                     </div>
                     <div className="w-full bg-[#1F2947] h-1.5 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="bg-indigo-600 h-full transition-all duration-1000"
                         style={{ width: `${item.value}%` }}
                       ></div>
@@ -492,7 +488,7 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
 
               <div className="border-t border-[#1F2947]/80 pt-6 space-y-3">
                 <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest block font-bold">Recommended Immediate Road Actions</span>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {savedResult.recommendations.map((reco, idx) => (
                     <div key={idx} className="bg-[#0B0F19]/50 p-4 rounded-2xl border border-[#1F2947]/80 flex flex-col justify-between space-y-3">

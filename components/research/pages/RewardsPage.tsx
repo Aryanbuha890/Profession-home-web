@@ -1,17 +1,12 @@
-'use client';
-
-import React from "react";
 import { Search, Plus } from "lucide-react";
 
-
-
-function SkillBuilderPage() {
+export function ResearchRewardsPage() {
   return (
     <div className="space-y-6 animate-in fade-in zoom-in duration-500 p-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">Skill Builder</h1>
-          <p className="text-sm text-slate-400 mt-1">Manage skill builder settings and view data.</p>
+          <h1 className="text-2xl font-bold text-white">Research Rewards</h1>
+          <p className="text-sm text-slate-400 mt-1">Manage research rewards settings and view data.</p>
         </div>
         <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition flex items-center gap-2">
           <Plus className="w-4 h-4" /> Add New
@@ -22,19 +17,17 @@ function SkillBuilderPage() {
         <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
+            <input
+              type="text"
+              placeholder="Search..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:border-slate-600 transition"
             />
           </div>
         </div>
         <div className="text-center text-slate-500 mt-20">
-          <p>No skill builder found yet.</p>
+          <p>No research rewards found yet.</p>
         </div>
       </div>
     </div>
   );
 }
-
-export default SkillBuilderPage;
