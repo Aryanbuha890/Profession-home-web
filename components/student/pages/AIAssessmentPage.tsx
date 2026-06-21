@@ -1,8 +1,5 @@
 'use client';
 
-import { useStartupContext } from "../-context";
-
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -15,7 +12,7 @@ import {
   Sparkles,
   Info
 } from 'lucide-react';
-import { ASSESSMENT_QUESTIONS, AssessmentResult, Question } from '../-types';
+import { ASSESSMENT_QUESTIONS, AssessmentResult, Question } from '@/app/(dashboard)/app/startup/-types';
 
 interface StartupAssessmentProps {
   onSaveAssessment: (result: AssessmentResult) => void;
@@ -514,9 +511,27 @@ function StartupAssessment({ onSaveAssessment, savedResult }: StartupAssessmentP
 
 
 
-function StartupAssessmentWrapper() {
-  const context = useStartupContext();
-  return <StartupAssessment {...context} />;
-}
+export function AIAssessmentPage() {
+  const [savedResult, setSavedResult] = useState<AssessmentResult>({
+    problemValidation: 0,
+    customerValidation: 0,
+    productReadiness: 0,
+    marketOpportunity: 0,
+    businessModel: 0,
+    teamStrength: 0,
+    financialHealth: 0,
+    executionGrowth: 0,
+    overallScore: 0,
+    diagnosis: "",
+    recommendations: []
+  });
 
-export default StartupAssessmentWrapper;
+  return (
+    <div className="p-8">
+      <StartupAssessment 
+        onSaveAssessment={(res) => setSavedResult(res)} 
+        savedResult={savedResult} 
+      />
+    </div>
+  );
+}
