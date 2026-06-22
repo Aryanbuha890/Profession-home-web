@@ -1,7 +1,5 @@
-'use client';
-
-import { AIAssessmentPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <AIAssessmentPage />;
+  return <StudentSectionPage tab="assessment" />;
 }

@@ -1,3 +1,6 @@
+'use client';
+
+import React from "react";
 import { Search, Plus } from "lucide-react";
 
 export function ResearchAssessmentPage() {

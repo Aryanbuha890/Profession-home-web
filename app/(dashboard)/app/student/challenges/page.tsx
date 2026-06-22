@@ -1,7 +1,5 @@
-'use client';
-
-import { ChallengesPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <ChallengesPage />;
+  return <StudentSectionPage tab="challenges" />;
 }

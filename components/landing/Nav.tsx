@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { PlatformLaunchLink } from "@/components/landing/PlatformLaunchLink";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -103,18 +104,16 @@ export function Nav() {
           >
             Sign in
           </Link>
-          <Link
-            href="/dashboard?tab=home"
+          <PlatformLaunchLink
+            onClick={() => setMenuOpen(false)}
+            shimmer
             className="group relative inline-flex h-9 items-center gap-1.5 overflow-hidden rounded-full px-4 text-sm font-semibold text-white shadow-[0_10px_30px_-8px_rgba(99,102,241,0.7),inset_0_1px_0_0_rgba(255,255,255,0.35)] transition-transform hover:-translate-y-px whitespace-nowrap"
             style={{
               backgroundImage: "linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 110%)",
-            }}
+            } as React.CSSProperties}
           >
-            <span className="relative z-10">Launch Platform</span>
-            <ArrowRight className="relative z-10 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-            {/* Glossy hover shimmer slide-across effect */}
-            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-          </Link>
+            Launch Platform
+          </PlatformLaunchLink>
 
           {/* Hamburger Menu Toggle on Mobile */}
           <button
@@ -160,17 +159,16 @@ export function Nav() {
                 >
                   Sign in
                 </Link>
-                <Link
-                  href="/dashboard?tab=home"
+                <PlatformLaunchLink
                   onClick={() => setMenuOpen(false)}
-                  className="flex h-10 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white"
+                  showArrow
+                  className="group flex h-10 items-center justify-center gap-1.5 rounded-full px-5 text-sm font-semibold text-white"
                   style={{
                     backgroundImage: "linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #22D3EE 110%)",
-                  }}
+                  } as React.CSSProperties}
                 >
                   Launch Platform
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                </PlatformLaunchLink>
               </div>
             </motion.div>
           )}

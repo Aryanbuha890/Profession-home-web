@@ -1,7 +1,5 @@
-'use client';
-
-import { CareerRoadmapPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <CareerRoadmapPage />;
+  return <StudentSectionPage tab="roadmap" />;
 }

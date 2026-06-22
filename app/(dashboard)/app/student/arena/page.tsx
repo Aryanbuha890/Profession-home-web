@@ -1,7 +1,5 @@
-'use client';
-
-import { CareerArenaPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <CareerArenaPage />;
+  return <StudentSectionPage tab="arena" />;
 }

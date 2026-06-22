@@ -24,6 +24,12 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     return "student";
   });
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      document.cookie = `ph_role=${role}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+    }
+  }, [role]);
+
   const setRole = (newRole: Role) => {
     setRoleState(newRole);
     if (typeof window !== "undefined") {

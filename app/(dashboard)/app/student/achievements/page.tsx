@@ -1,7 +1,5 @@
-'use client';
-
-import { AchievementVaultPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <AchievementVaultPage />;
+  return <StudentSectionPage tab="achievements" />;
 }

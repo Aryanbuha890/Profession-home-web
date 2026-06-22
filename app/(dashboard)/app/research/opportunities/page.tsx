@@ -1,7 +1,5 @@
-'use client';
-
-import { ResearchOpportunitiesPage } from "@/components/research";
+import ResearchSectionPage from "@/components/research/ResearchSectionPage";
 
 export default function Page() {
-  return <ResearchOpportunitiesPage />;
+  return <ResearchSectionPage segment="opportunities" />;
 }

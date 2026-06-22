@@ -1,7 +1,5 @@
-'use client';
-
-import { ProjectsPage } from "@/components/student";
+import StudentSectionPage from "@/components/student/StudentSectionPage";
 
 export default function Page() {
-  return <ProjectsPage />;
+  return <StudentSectionPage tab="projects" />;
 }
